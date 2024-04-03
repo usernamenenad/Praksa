@@ -8,8 +8,8 @@ model "myflyback" {
     configuration {
         hil_device = "VHIL+"
         hil_configuration_id = 1
-        simulation_method = trapezoidal
-        simulation_time_step = 20e-6
+        simulation_method = exact
+        simulation_time_step = auto
         simulation_discret_scaling = 1.0
         dsp_timer_periods = 100e-6, 50e-3
         ss_calc_method = "systematic elimination"
@@ -75,54 +75,32 @@ model "myflyback" {
 
     component Subsystem Root {
         component "core/Flyback" Flyback1 {
-            Lm = "2.5"
+            L1 = "1e-6"
+            L2 = "1e-6"
+            Lm = "166e-6"
+            R1 = "1e-5"
+            R2 = "1e-5"
+            carrier_freq = "100000.0"
             ctrl_src = "Internal modulator"
+            d_time = "2.5e-6"
+            n2 = "9"
             ref_sig_min_max = "[0.0, 1.0]"
             signal_access = "Inherit"
         }
         [
-            position = 8440, 8328
+            position = 8440, 8288
             size = 144, 256
         ]
 
         component "core/Voltage Source" Vin {
-            init_const_value = "Vin"
+            init_const_value = "24"
         }
         [
-            position = 8248, 8328
+            position = 8160, 8288
             rotation = right
         ]
 
-        component "core/Capacitor" C {
-            capacitance = "C"
-            signal_access = "Inherit"
-        }
-        [
-            position = 8640, 8280
-            rotation = right
-        ]
-
-        component "core/Resistor" Rload {
-            resistance = "Rload"
-        }
-        [
-            position = 8784, 8280
-            rotation = right
-        ]
-
-        component "core/PID controller" PID {
-            controller_type = "PI"
-            enb_anti_windup_out = "True"
-            enb_output_limit_out = "True"
-            ki_source = "external"
-            kp_source = "external"
-            lower_sat_lim = "0"
-        }
-        [
-            position = 8336, 8000
-        ]
-
-        component "core/SCADA Input" "Enable Flyback" {
+        component "core/SCADA Input" Enable {
             format = "uint"
             max = "1"
             min = "0"
@@ -131,137 +109,94 @@ model "myflyback" {
             unit = ""
         }
         [
-            position = 8328, 8168
+            position = 8256, 8120
         ]
 
-        component "core/Voltage Measurement" Vout {
-            sig_output = "True"
-            signal_access = "Inherit"
-        }
-        [
-            position = 8880, 8280
-            rotation = right
-            size = 64, 32
-        ]
-
-        component "core/Sum" Sum1 {
-            signs = "+-"
-        }
-        [
-            position = 8184, 8000
-        ]
-
-        component "core/SCADA Input" "Reference Voltage" {
-            max = "200"
-            min = "0"
-            signal_access = "Inherit"
-            unit = ""
-        }
-        [
-            position = 8008, 7960
-        ]
-
-        component "core/SCADA Input" Kp {
-            def_value = "1"
-            max = "100"
-            min = "0"
-            signal_access = "Inherit"
-            unit = ""
-        }
-        [
-            position = 8256, 7912
-        ]
-
-        component "core/SCADA Input" Ki {
-            def_value = "1"
-            max = "100"
-            min = "0"
-            signal_access = "Inherit"
-            unit = ""
-        }
-        [
-            position = 8256, 8032
-        ]
-
-        component "core/SCADA Input" "SCADA Input1" {
-            def_value = "0.5"
+        component "core/SCADA Input" "Duty ratio" {
+            def_value = "0.505"
             max = "1"
             min = "0"
             signal_access = "Inherit"
             unit = ""
         }
         [
-            position = 8400, 8112
+            position = 8256, 8048
         ]
 
-        tag Goto1 {
-            value = "Vout"
-            scope = local
-            kind = sp
-            direction = in
+        component "core/Capacitor" C {
+            capacitance = "0.555e-6"
+            signal_access = "Inherit"
         }
         [
-            position = 8992, 8280
-            size = 60, 20
+            position = 8688, 8240
+            rotation = right
         ]
 
-        tag From1 {
-            value = "Vout"
-            scope = local
-            kind = sp
-            direction = out
+        component "core/Resistor" Rload {
+            resistance = "2200"
         }
         [
-            position = 8008, 8008
-            size = 60, 20
+            position = 8800, 8320
+            rotation = right
+        ]
+
+        component "core/Voltage Measurement" Vout {
+        }
+        [
+            position = 8912, 8280
+            rotation = right
+            size = 64, 32
+        ]
+
+        component "core/Current Measurement" Iout {
+        }
+        [
+            position = 8800, 8232
+            rotation = right
+            size = 64, 32
         ]
 
         junction Junction1 pe
         [
-            position = 8640, 8232
+            position = 8688, 8192
         ]
 
         junction Junction2 pe
         [
-            position = 8640, 8328
+            position = 8688, 8288
         ]
 
         junction Junction3 pe
         [
-            position = 8784, 8232
+            position = 8800, 8192
         ]
 
         junction Junction4 pe
         [
-            position = 8784, 8328
+            position = 8800, 8360
         ]
 
-        connect Flyback1.a_out Junction1 as Connection5
-        connect Junction1 C.p_node as Connection6
-        connect Flyback1.b_out Junction2 as Connection8
-        connect Junction2 C.n_node as Connection9
-        connect Rload.p_node Junction3 as Connection13
-        connect Junction3 Junction1 as Connection14
-        connect Vout.p_node Junction3 as Connection15
-        connect Rload.n_node Junction4 as Connection16
-        connect Junction4 Junction2 as Connection17
-        connect Vout.n_node Junction4 as Connection18
-        connect Vout.out Goto1 as Connection19
-        connect Sum1.out PID.in as Connection20
+        connect Vin.p_node Flyback1.a_in as Connection1
+        connect Vin.n_node Flyback1.b_in as Connection2
+        connect Enable.out Flyback1.En as Connection3
+        connect "Duty ratio.out" Flyback1.In as Connection4
+        connect C.p_node Junction1 as Connection64
+        connect Junction1 Flyback1.a_out as Connection65
         [
-            breakpoints = 8224, 7984; 8304, 7984
+            breakpoints = 8688, 8192; 8688, 8192; 8688, 8192
         ]
-        connect From1 Sum1.in1 as Connection21
-        connect "Reference Voltage.out" Sum1.in as Connection22
-        connect "Enable Flyback.out" Flyback1.En as Connection24
-        connect Kp.out PID.kp_in as Connection25
-        connect Ki.out PID.ki_in as Connection26
-        connect Flyback1.b_in Vin.n_node as Connection34
+        connect Iout.n_node Rload.p_node as Connection67
+        connect C.n_node Junction2 as Connection68
+        connect Junction2 Flyback1.b_out as Connection69
         [
-            breakpoints = 8328, 8424
+            breakpoints = 8688, 8288; 8688, 8288; 8688, 8288
         ]
-        connect "SCADA Input1.out" Flyback1.In as Connection37
-        connect Flyback1.a_in Vin.p_node as Connection38
+        connect Iout.p_node Junction3 as Connection71
+        connect Junction3 Junction1 as Connection72
+        connect Vout.p_node Junction3 as Connection73
+        connect Rload.n_node Junction4 as Connection74
+        connect Junction4 Junction2 as Connection75
+        connect Vout.n_node Junction4 as Connection76
     }
 
     default {
@@ -271,29 +206,6 @@ model "myflyback" {
             initial_voltage = "0"
             pole_shift_ignore = "False"
             visible = "True"
-        }
-
-        "core/PID controller" {
-            controller_type = "PID"
-            kp = "1"
-            kp_source = "internal"
-            ki = "1"
-            ki_source = "internal"
-            kd = "0"
-            kd_source = "internal"
-            filt_coef = "100"
-            int_init_value = "0"
-            filt_init_value = "0"
-            enb_output_limit_out = "False"
-            show_reset = "none"
-            upper_sat_lim = "1"
-            upper_sat_lim_source = "internal"
-            lower_sat_lim = "-1"
-            lower_sat_lim_source = "internal"
-            enb_anti_windup_out = "False"
-            signal_out_type = "inherit"
-            _tunable = "False"
-            execution_rate = "inherit"
         }
 
         "core/Resistor" {
@@ -313,11 +225,6 @@ model "myflyback" {
             def_value = "0"
             unit = " "
             execution_rate = "100e-6"
-        }
-
-        "core/Sum" {
-            signs = "2"
-            execution_rate = "inherit"
         }
 
         "core/Voltage Source" {
@@ -340,6 +247,30 @@ model "myflyback" {
             init_rms_value = "0.0"
             init_frequency = "50.0"
             init_phase = "0.0"
+        }
+
+        "core/Current Measurement" {
+            signal_access = "inherit"
+            bw_limit = "False"
+            frequency = "10e3"
+            comparator_enable = "False"
+            operator = "greater"
+            threshold = "0"
+            cmp_abs_value = "False"
+            feed_forward = "false"
+            sig_output = "False"
+            sig_output_filt_and_full_bw = "False"
+            execution_rate = "100e-6"
+            addr = "0"
+            nd_msr_estimation = "false"
+            dev_cpl_msr = "false"
+            host_device = "0"
+            output_to_device = "0"
+            dev_cpl_index = "0"
+            dev_cpl_var_nb = "0"
+            visible = "True"
+            override_signal_name = "False"
+            signal_name = ""
         }
 
         "core/Flyback" {
@@ -394,16 +325,4 @@ model "myflyback" {
             signal_name = ""
         }
     }
-
-    CODE model_init
-        # Numpy module is imported as 'np'
-        # Scipy module is imported as 'sp'
-        # The Schematic API is imported as 'mdl'
-        # To get the model file path, use 'mdl.get_model_file_path()'
-        # To print information to the console, use info()
-        
-        Vin = 100
-        C = 1e-4
-        Rload = 2
-    ENDCODE
 }

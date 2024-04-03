@@ -12,7 +12,7 @@
         <vhil_adio_loopback>False</vhil_adio_loopback>
     </hw_properties>
     <sim_setup>
-        <sim_time_step>2e-05</sim_time_step>
+        <sim_time_step>1e-07</sim_time_step>
     </sim_setup>
     <pesb>
         <cell>
@@ -47,13 +47,6 @@
             <visible>True</visible>
         </cell>
         <cell>
-            <name>Flyback1.L2</name>
-            <address>2</address>
-            <type>current</type>
-            <initial_condition>0.0</initial_condition>
-            <visible>True</visible>
-        </cell>
-        <cell>
             <name>Flyback1.L1</name>
             <address>1</address>
             <type>current</type>
@@ -61,11 +54,11 @@
             <visible>True</visible>
         </cell>
         <cell>
-            <name>Flyback1.v2</name>
-            <address>386</address>
-            <type>voltage</type>
-            <initial_condition>None</initial_condition>
-            <visible>False</visible>
+            <name>Flyback1.L2</name>
+            <address>2</address>
+            <type>current</type>
+            <initial_condition>0.0</initial_condition>
+            <visible>True</visible>
         </cell>
         <cell>
             <name>Flyback1.v1</name>
@@ -75,6 +68,20 @@
             <visible>False</visible>
         </cell>
         <cell>
+            <name>Vout</name>
+            <address>4</address>
+            <type>voltage</type>
+            <initial_condition>None</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
+            <name>Iout</name>
+            <address>5</address>
+            <type>current</type>
+            <initial_condition>None</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
             <name>Flyback1.il</name>
             <address>384</address>
             <type>current</type>
@@ -82,11 +89,11 @@
             <visible>False</visible>
         </cell>
         <cell>
-            <name>Vout</name>
-            <address>4</address>
+            <name>Flyback1.v2</name>
+            <address>386</address>
             <type>voltage</type>
             <initial_condition>None</initial_condition>
-            <visible>True</visible>
+            <visible>False</visible>
         </cell>
         <cell>
             <name>Vin</name>
@@ -627,7 +634,7 @@
             <type>1phase</type>
             <address>[0]</address>
             <unit>V</unit>
-            <init_settings>['Constant', 100.0]</init_settings>
+            <init_settings>['Constant', 24.0]</init_settings>
         </cell>
     </sources>
     <machines>
@@ -668,14 +675,14 @@
 
     <tunable_params>
         <tunable_param>
-            <name>Enable Flyback</name>
+            <name>Duty ratio</name>
             <addr>[1426063616]</addr>
             <min>0.0</min>
             <max>1.0</max>
-            <def_value>0.0</def_value>
+            <def_value>0.505</def_value>
             <unit></unit>
-            <widget_type>int</widget_type>
-            <format>unsigned_int</format>
+            <widget_type>float</widget_type>
+            <format>real</format>
             <size>1</size>
             <param_type>scada input</param_type>
             <cpu_type>user_sp_cpu</cpu_type>
@@ -684,14 +691,14 @@
             <visible>True</visible>
         </tunable_param>
         <tunable_param>
-            <name>SCADA Input1</name>
+            <name>Enable</name>
             <addr>[1426063620]</addr>
             <min>0.0</min>
             <max>1.0</max>
-            <def_value>0.5</def_value>
+            <def_value>0.0</def_value>
             <unit></unit>
-            <widget_type>float</widget_type>
-            <format>real</format>
+            <widget_type>int</widget_type>
+            <format>unsigned_int</format>
             <size>1</size>
             <param_type>scada input</param_type>
             <cpu_type>user_sp_cpu</cpu_type>
