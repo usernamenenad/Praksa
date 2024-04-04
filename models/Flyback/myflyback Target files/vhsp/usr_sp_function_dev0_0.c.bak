@@ -70,6 +70,10 @@ typedef double real;
 
 
 
+
+
+
+
 //@cmp.def.end
 
 
@@ -83,8 +87,12 @@ typedef double real;
 
 //@cmp.var.start
 // variables
-    double _duty_ratio__out;
+         double _constant1__out = 220.0;
     X_UnInt32 _enable__out;
+    double _vout_va1__out;
+    double _sum1__out;
+    double _pid_controller1__out;
+    double _pid_controller1__pi_reg_out_int;
     X_UnInt32 _flyback1_pwm_modulator__channels[1] = {0};
     double _flyback1_pwm_modulator__limited_in[1];
     X_UnInt32 _flyback1_pwm_modulator__update_mask;
@@ -93,7 +101,9 @@ typedef double real;
 
 //@cmp.svar.start
 // state variables
-//@cmp.svar.end
+    double _pid_controller1__integrator_state;
+        X_Int32 _pid_controller1__av_active;
+    double _pid_controller1__filter_state;//@cmp.svar.end
 
 //
 // Tunable parameters
@@ -125,6 +135,11 @@ void ReInit_user_sp_cpu0_dev0(){
     //@cmp.init.block.start
     
     
+    
+    
+        _pid_controller1__integrator_state =  0.0;
+    _pid_controller1__filter_state =  0.0;
+
                 _flyback1_pwm_modulator__update_mask = 1;
             HIL_OutInt32(0x2000080 + _flyback1_pwm_modulator__channels[0], 2000); // divide by 2 is already implemented in hw
         HIL_OutInt32(0x20000c0 + _flyback1_pwm_modulator__channels[0], 1000);
@@ -134,6 +149,8 @@ void ReInit_user_sp_cpu0_dev0(){
         HIL_OutInt32(0x2000300 + _flyback1_pwm_modulator__channels[0], 1);
             HIL_OutInt32(0x2000340 + _flyback1_pwm_modulator__channels[0], 0);
 HIL_OutInt32(0x2000140, _flyback1_pwm_modulator__update_mask);
+
+          HIL_OutAO(0x4000, 0.0f);
 
     //@cmp.init.block.end
 }
@@ -196,18 +213,41 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     //////////////////////////////////////////////////////////////////////////
     // Set tunable parameters
     //////////////////////////////////////////////////////////////////////////
+             // Generated from the component: Constant1
+            
+
+
 //////////////////////////////////////////////////////////////////////////
     // Output block
     //////////////////////////////////////////////////////////////////////////
     //@cmp.out.block.start
-         // Generated from the component: Duty ratio
-                    _duty_ratio__out = XIo_InFloat(0x55000100);
-
          // Generated from the component: Enable
-                    _enable__out = XIo_InInt32(0x55000104);
+                    _enable__out = XIo_InInt32(0x55000100);
+
+         // Generated from the component: Vout.Va1
+            _vout_va1__out = (HIL_InFloat(0xc80000+0x4));
+
+         // Generated from the component: Sum1
+        _sum1__out = _constant1__out-_vout_va1__out;    
+
+         // Generated from the component: PID controller1
+        
+
+
+        _pid_controller1__pi_reg_out_int = _pid_controller1__integrator_state + 1e-05 * _sum1__out;
+
+
+        if (_pid_controller1__pi_reg_out_int < 0.0)
+            _pid_controller1__av_active = -1;
+        else if (_pid_controller1__pi_reg_out_int > 1.0)
+            _pid_controller1__av_active = 1;
+        else
+            _pid_controller1__av_active = 0;
+
+        _pid_controller1__out = MIN(MAX(_pid_controller1__pi_reg_out_int, 0.0), 1.0);
 
          // Generated from the component: Flyback1.PWM_Modulator
-                    _flyback1_pwm_modulator__limited_in[0] = MIN(MAX(_duty_ratio__out, 0.0), 1.0);
+                    _flyback1_pwm_modulator__limited_in[0] = MIN(MAX(_pid_controller1__out, 0.0), 1.0);
 
                 HIL_OutInt32(0x2000040 + _flyback1_pwm_modulator__channels[0], ((X_UnInt32)((_flyback1_pwm_modulator__limited_in[0]-(0.0)) * 2000.0)));
 
@@ -225,6 +265,9 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
 
 
 
+         // Generated from the component: Probe1
+            HIL_OutAO(0x4000, (float)_pid_controller1__out);
+
 //@cmp.out.block.end
 
 
@@ -232,6 +275,13 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     // Update block
     //////////////////////////////////////////////////////////////////////////
     //@cmp.update.block.start
+         // Generated from the component: PID controller1
+                        if (!_pid_controller1__av_active || ((_pid_controller1__av_active < 0 && _sum1__out > 0 ) || (_pid_controller1__av_active > 0 && _sum1__out < 0 ))) {
+                    _pid_controller1__integrator_state += 0.001 * _sum1__out * 0.0001;
+                }
+
+
+
     //@cmp.update.block.end
 }
 // ----------------------------------------------------------------------------------------

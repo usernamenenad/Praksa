@@ -112,17 +112,6 @@ model "myflyback" {
             position = 8256, 8120
         ]
 
-        component "core/SCADA Input" "Duty ratio" {
-            def_value = "0.505"
-            max = "1"
-            min = "0"
-            signal_access = "Inherit"
-            unit = ""
-        }
-        [
-            position = 8256, 8048
-        ]
-
         component "core/Capacitor" C {
             capacitance = "0.555e-6"
             signal_access = "Inherit"
@@ -141,6 +130,8 @@ model "myflyback" {
         ]
 
         component "core/Voltage Measurement" Vout {
+            sig_output = "True"
+            signal_access = "Inherit"
         }
         [
             position = 8912, 8280
@@ -154,6 +145,60 @@ model "myflyback" {
             position = 8800, 8232
             rotation = right
             size = 64, 32
+        ]
+
+        component "core/PID controller" "PID controller1" {
+            controller_type = "PI"
+            enb_anti_windup_out = "True"
+            enb_output_limit_out = "True"
+            ki = "0.001"
+            kp = "0.00001"
+            lower_sat_lim = "0"
+        }
+        [
+            position = 8256, 8008
+        ]
+
+        component "core/Sum" Sum1 {
+            signs = "+-"
+        }
+        [
+            position = 8152, 8008
+        ]
+
+        component "core/Constant" Constant1 {
+            value = "220"
+        }
+        [
+            position = 8048, 7968
+        ]
+
+        component "core/Probe" Probe1 {
+        }
+        [
+            position = 8576, 8008
+        ]
+
+        tag Goto1 {
+            value = "tag"
+            scope = local
+            kind = sp
+            direction = in
+        }
+        [
+            position = 8984, 8280
+            size = 60, 20
+        ]
+
+        tag From1 {
+            value = "tag"
+            scope = local
+            kind = sp
+            direction = out
+        }
+        [
+            position = 8048, 8016
+            size = 60, 20
         ]
 
         junction Junction1 pe
@@ -176,10 +221,14 @@ model "myflyback" {
             position = 8800, 8360
         ]
 
+        junction Junction5 sp
+        [
+            position = 8448, 8008
+        ]
+
         connect Vin.p_node Flyback1.a_in as Connection1
         connect Vin.n_node Flyback1.b_in as Connection2
         connect Enable.out Flyback1.En as Connection3
-        connect "Duty ratio.out" Flyback1.In as Connection4
         connect C.p_node Junction1 as Connection64
         connect Junction1 Flyback1.a_out as Connection65
         [
@@ -197,6 +246,13 @@ model "myflyback" {
         connect Rload.n_node Junction4 as Connection74
         connect Junction4 Junction2 as Connection75
         connect Vout.n_node Junction4 as Connection76
+        connect Vout.out Goto1 as Connection78
+        connect Sum1.out "PID controller1.in" as Connection79
+        connect From1 Sum1.in1 as Connection80
+        connect Constant1.out Sum1.in as Connection81
+        connect "PID controller1.out" Junction5 as Connection82
+        connect Junction5 Flyback1.In as Connection83
+        connect Probe1.in Junction5 as Connection84
     }
 
     default {
@@ -206,6 +262,47 @@ model "myflyback" {
             initial_voltage = "0"
             pole_shift_ignore = "False"
             visible = "True"
+        }
+
+        "core/Constant" {
+            value = "1"
+            signal_type = "real"
+            execution_rate = "100e-6"
+            _tunable = "False"
+        }
+
+        "core/PID controller" {
+            controller_type = "PID"
+            kp = "1"
+            kp_source = "internal"
+            ki = "1"
+            ki_source = "internal"
+            kd = "0"
+            kd_source = "internal"
+            filt_coef = "100"
+            int_init_value = "0"
+            filt_init_value = "0"
+            enb_output_limit_out = "False"
+            show_reset = "none"
+            upper_sat_lim = "1"
+            upper_sat_lim_source = "internal"
+            lower_sat_lim = "-1"
+            lower_sat_lim_source = "internal"
+            enb_anti_windup_out = "False"
+            signal_out_type = "inherit"
+            _tunable = "False"
+            execution_rate = "inherit"
+        }
+
+        "core/Probe" {
+            signal_access = "inherit"
+            addr = "0"
+            override_signal_name = "False"
+            signal_name = ""
+            signal_type = "generic"
+            streaming_en = "False"
+            streaming_er_idx = "0"
+            execution_rate = "inherit"
         }
 
         "core/Resistor" {
@@ -225,6 +322,11 @@ model "myflyback" {
             def_value = "0"
             unit = " "
             execution_rate = "100e-6"
+        }
+
+        "core/Sum" {
+            signs = "2"
+            execution_rate = "inherit"
         }
 
         "core/Voltage Source" {

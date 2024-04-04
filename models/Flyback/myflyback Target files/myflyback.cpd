@@ -33,16 +33,16 @@
     </pesb>
     <analog_variables>
         <cell>
-            <name>Flyback1.Lm</name>
-            <address>3</address>
-            <type>current</type>
+            <name>C</name>
+            <address>0</address>
+            <type>voltage</type>
             <initial_condition>0.0</initial_condition>
             <visible>True</visible>
         </cell>
         <cell>
-            <name>C</name>
-            <address>0</address>
-            <type>voltage</type>
+            <name>Flyback1.Lm</name>
+            <address>3</address>
+            <type>current</type>
             <initial_condition>0.0</initial_condition>
             <visible>True</visible>
         </cell>
@@ -61,13 +61,6 @@
             <visible>True</visible>
         </cell>
         <cell>
-            <name>Flyback1.v1</name>
-            <address>385</address>
-            <type>voltage</type>
-            <initial_condition>None</initial_condition>
-            <visible>False</visible>
-        </cell>
-        <cell>
             <name>Vout</name>
             <address>4</address>
             <type>voltage</type>
@@ -75,11 +68,11 @@
             <visible>True</visible>
         </cell>
         <cell>
-            <name>Iout</name>
-            <address>5</address>
-            <type>current</type>
+            <name>Flyback1.v2</name>
+            <address>386</address>
+            <type>voltage</type>
             <initial_condition>None</initial_condition>
-            <visible>True</visible>
+            <visible>False</visible>
         </cell>
         <cell>
             <name>Flyback1.il</name>
@@ -89,11 +82,18 @@
             <visible>False</visible>
         </cell>
         <cell>
-            <name>Flyback1.v2</name>
-            <address>386</address>
+            <name>Flyback1.v1</name>
+            <address>385</address>
             <type>voltage</type>
             <initial_condition>None</initial_condition>
             <visible>False</visible>
+        </cell>
+        <cell>
+            <name>Iout</name>
+            <address>5</address>
+            <type>current</type>
+            <initial_condition>None</initial_condition>
+            <visible>True</visible>
         </cell>
         <cell>
             <name>Vin</name>
@@ -669,30 +669,23 @@
         <sig_stim>off</sig_stim>
     </model_properties>
 
+    <analog_variables>
+        <cell>
+            <name>Probe1</name>
+            <type>generic</type>
+            <address>16384</address>
+            <initial_condition>None</initial_condition>
+            <visible>True</visible>
+        </cell>
+    </analog_variables>
 
 <digital_variables>
     </digital_variables>
 
     <tunable_params>
         <tunable_param>
-            <name>Duty ratio</name>
-            <addr>[1426063616]</addr>
-            <min>0.0</min>
-            <max>1.0</max>
-            <def_value>0.505</def_value>
-            <unit></unit>
-            <widget_type>float</widget_type>
-            <format>real</format>
-            <size>1</size>
-            <param_type>scada input</param_type>
-            <cpu_type>user_sp_cpu</cpu_type>
-            <cpu_idx>0</cpu_idx>
-            <execution_rate>0.0001</execution_rate>
-            <visible>True</visible>
-        </tunable_param>
-        <tunable_param>
             <name>Enable</name>
-            <addr>[1426063620]</addr>
+            <addr>[1426063616]</addr>
             <min>0.0</min>
             <max>1.0</max>
             <def_value>0.0</def_value>
@@ -723,6 +716,11 @@
 
     <sp_compiler_type>gcc</sp_compiler_type>
 
+    <streaming>
+
+
+
+     </streaming>
 
 
 </model_description>
