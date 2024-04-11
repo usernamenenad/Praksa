@@ -4,12 +4,12 @@ version = 4.2
 // Saved by sw version: 2024.1
 //
 
-model "New schematic 11-Apr-2024@11-01-13" {
+model "boost" {
     configuration {
         hil_device = "VHIL+"
         hil_configuration_id = 1
         simulation_method = bilinear
-        simulation_time_step = auto
+        simulation_time_step = 20e-6
         simulation_discret_scaling = 1.0
         dsp_timer_periods = 100e-6, 50e-3
         ss_calc_method = "systematic elimination"
@@ -75,78 +75,126 @@ model "New schematic 11-Apr-2024@11-01-13" {
 
     component Subsystem Root {
         component "core/Boost" Boost {
+            ctrl_src = "Internal modulator"
             fvd_def_method = "LUT"
+            ref_sig_min_max = "[0.0, 1.0]"
+            signal_access = "Inherit"
         }
         [
-            position = 8400, 8256
+            position = 8416, 8248
             size = 128, 256
+        ]
+
+        component "core/Inductor" L {
+            inductance = "L"
+            initial_current = "0.195"
+            signal_access = "Inherit"
+        }
+        [
+            position = 8120, 8152
+        ]
+
+        component "core/Capacitor" C {
+            capacitance = "C"
+            initial_voltage = "9.78"
+            signal_access = "Inherit"
+        }
+        [
+            position = 8672, 8200
+            rotation = right
+        ]
+
+        component "core/Resistor" RL {
+            resistance = "RL"
+        }
+        [
+            position = 8240, 8152
         ]
 
         component "core/Voltage Source" Vin {
             init_const_value = "Vin"
         }
         [
-            position = 8136, 8256
-            rotation = right
-        ]
-
-        component "core/Inductor" L {
-        }
-        [
-            position = 8192, 8160
-        ]
-
-        component "core/Resistor" RL {
-        }
-        [
-            position = 8272, 8160
-        ]
-
-        component "core/Capacitor" C {
-        }
-        [
-            position = 8608, 8224
+            position = 8048, 8256
             rotation = right
         ]
 
         component "core/Resistor" RC {
+            resistance = "RC"
         }
         [
-            position = 8608, 8296
+            position = 8672, 8296
             rotation = right
         ]
 
-        component "core/Resistor" Rload {
+        component "core/Voltage Measurement" Vout {
+            signal_access = "Inherit"
         }
         [
-            position = 8736, 8256
+            position = 8904, 8248
             rotation = right
+            size = 64, 32
+        ]
+
+        component "core/Resistor" R {
+            resistance = "R"
+        }
+        [
+            position = 8808, 8256
+            rotation = right
+        ]
+
+        component "core/Constant" enable {
+            signal_type = "int"
+        }
+        [
+            position = 8240, 8056
+        ]
+
+        component "core/Constant" "duty ratio" {
+            value = "0.5"
+        }
+        [
+            position = 8240, 7984
+        ]
+
+        junction Junction1 pe
+        [
+            position = 8672, 8152
         ]
 
         junction Junction2 pe
         [
-            position = 8608, 8352
+            position = 8672, 8344
         ]
 
         junction Junction3 pe
         [
-            position = 8608, 8160
+            position = 8808, 8152
         ]
 
-        connect Vin.n_node Boost.b_in as Connection2
-        connect RC.p_node C.n_node as Connection6
-        connect RC.n_node Junction2 as Connection11
-        connect Junction2 Boost.b_out as Connection12
-        connect Rload.n_node Junction2 as Connection13
-        connect Boost.a_in RL.n_node as Connection15
-        connect L.p_node Vin.p_node as Connection17
-        connect L.n_node RL.p_node as Connection18
-        connect Rload.p_node Junction3 as Connection19
-        connect Junction3 C.p_node as Connection20
+        junction Junction4 pe
         [
-            breakpoints = 8608, 8160
+            position = 8808, 8344
         ]
-        connect Boost.a_out Junction3 as Connection21
+
+        connect L.n_node RL.p_node as Connection3
+        connect RL.n_node Boost.a_in as Connection4
+        connect Vin.p_node L.p_node as Connection5
+        connect Vin.n_node Boost.b_in as Connection6
+        connect RC.p_node C.n_node as Connection8
+        connect Boost.a_out Junction1 as Connection10
+        connect Junction1 C.p_node as Connection11
+        connect Boost.b_out Junction2 as Connection13
+        connect Junction2 RC.n_node as Connection14
+        connect Vout.p_node Junction3 as Connection16
+        connect Junction3 Junction1 as Connection17
+        connect R.p_node Junction3 as Connection18
+        connect Vout.n_node Junction4 as Connection19
+        connect Junction4 Junction2 as Connection20
+        connect R.n_node Junction4 as Connection21
+        connect enable.out Boost.En as Connection25
+        connect "duty ratio.out" Boost.In as Connection26
     }
 
     default {
@@ -156,6 +204,13 @@ model "New schematic 11-Apr-2024@11-01-13" {
             initial_voltage = "0"
             pole_shift_ignore = "False"
             visible = "True"
+        }
+
+        "core/Constant" {
+            value = "1"
+            signal_type = "real"
+            execution_rate = "100e-6"
+            _tunable = "False"
         }
 
         "core/Inductor" {
@@ -238,6 +293,30 @@ model "New schematic 11-Apr-2024@11-01-13" {
             visualize_luts = "Visualize Lookup Tables"
             show_monitoring = "False"
         }
+
+        "core/Voltage Measurement" {
+            signal_access = "inherit"
+            bw_limit = "False"
+            frequency = "10e3"
+            comparator_enable = "False"
+            operator = "greater"
+            threshold = "0"
+            cmp_abs_value = "False"
+            feed_forward = "false"
+            sig_output = "False"
+            sig_output_filt_and_full_bw = "False"
+            execution_rate = "100e-6"
+            addr = "0"
+            nd_msr_estimation = "false"
+            dev_cpl_msr = "false"
+            host_device = "0"
+            output_to_device = "0"
+            dev_cpl_index = "0"
+            dev_cpl_var_nb = "0"
+            visible = "True"
+            override_signal_name = "False"
+            signal_name = ""
+        }
     }
 
     CODE model_init
@@ -247,6 +326,11 @@ model "New schematic 11-Apr-2024@11-01-13" {
         # To get the model file path, use 'mdl.get_model_file_path()'
         # To print information to the console, use info()
         
-        Vin = 10
+        Vin = 5
+        L = 150e-3
+        C = 1e-3
+        R = 100
+        RL = 0.9
+        RC = 0.4
     ENDCODE
 }
