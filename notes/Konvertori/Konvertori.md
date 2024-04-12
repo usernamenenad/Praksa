@@ -51,7 +51,8 @@ $$I_{out}>\frac{V_{in}}{2f_{s}L}D(1-D)$$
 - Struja prekidaca diskontinualna - u prvom periodu prekidacke periode jednaka struji kalema (ulaznoj struji), koja moze biti velika.
 - Kako sluzi kao podizac napona, veliki stres na komponente.
 - Prakticno najveci koeficijent korisnog dejstva dostize se kada je $D=0.5$.
-- Nula u desnoj poluravni - nestabilan sistem sam po sebi, pa teza kontrola.
+- Nula u desnoj poluravni - moze biti otezana kontrola.
+- Struja kondenzatora diskontinualna, sto dovodi do vece talasnosti izlaznog napona.
 ## Aplikacije
 
 - Pojacavaci snage.
@@ -77,6 +78,7 @@ $$I_{in} = -\frac{D}{1-D}I_{out}$$
 ## Mane
 
 - Kompeksan dizajn i implementacija, posebno za sisteme koji zahtjevaju veliku snagu i efikasnost.
+- Struja kondenzatora diskontinualna, sto dovodi do vece talasnosti izlaznog napona.
 ## Aplikacije
 
 - Samoregulisuce napajanje.
@@ -91,24 +93,52 @@ $$V_{out} = \frac{nD}{1-D}V_{in}$$
 ## Prednosti
 
 - Galvanska izolacija izmedju "primarne" i "sekundarne" strane.
+- Visoka efikasnost na manjim snagama.
+- Jeftina za primjene pri manjim i srednjim snagama.
+- Izlazni kalem nije potreban. Transformer u *flyback* topologiji se ponasa kao kalem.
+- Dodatni stepen slobode je odnos namotaja. 
+- Moguce dobiti vise izlaznih napona. 
 ## Mane
 
 - Struja kondenzatora diskontinualna, sto dovodi do vece talasnosti izlaznog napona. Efektivna vrijednost struje kondenzatora velika, a time i disipacija na kondenzatoru.
-- Talasnost izlaznog napona uslovljena je konacnom kapacitivnoscu kondenzatora.
+- Talasnost izlaznog napona uslovljena je konacnom kapacitivnoscu kondenzatora. Moze biti velika.
+- Povecan stres na izlaznoj diodi, pogotovo u diskontinualnom rezimu rada.
+- Smanjen koeficijent korisnog dejstva u poredjenju sa drugim topologijama.
+- Kompleksnost u dizajnu visokofrekventnih transformera.
+- Prekidac izlozen maksimalnom naponu i maloj struji, za razliku od buck konvertora gdje su obje prekidacke kompnente bile na visokom naponu i visokoj struji.
+- Dizajn transformatora moze biti prostorno velik.
+## Aplikacije
+
+- Punjaci baterija i adapteri.
+- Telekomunikaciona oprema.
+- Industrijski i medicinski izvori.
 # Forward konvertor
 
 ## Osobine
 
 - Buck derived konvertor.
-- $V_{out} = nDV_{in}$
+$$V_{out} = nDV_{in}$$
+$$I_{out}=nDI_{in}$$
+- Nastao zbog pojednostavljenja konstrukcije transformatora *flyback* konvertora, odnosno smanjivanje njegove velicine.
 ## Prednosti
 
+- Galvanska izolacija izmedju "primarne" i "sekundarne" strane.
 - Efikasnije koriscenje magnetskih komponenata. Time je bolji izbor pri vecim snagama.
+- Prekidac povezan na masu - nema potrebe za *high side driver*-om.
+- Pri vecim snagama bolji od *flyback* konvertora.
+- Izlazna struja relativno konstantna.
+- Velika efikasnost, fleksibinost i sigurnost.
 ## Mane
 
-- Slozenija konstrukcija (dodatna slozenost u dva jezgra, demagnetizacionom namotaju i vecem broju dioda).
+- Slozenija konstrukcija (dodatna slozenost u dva jezgra, demagnetizacionom namotaju i vecem broju dioda). Time je konvertor skuplji.
+- Potrebno *snubbovanje* zbog rasipnih induktivnosti transformatora.
+- Kompleksnije upravljanje.
+## Aplikacije
 
-## Push-pull konvertor
+- Baterijski punjaci.
+- Solarni elektroenergetski sistemi.
+- Hibridno punjenje.
+# Push-pull konvertor
 
 ## Osobine
 
@@ -117,7 +147,6 @@ $$V_{out} = \frac{nD}{1-D}V_{in}$$
 - Za visoke izlazne napone, sa Grecovim spojem.
 - *Peak limiting current mode control* - vrsimo prekidanje prekidaca na osnovu kontrole vrsne vrijednosti ulazne struje. Time dobijamo da jezgro transformatora ne ode u zasicenje + kontrolu konvertora. 
 $$V_{out} = 2nDV_{in}$$
-- 
 ## Prednosti
 
 ## Mane
