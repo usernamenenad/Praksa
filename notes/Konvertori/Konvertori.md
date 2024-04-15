@@ -147,9 +147,21 @@ $$I_{out}=nDI_{in}$$
 - Za visoke izlazne napone, sa Grecovim spojem.
 - *Peak limiting current mode control* - vrsimo prekidanje prekidaca na osnovu kontrole vrsne vrijednosti ulazne struje. Time dobijamo da jezgro transformatora ne ode u zasicenje + kontrolu konvertora. 
 $$V_{out} = 2nDV_{in}$$
+$$I_{in}=2nDI_{out}$$
+- Uslov za rad u kontinualnom rezimu
+$$I_{out} > \frac{nV_{in}}{2f_SL}D(1-2D)$$
 ## Prednosti
 
+- Za velike snage - dva prekidaca (tranzistora) raspodjele snagu izmedju sebe.
+- Velika efikasnost.
+- $n$ manje u odnosu na *forward* konvertor.
 ## Mane
 
 - Naponi na prekidacima dostizu $2V_{in}$, sto je mana kada radimo sa visokim ulaznim naponima.
-- 
+- Kompleksnost u izradi konvertora.
+- Disbalans u duty ratio ciklusima moze otjerati magnetno jezgro transformatora u zasicenje. 
+## Aplikacije
+
+- Punjaci kompjutera i servera, gdje se zahtjeva veoma velika efikasnost.
+- Obnovljivi izvori energije.
+- Elektricni automobili.
