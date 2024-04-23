@@ -1,0 +1,384 @@
+version = 4.2
+
+//
+// Saved by sw version: 2024.1
+//
+
+model "test" {
+    configuration {
+        hil_device = "VHIL+"
+        hil_configuration_id = 1
+        simulation_method = exact
+        simulation_time_step = 1e-6
+        simulation_discret_scaling = 1.0
+        dsp_timer_periods = 100e-6, 50e-3
+        ss_calc_method = "systematic elimination"
+        enb_pole_shift = True
+        enb_gds_oversampling = True
+        show_modes = False
+        device_ao_limit_enable = False
+        reset_analog_outputs_on_sim_stop = True
+        reset_analog_outputs_on_sim_stop_mode = Offset values
+        reset_digital_outputs_on_sim_stop = True
+        vhil_adio_loopback = False
+        cpl_stb = False
+        enb_dep_sw_detect = False
+        code_section = "internal memory"
+        data_section = "internal memory"
+        sys_sp_rate_1 = 0.0001
+        sys_sp_rate_2 = 0.05
+        sys_real_type_precision = "default"
+        user_real_type_precision = "default"
+        sys_cpu_optimization = "high"
+        user_cpu_optimization = "high"
+        user_cpu_part_option = "default"
+        matrix_based_reduction = True
+        cpl_dynamics_analysis = False
+        export_ss_to_pickle = False
+        ground_scope_core = False
+        dss_num_tol = 1e-15
+        cce_platform = "generic"
+        cce_use_relative_names = False
+        cce_type_mapping_real = "double"
+        cce_type_mapping_uint = "unsigned int"
+        cce_type_mapping_int = "int"
+        cce_platform = "generic"
+        cce_use_relative_names = False
+        cce_type_mapping_real = "double"
+        cce_type_mapping_uint = "unsigned int"
+        cce_type_mapping_int = "int"
+        cce_directory = ""
+        cce_custom_type_int = ""
+        cce_custom_type_uint = ""
+        cce_custom_type_real = ""
+        tunable_params = "component defined"
+        sp_compiler_type = "C compiler"
+        sig_stim = "off"
+        export_resource_list = ""
+        export_dependency_list = ""
+        excluded_resource_list = ""
+        export_out_file = ""
+        export_lock_top_level = True
+        export_encrypt_library = True
+        export_encrypt_resources = True
+        dae_solver = "BDF"
+        max_sim_step = 1e-4
+        simulation_time = 1.0
+        abs_tol = 1e-3
+        rel_tol = 1e-3
+        init_sim_step = 1e-6
+        r_on_sw = 1e-3
+        v_on_diode = 0.2
+        data_sampling_rate = 0
+        feedthrough_validation_error_level = error
+    }
+
+    component Subsystem Root {
+        component "core/Flyback" Flyback1 {
+            L1 = "1e-9"
+            L2 = "1e-9"
+            Lm = "Lm"
+            R1 = "Rp"
+            R2 = "Rs"
+            Rm = "1000000"
+            carrier_freq = "fs"
+            ctrl_src = "Internal modulator"
+            d_time = "0"
+            n1 = "100"
+            n2 = "37"
+            ref_sig_min_max = "[0.0, 1.0]"
+            signal_access = "Inherit"
+        }
+        [
+            position = 8464, 8288
+            size = 144, 256
+        ]
+
+        component "core/Voltage Source" Vin {
+            init_const_value = "Vin"
+        }
+        [
+            position = 8128, 8288
+            rotation = right
+        ]
+
+        component "core/Capacitor" C2 {
+            capacitance = "C2"
+            signal_access = "Inherit"
+        }
+        [
+            position = 8656, 8240
+            rotation = right
+        ]
+
+        component "core/Voltage Measurement" Vout {
+            signal_access = "Inherit"
+        }
+        [
+            position = 8904, 8240
+            rotation = right
+            size = 64, 32
+        ]
+
+        component "core/Current Measurement" ILm {
+        }
+        [
+            position = 8256, 8192
+            size = 64, 32
+        ]
+
+        component "core/Constant" enable {
+        }
+        [
+            position = 8256, 8120
+        ]
+
+        component "core/SCADA Input" "duty ratio" {
+            unit = ""
+        }
+        [
+            position = 8256, 8048
+        ]
+
+        component "core/SCADA Input" "set power" {
+            unit = ""
+        }
+        [
+            position = 8544, 8048
+        ]
+
+        component "core/Signal Controlled Current Source" Isp1 {
+        }
+        [
+            position = 8808, 8240
+            rotation = left
+            size = 64, 32
+        ]
+
+        component "core/Resistor" R1 {
+            resistance = "20"
+        }
+        [
+            position = 8728, 8240
+            rotation = right
+        ]
+
+        junction Junction6 pe
+        [
+            position = 8808, 8192
+        ]
+
+        junction Junction7 pe
+        [
+            position = 8808, 8288
+        ]
+
+        junction Junction8 pe
+        [
+            position = 8656, 8288
+        ]
+
+        junction Junction9 pe
+        [
+            position = 8656, 8192
+        ]
+
+        junction Junction10 pe
+        [
+            position = 8728, 8192
+        ]
+
+        junction Junction11 pe
+        [
+            position = 8728, 8288
+        ]
+
+        connect Vin.n_node Flyback1.b_in as Connection2
+        connect ILm.n_node Flyback1.a_in as Connection17
+        connect ILm.p_node Vin.p_node as Connection18
+        connect enable.out Flyback1.En as Connection32
+        connect "duty ratio.out" Flyback1.In as Connection41
+        connect Isp1.in "set power.out" as Connection84
+        connect Vout.p_node Junction6 as Connection109
+        connect Junction6 Isp1.n_node as Connection110
+        [
+            breakpoints = 8808, 8192; 8808, 8192
+        ]
+        connect Vout.n_node Junction7 as Connection112
+        connect Junction7 Isp1.p_node as Connection113
+        [
+            breakpoints = 8808, 8288
+        ]
+        connect Flyback1.b_out Junction8 as Connection115
+        connect C2.n_node Junction8 as Connection117
+        connect Junction9 Flyback1.a_out as Connection123
+        [
+            breakpoints = 8648, 8192
+        ]
+        connect C2.p_node Junction9 as Connection124
+        connect Junction6 Junction10 as Connection125
+        [
+            breakpoints = 8808, 8192
+        ]
+        connect Junction10 Junction9 as Connection126
+        connect R1.p_node Junction10 as Connection127
+        connect Junction8 Junction11 as Connection128
+        connect Junction11 Junction7 as Connection129
+        connect R1.n_node Junction11 as Connection130
+    }
+
+    default {
+        "core/Capacitor" {
+            signal_access = "inherit"
+            capacitance = "1e-6"
+            initial_voltage = "0"
+            pole_shift_ignore = "False"
+            visible = "True"
+        }
+
+        "core/Constant" {
+            value = "1"
+            signal_type = "real"
+            execution_rate = "100e-6"
+            _tunable = "False"
+        }
+
+        "core/Resistor" {
+            resistance = "1"
+            param_set = ""
+        }
+
+        "core/SCADA Input" {
+            signal_access = "inherit"
+            addr = "0"
+            format = "real"
+            override_signal_name = "False"
+            signal_name = ""
+            signal_type = "real"
+            min = "-1e6"
+            max = "1e6"
+            def_value = "0"
+            unit = " "
+            execution_rate = "100e-6"
+        }
+
+        "core/Voltage Source" {
+            sig_input = "False"
+            type = "signal generator"
+            param_set = "1phase"
+            parent_label = ""
+            addr = "0"
+            spc_nb = "0"
+            execution_rate = "100e-6"
+            cpd_visible = "True"
+            enable_snb = "False"
+            snb_type = "R2"
+            R2 = "0.0"
+            L1 = "0.1"
+            override_signal_name = "False"
+            signal_name = ""
+            init_source_nature = "Constant"
+            init_const_value = "0.0"
+            init_rms_value = "0.0"
+            init_frequency = "50.0"
+            init_phase = "0.0"
+        }
+
+        "core/Current Measurement" {
+            signal_access = "inherit"
+            bw_limit = "False"
+            frequency = "10e3"
+            comparator_enable = "False"
+            operator = "greater"
+            threshold = "0"
+            cmp_abs_value = "False"
+            feed_forward = "false"
+            sig_output = "False"
+            sig_output_filt_and_full_bw = "False"
+            execution_rate = "100e-6"
+            addr = "0"
+            nd_msr_estimation = "false"
+            dev_cpl_msr = "false"
+            host_device = "0"
+            output_to_device = "0"
+            dev_cpl_index = "0"
+            dev_cpl_var_nb = "0"
+            visible = "True"
+            override_signal_name = "False"
+            signal_name = ""
+        }
+
+        "core/Flyback" {
+            signal_access = "inherit"
+            ctrl_src = "Digital inputs"
+            op_mode = "Fixed carrier frequency"
+            carrier_freq = "10000.0"
+            carr_ph_offset = "0.0"
+            d_time = "5e-6"
+            ref_sig_min_max = "[-1.0, 1.0]"
+            load_mode = "on min"
+            execution_rate = "inherit"
+            S1 = "1"
+            S1_logic = "active high"
+            show_monitoring = "False"
+            n1 = "1"
+            n2 = "1"
+            L1 = "0.001"
+            I1 = "0"
+            L2 = "0.001"
+            I2 = "0"
+            Lm = "5"
+            R1 = "0.1"
+            R2 = "0.1"
+            Rm = "1e4"
+            pwm_enabling = "False"
+            pwm_enable_di = "13"
+            pwm_enable_inv = "active high"
+        }
+
+        "core/Signal Controlled Current Source" {
+            execution_rate = "inherit"
+        }
+
+        "core/Voltage Measurement" {
+            signal_access = "inherit"
+            bw_limit = "False"
+            frequency = "10e3"
+            comparator_enable = "False"
+            operator = "greater"
+            threshold = "0"
+            cmp_abs_value = "False"
+            feed_forward = "false"
+            sig_output = "False"
+            sig_output_filt_and_full_bw = "False"
+            execution_rate = "100e-6"
+            addr = "0"
+            nd_msr_estimation = "false"
+            dev_cpl_msr = "false"
+            host_device = "0"
+            output_to_device = "0"
+            dev_cpl_index = "0"
+            dev_cpl_var_nb = "0"
+            visible = "True"
+            override_signal_name = "False"
+            signal_name = ""
+        }
+    }
+
+    CODE model_init
+        # Numpy module is imported as 'np'
+        # Scipy module is imported as 'sp'
+        # The Schematic API is imported as 'mdl'
+        # To get the model file path, use 'mdl.get_model_file_path()'
+        # To print information to the console, use info()
+        
+        Vin = 230 * np.sqrt(2)
+        Lm = 25e-3
+        C2 = 5e-3
+        Iout = 20
+        n = 0.37
+        Rp = 1e-4
+        Rs = 1e-5
+        fs = 2500
+    ENDCODE
+}
