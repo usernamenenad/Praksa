@@ -161,14 +161,6 @@ model "test" {
             position = 8256, 8120
         ]
 
-        component "core/Resistor" R1 {
-            resistance = "1e6"
-        }
-        [
-            position = 8720, 8240
-            rotation = right
-        ]
-
         component "core/Single Phase Diode Rectifier" "Single Phase Diode Rectifier" {
         }
         [
@@ -230,16 +222,6 @@ model "test" {
             position = 8648, 8288
         ]
 
-        junction Junction23 pe
-        [
-            position = 8720, 8192
-        ]
-
-        junction Junction24 pe
-        [
-            position = 8720, 8288
-        ]
-
         junction Junction25 pe
         [
             position = 8240, 8192
@@ -285,18 +267,6 @@ model "test" {
         connect C2.p_node Junction21 as Connection290
         connect Flyback.b_out Junction22 as Connection291
         connect C2.n_node Junction22 as Connection293
-        connect S1.a_in Junction23 as Connection294
-        connect Junction23 Junction21 as Connection295
-        [
-            breakpoints = 8728, 8192; 8704, 8192; 8704, 8192
-        ]
-        connect R1.p_node Junction23 as Connection296
-        connect Junction22 Junction24 as Connection297
-        [
-            breakpoints = 8704, 8288
-        ]
-        connect Junction24 Junction20 as Connection298
-        connect R1.n_node Junction24 as Connection299
         connect Vsource.n_node "Single Phase Diode Rectifier.b_in" as Connection303
         connect Flyback.a_in Junction25 as Connection387
         [
@@ -322,6 +292,14 @@ model "test" {
             breakpoints = 8160, 8384; 8160, 8384; 8184, 8384; 8208, 8384
         ]
         connect C1.n_node Junction28 as Connection400
+        connect Junction21 S1.a_in as Connection401
+        [
+            breakpoints = 8648, 8192; 8704, 8192; 8704, 8192; 8728, 8192; 8720, 8192
+        ]
+        connect Junction20 Junction22 as Connection402
+        [
+            breakpoints = 8904, 8288; 8720, 8288; 8704, 8288
+        ]
     }
 
     default {
@@ -339,11 +317,6 @@ model "test" {
             initial_current = "0.0"
             pole_shift_ignore = "False"
             visible = "True"
-        }
-
-        "core/Resistor" {
-            resistance = "1"
-            param_set = ""
         }
 
         "core/SCADA Input" {
@@ -474,7 +447,7 @@ model "test" {
         
         Vrms = 230
         Lm = 25e-3
-        C2 = 100e-3
+        C2 = 5e-3
         Iout = 20
         n = 0.37
         Rp = 1e-4

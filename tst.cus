@@ -131,8 +131,8 @@ Pout = panel.get_property_value(panel.get_widget_by_fqn('Output Power'), api_con
 dr = np.roots([PlossT * Vout / Pout, n * Vin + Vout - PlossT * Vout / Pout, -Vout])[1]
 hil.model_write('duty ratio', dr)
 
-iout = Vout ** 2 / Pout
-hil.model_write('set power', iout)
+Rout = Vout ** 2 / Pout
+hil.model_write('set power', Rout)
 ]]></on_use_code>
                 <on_start_code active="True"><![CDATA[# NOTE: The code specified in this handler will be executed on simulation start.
 # NOTE: Variables specified here will be available in other handlers.
@@ -141,24 +141,11 @@ hil.model_write('set power', iout)
 # SCADA API constants are imported as 'api_const'
 # 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
 # This object can be used as an argument in SCADA API functions.
-
 # Change widget value by setting this variable.
 # NOTE: If you not specify 'widgetValue' variable or assign 'None' to it,
 # widget value won't be changed.
-widgetValue = None
-# NOTE: entered value is available through variable 'inputValue'
-
-PlossT = 0.01
-n = 0.37
-Vin = hil.model_read('Vin')
-Vout = 12
-Pout = panel.get_property_value(panel.get_widget_by_fqn('Output Power'), api_const.PROP_WIDGET_VALUE)
-
-dr = np.roots([PlossT * Vout / Pout, n * Vin + Vout - PlossT * Vout / Pout, -Vout])[1]
-hil.model_write('duty ratio', dr)
-
-iout = Vout ** 2 / Pout
-hil.model_write('set power', iout)]]></on_start_code>
+widgetValue = 5
+# NOTE: entered value is available through variable 'inputValue']]></on_start_code>
                 <on_stop_code active="False"><![CDATA[# NOTE: The code specified in this handler will be executed after simulation is stopped.
 # HIL API is imported as 'hil'
 # SCADA API is imported as 'panel'
@@ -222,9 +209,9 @@ Vout = panel.get_property_value(panel.get_widget_by_fqn('Output Voltage'), api_c
 dr = np.roots([PlossT * Vout / Pout, n * Vin + Vout - PlossT * Vout / Pout, -Vout])[1]
 hil.model_write('duty ratio', dr)
 
-iout = Vout**2 / Pout
-hil.model_write('set power', iout)]]></on_use_code>
-                <on_start_code active="False"><![CDATA[# NOTE: The code specified in this handler will be executed on simulation start.
+Rout = Vout**2 / Pout
+hil.model_write('set power', Rout)]]></on_use_code>
+                <on_start_code active="True"><![CDATA[# NOTE: The code specified in this handler will be executed on simulation start.
 # NOTE: Variables specified here will be available in other handlers.
 # HIL API is imported as 'hil'
 # SCADA API is imported as 'panel'
@@ -235,7 +222,8 @@ hil.model_write('set power', iout)]]></on_use_code>
 # Change widget value by setting this variable.
 # NOTE: If you not specify 'widgetValue' variable or assign 'None' to it,
 # widget value won't be changed.
-widgetValue = None
+widgetValue = 7.5
+
 ]]></on_start_code>
                 <on_stop_code active="False"><![CDATA[# NOTE: The code specified in this handler will be executed after simulation is stopped.
 # HIL API is imported as 'hil'
@@ -263,7 +251,7 @@ widgetValue = None
 widgetValue = None
 ]]></on_timer_code>
                 <on_start_code_source><![CDATA[Custom code]]></on_start_code_source>
-                <inputValue><![CDATA[70.0]]></inputValue>
+                <inputValue><![CDATA[7.5]]></inputValue>
                 <min>7.5</min>
                 <max>100.0</max>
                 <step>1.0</step>
@@ -395,146 +383,7 @@ widgetValue = None
                 </widget_settings>
             </component_data>
         <component_data>
-                <id>6cd4bebb021a11ef8326a871e5984792</id>
-                <name><![CDATA[Capture/Scope]]></name>
-                <type>Capture/Scope</type>
-                <description><![CDATA[]]></description>
-                <working_mode>windowed</working_mode>
-                <widget_settings>
-                    <x>488</x>
-                    <y>384</y>
-                    <width>120</width>
-                    <height>120</height>
-                    <hierarchy_position>1</hierarchy_position>
-                    <label><![CDATA[]]></label>
-                    <use_label>False</use_label>
-                    <appearance><![CDATA[Flat]]></appearance>
-                    <state>Capture</state>
-                    <layout>None</layout>
-                    <virtual_signals_definitions>
-                    </virtual_signals_definitions>
-                    <presets>
-                        <active_capture_preset><![CDATA[Default]]></active_capture_preset>
-                        <active_scope_preset><![CDATA[Default]]></active_scope_preset>
-                        <capture name="Default">
-                            <time_interval>10.0</time_interval>
-                            <sample_rate>50000</sample_rate>
-                            <background_color>white</background_color>
-                            <layout>Vertical</layout>
-                            <legend>True</legend>
-                            <analog_signals>
-                                <analog>
-                                    <channel>0</channel>
-                                    <name><![CDATA[C1]]></name>
-                                    <is_locked>False</is_locked>
-                                    <vertical_scale>Auto</vertical_scale>
-                                    <vertical_offset>0</vertical_offset>
-                                    <coupling>False</coupling>
-                                    <row>0</row>
-                                    <viewports>
-                                   </viewports>
-                               </analog>
-                            </analog_signals>
-                            <digital_signals>
-                            </digital_signals>
-                            <virtual_signals>
-                            </virtual_signals>
-                            <trigger>
-                                <device>0</device>
-                                <is_force>False</is_force>
-                                <type>Analog</type>
-                                <source><![CDATA[C1]]></source>
-                                <edge>Rising edge</edge>
-                                <treshold>0.0</treshold>
-                                <offset>0.0</offset>
-                                <useFirstTrigger>False</useFirstTrigger>
-                            </trigger>
-                            <plotting_options in_use="False">
-                                <subplots>
-                                    </subplots>
-                            </plotting_options>
-                        </capture>
-                        <scope name="Default">
-                            <background_color>white</background_color>
-                            <layout>Grid</layout>
-                            <legend>True</legend>
-                            <show_viewports>1</show_viewports>
-                            <decimation>1.0</decimation>
-                            <time_base>0.005</time_base>
-                            <analog_signals>
-                            </analog_signals>
-                            <digital_signals>
-                            </digital_signals>
-                            <trigger>
-                                <device>-1</device>
-                                <is_force>False</is_force>
-                                <type>Analog</type>
-                                <source>None</source>
-                                <edge>Rising edge</edge>
-                                <treshold>0.0</treshold>
-                                <offset>50.0</offset>
-                                <useFirstTrigger>False</useFirstTrigger>
-                            </trigger>
-                        </scope>
-                        </presets>
-                    <capture>
-                        <time_interval>10.0</time_interval>
-                        <sample_rate>50000</sample_rate>
-                        <background_color>white</background_color>
-                        <layout>Vertical</layout>
-                        <legend>True</legend>
-                        <trigger>
-                            <type>Analog</type>
-                            <source>C1</source>
-                            <edge>Rising edge</edge>
-                            <treshold>0.0</treshold>
-                            <offset>0.0</offset>
-                            <useFirstTrigger>False</useFirstTrigger>
-                        </trigger>
-                        <analog_signals>
-                            <analog>
-                                    <channel>0</channel>
-                                    <name><![CDATA[C1]]></name>
-                                    <is_locked>False</is_locked>
-                                    <vertical_scale>Auto</vertical_scale>
-                                    <vertical_offset>0</vertical_offset>
-                                    <coupling>False</coupling>
-                                    <row>0</row>
-                                    <viewports>
-                                   </viewports>
-                               </analog>
-                        </analog_signals>
-                         <digital_signals>
-                         </digital_signals>
-                    </capture>
-                    <scope>
-                        <time_base>0.005 </time_base>
-                        <background_color>white</background_color>
-                        <layout>Grid</layout>
-                        <legend>True</legend>
-                        <trigger>
-                            <mode>Auto</mode>
-                            <type>Analog</type>
-                            <source>None</source>
-                            <edge>Rising edge</edge>
-                            <treshold>0.0</treshold>
-                            <offset>50.0</offset>
-                        </trigger>
-                         <analog_signals>
-                        </analog_signals>
-                        <digital_signals>
-                        </digital_signals>
-                    </scope>
-                    <plotting_options in_use="False">
-                    
-                        <subplots>
-                            </subplots>
-                    </plotting_options>
-                </widget_settings>
-
-            </component_data>
-        <component_data>
-                <id>26a9e796022111ef86b0a871e5984792</id>
+                <id>6fc740bb027e11efb953cc66b5638066</id>
                 <name><![CDATA[duty ratio]]></name>
                 <type>KnobMacro</type>
                 <description><![CDATA[]]></description>
@@ -585,13 +434,13 @@ widgetValue = None
 widgetValue = hil.model_read('duty ratio')
 ]]></on_timer_code>
                 <on_start_code_source><![CDATA[Macro code]]></on_start_code_source>
-                <inputValue><![CDATA[0.0]]></inputValue>
+                <inputValue><![CDATA[0.09074365835204289]]></inputValue>
                 <min>0.0</min>
-                <max>0.7</max>
-                <step>0.01</step>
+                <max>1.0</max>
+                <step>1.0</step>
                 <widget_settings>
-                    <x>880</x>
-                    <y>336</y>
+                    <x>808</x>
+                    <y>264</y>
                     <width>80</width>
                     <height>120</height>
                     <appearance><![CDATA[Flat]]></appearance>
