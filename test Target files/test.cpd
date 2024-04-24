@@ -12,11 +12,11 @@
         <vhil_adio_loopback>False</vhil_adio_loopback>
     </hw_properties>
     <sim_setup>
-        <sim_time_step>1e-06</sim_time_step>
+        <sim_time_step>2e-05</sim_time_step>
     </sim_setup>
     <pesb>
         <cell>
-            <name>Flyback1</name>
+            <name>Flyback</name>
             <type>
                 <cell>igbt_leg</cell>
             </type>
@@ -30,94 +30,173 @@
                 </cell>
             </switches>
         </cell>
+        <cell>
+            <name>Single Phase Diode Rectifier</name>
+            <type>
+                <cell>1ph_diode_rect_r3</cell>
+            </type>
+            <site>0</site>
+            <switches>
+            </switches>
+        </cell>
     </pesb>
     <analog_variables>
         <cell>
-            <name>Flyback1.L1</name>
-            <address>1</address>
-            <type>current</type>
-            <initial_condition>0.0</initial_condition>
-            <visible>True</visible>
-        </cell>
-        <cell>
-            <name>RL1.L</name>
-            <address>4</address>
-            <type>current</type>
-            <initial_condition>0.0</initial_condition>
-            <visible>True</visible>
-        </cell>
-        <cell>
-            <name>C2</name>
+            <name>C1</name>
             <address>0</address>
             <type>voltage</type>
             <initial_condition>0.0</initial_condition>
             <visible>True</visible>
         </cell>
         <cell>
-            <name>Flyback1.L2</name>
-            <address>2</address>
+            <name>Flyback.Lm</name>
+            <address>4</address>
             <type>current</type>
             <initial_condition>0.0</initial_condition>
             <visible>True</visible>
         </cell>
         <cell>
-            <name>Flyback1.Lm</name>
+            <name>Flyback.L2</name>
             <address>3</address>
             <type>current</type>
             <initial_condition>0.0</initial_condition>
             <visible>True</visible>
         </cell>
         <cell>
-            <name>Flyback1.il</name>
-            <address>384</address>
+            <name>RL1.L</name>
+            <address>6</address>
+            <type>current</type>
+            <initial_condition>0.0</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
+            <name>L1</name>
+            <address>5</address>
+            <type>current</type>
+            <initial_condition>0.0</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
+            <name>C2</name>
+            <address>1</address>
+            <type>voltage</type>
+            <initial_condition>0.0</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
+            <name>Flyback.L1</name>
+            <address>2</address>
+            <type>current</type>
+            <initial_condition>0.0</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
+            <name>Single Phase Diode Rectifier.i4</name>
+            <address>395</address>
             <type>current</type>
             <initial_condition>None</initial_condition>
             <visible>False</visible>
         </cell>
         <cell>
+            <name>Single Phase Diode Rectifier.i1</name>
+            <address>392</address>
+            <type>current</type>
+            <initial_condition>None</initial_condition>
+            <visible>False</visible>
+        </cell>
+        <cell>
+            <name>Single Phase Diode Rectifier.i2</name>
+            <address>393</address>
+            <type>current</type>
+            <initial_condition>None</initial_condition>
+            <visible>False</visible>
+        </cell>
+        <cell>
+            <name>Vout</name>
+            <address>8</address>
+            <type>voltage</type>
+            <initial_condition>None</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
+            <name>Single Phase Diode Rectifier.v3</name>
+            <address>398</address>
+            <type>voltage</type>
+            <initial_condition>None</initial_condition>
+            <visible>False</visible>
+        </cell>
+        <cell>
+            <name>Single Phase Diode Rectifier.v4</name>
+            <address>399</address>
+            <type>voltage</type>
+            <initial_condition>None</initial_condition>
+            <visible>False</visible>
+        </cell>
+        <cell>
             <name>RL1.I</name>
-            <address>7</address>
+            <address>9</address>
             <type>current</type>
             <initial_condition>None</initial_condition>
             <visible>True</visible>
+        </cell>
+        <cell>
+            <name>Single Phase Diode Rectifier.i3</name>
+            <address>394</address>
+            <type>current</type>
+            <initial_condition>None</initial_condition>
+            <visible>False</visible>
         </cell>
         <cell>
             <name>S1.i</name>
-            <address>8</address>
+            <address>10</address>
             <type>current</type>
             <initial_condition>None</initial_condition>
             <visible>True</visible>
         </cell>
         <cell>
-            <name>Flyback1.v2</name>
+            <name>Single Phase Diode Rectifier.v2</name>
+            <address>397</address>
+            <type>voltage</type>
+            <initial_condition>None</initial_condition>
+            <visible>False</visible>
+        </cell>
+        <cell>
+            <name>Vin</name>
+            <address>7</address>
+            <type>voltage</type>
+            <initial_condition>None</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
+            <name>Flyback.v2</name>
             <address>386</address>
             <type>voltage</type>
             <initial_condition>None</initial_condition>
             <visible>False</visible>
         </cell>
         <cell>
-            <name>Vout</name>
-            <address>5</address>
-            <type>voltage</type>
-            <initial_condition>None</initial_condition>
-            <visible>True</visible>
-        </cell>
-        <cell>
-            <name>Flyback1.v1</name>
+            <name>Flyback.v1</name>
             <address>385</address>
             <type>voltage</type>
             <initial_condition>None</initial_condition>
             <visible>False</visible>
         </cell>
         <cell>
-            <name>ILm</name>
-            <address>6</address>
+            <name>Flyback.il</name>
+            <address>384</address>
             <type>current</type>
             <initial_condition>None</initial_condition>
-            <visible>True</visible>
+            <visible>False</visible>
         </cell>
         <cell>
-            <name>Vin</name>
+            <name>Single Phase Diode Rectifier.v1</name>
+            <address>396</address>
+            <type>voltage</type>
+            <initial_condition>None</initial_condition>
+            <visible>False</visible>
+        </cell>
+        <cell>
+            <name>Vsource</name>
             <address>33280</address>
             <type>voltage</type>
             <initial_condition>None</initial_condition>
@@ -629,27 +708,23 @@
             <address>575</address>
         </cell>
         <cell>
-            <name>Flyback1.S1</name>
+            <name>Flyback.S1</name>
             <address>768</address>
         </cell>
         <cell>
-            <name>S1.Sa</name>
-            <address>512</address>
-        </cell>
-        <cell>
-            <name>Flyback1.PWM_Modulator.BOT_1</name>
+            <name>Flyback.PWM_Modulator.BOT_1</name>
             <address>769</address>
         </cell>
         <cell>
-            <name>Flyback1.PWM_Modulator_BOT_1</name>
+            <name>Flyback.PWM_Modulator_BOT_1</name>
             <address>769</address>
         </cell>
         <cell>
-            <name>Flyback1.PWM_Modulator.TOP_1</name>
+            <name>Flyback.PWM_Modulator.TOP_1</name>
             <address>768</address>
         </cell>
         <cell>
-            <name>Flyback1.PWM_Modulator_TOP_1</name>
+            <name>Flyback.PWM_Modulator_TOP_1</name>
             <address>768</address>
         </cell>
         <cell>
@@ -663,11 +738,11 @@
     </digital_variables>
     <sources>
         <cell>
-            <name>Vin</name>
+            <name>Vsource</name>
             <type>1phase</type>
             <address>[0]</address>
             <unit>V</unit>
-            <init_settings>['Constant', 325.2691193458119]</init_settings>
+            <init_settings>['Sine', 230.0, 50.0, 0.0]</init_settings>
         </cell>
     </sources>
     <machines>
@@ -692,7 +767,11 @@
         <spc_dtv>
             <cell>
                 <address>0</address>
-                <fqn>Flyback1</fqn>
+                <fqn>Flyback</fqn>
+            </cell>
+            <cell>
+                <address>1</address>
+                <fqn>Single Phase Diode Rectifier</fqn>
             </cell>
         </spc_dtv>
         <par_dtv>
@@ -730,8 +809,24 @@
             <visible>True</visible>
         </tunable_param>
         <tunable_param>
-            <name>load</name>
+            <name>enable</name>
             <addr>[1426063620]</addr>
+            <min>0.0</min>
+            <max>1.0</max>
+            <def_value>0.0</def_value>
+            <unit></unit>
+            <widget_type>float</widget_type>
+            <format>real</format>
+            <size>1</size>
+            <param_type>scada input</param_type>
+            <cpu_type>user_sp_cpu</cpu_type>
+            <cpu_idx>0</cpu_idx>
+            <execution_rate>0.0001</execution_rate>
+            <visible>True</visible>
+        </tunable_param>
+        <tunable_param>
+            <name>load</name>
+            <addr>[1426063624]</addr>
             <min>-1000000.0</min>
             <max>1000000.0</max>
             <def_value>0.0</def_value>
@@ -747,7 +842,7 @@
         </tunable_param>
         <tunable_param>
             <name>set power</name>
-            <addr>[1426063624]</addr>
+            <addr>[1426063628]</addr>
             <min>-1000000.0</min>
             <max>1000000.0</max>
             <def_value>0.0</def_value>

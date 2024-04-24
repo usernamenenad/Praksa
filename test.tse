@@ -9,7 +9,7 @@ model "test" {
         hil_device = "VHIL+"
         hil_configuration_id = 1
         simulation_method = exact
-        simulation_time_step = 1e-6
+        simulation_time_step = 20e-6
         simulation_discret_scaling = 1.0
         dsp_timer_periods = 100e-6, 50e-3
         ss_calc_method = "systematic elimination"
@@ -74,7 +74,7 @@ model "test" {
     }
 
     component Subsystem Root {
-        component "core/Flyback" Flyback1 {
+        component "core/Flyback" Flyback {
             L1 = "1e-9"
             L2 = "1e-9"
             Lm = "Lm"
@@ -94,20 +94,12 @@ model "test" {
             size = 144, 256
         ]
 
-        component "core/Voltage Source" Vin {
-            init_const_value = "Vin"
-        }
-        [
-            position = 8128, 8288
-            rotation = right
-        ]
-
         component "core/Capacitor" C2 {
             capacitance = "C2"
             signal_access = "Inherit"
         }
         [
-            position = 8656, 8240
+            position = 8648, 8240
             rotation = right
         ]
 
@@ -115,22 +107,9 @@ model "test" {
             signal_access = "Inherit"
         }
         [
-            position = 8968, 8240
+            position = 9072, 8240
             rotation = right
             size = 64, 32
-        ]
-
-        component "core/Current Measurement" ILm {
-        }
-        [
-            position = 8256, 8192
-            size = 64, 32
-        ]
-
-        component "core/Constant" enable {
-        }
-        [
-            position = 8256, 8120
         ]
 
         component "core/SCADA Input" "duty ratio" {
@@ -144,14 +123,14 @@ model "test" {
             unit = ""
         }
         [
-            position = 8920, 8048
+            position = 9024, 8048
             rotation = down
         ]
 
         component "core/Variable Resistor" RL1 {
         }
         [
-            position = 8800, 8240
+            position = 8904, 8240
             rotation = right
             size = 64, 48
         ]
@@ -161,7 +140,7 @@ model "test" {
             signal_access = "Inherit"
         }
         [
-            position = 8728, 8192
+            position = 8808, 8192
             size = 64, 32
         ]
 
@@ -169,65 +148,180 @@ model "test" {
             unit = ""
         }
         [
-            position = 8648, 8048
+            position = 8720, 8048
         ]
 
-        junction Junction10 pe
+        component "core/SCADA Input" enable {
+            max = "1"
+            min = "0"
+            signal_access = "Inherit"
+            unit = ""
+        }
         [
-            position = 8656, 8288
+            position = 8256, 8120
         ]
 
-        junction Junction12 pe
+        component "core/Resistor" R1 {
+            resistance = "1e6"
+        }
         [
-            position = 8800, 8288
+            position = 8720, 8240
+            rotation = right
+        ]
+
+        component "core/Single Phase Diode Rectifier" "Single Phase Diode Rectifier" {
+        }
+        [
+            position = 8008, 8288
+            size = 127, 256
+        ]
+
+        component "core/Voltage Source" Vsource {
+            init_rms_value = "Vrms"
+            init_source_nature = "Sine"
+        }
+        [
+            position = 7792, 8288
+            rotation = right
+        ]
+
+        component "core/Voltage Measurement" Vin {
+        }
+        [
+            position = 8240, 8288
+            rotation = right
+            size = 64, 32
+        ]
+
+        component "core/Inductor" L1 {
+            inductance = "1e-5"
+            signal_access = "Inherit"
+        }
+        [
+            position = 7856, 8192
+        ]
+
+        component "core/Capacitor" C1 {
+            capacitance = "1e-2"
+            signal_access = "Inherit"
+        }
+        [
+            position = 8152, 8288
+            rotation = right
         ]
 
         junction Junction13 pe
         [
-            position = 8800, 8192
+            position = 8904, 8192
         ]
 
-        junction Junction14 pe
+        junction Junction20 pe
         [
-            position = 8656, 8192
+            position = 8904, 8288
         ]
 
-        connect Vin.n_node Flyback1.b_in as Connection2
-        connect ILm.n_node Flyback1.a_in as Connection17
-        connect ILm.p_node Vin.p_node as Connection18
-        connect enable.out Flyback1.En as Connection32
-        connect "duty ratio.out" Flyback1.In as Connection41
-        connect Flyback1.b_out Junction10 as Connection134
-        connect C2.n_node Junction10 as Connection136
-        connect Junction10 Junction12 as Connection142
+        junction Junction21 pe
         [
-            breakpoints = 8656, 8288; 8656, 8288; 8656, 8288; 8728, 8288
+            position = 8648, 8192
         ]
-        connect Junction12 Vout.n_node as Connection143
+
+        junction Junction22 pe
         [
-            breakpoints = 8808, 8288
+            position = 8648, 8288
         ]
-        connect RL1.n_node Junction12 as Connection144
+
+        junction Junction23 pe
+        [
+            position = 8720, 8192
+        ]
+
+        junction Junction24 pe
+        [
+            position = 8720, 8288
+        ]
+
+        junction Junction25 pe
+        [
+            position = 8240, 8192
+        ]
+
+        junction Junction26 pe
+        [
+            position = 8240, 8384
+        ]
+
+        junction Junction27 pe
+        [
+            position = 8152, 8192
+        ]
+
+        junction Junction28 pe
+        [
+            position = 8152, 8384
+        ]
+
+        connect "duty ratio.out" Flyback.In as Connection41
         connect "set power.out" RL1.In as Connection145
         connect RL1.p_node Junction13 as Connection148
         connect Junction13 Vout.p_node as Connection149
         [
-            breakpoints = 8800, 8192; 8808, 8192; 8808, 8192; 8808, 8192
+            breakpoints = 8904, 8192; 8912, 8192; 8912, 8192; 8912, 8192
         ]
         connect S1.a_out Junction13 as Connection150
-        connect Flyback1.a_out Junction14 as Connection151
-        [
-            breakpoints = 8648, 8192
-        ]
-        connect Junction14 C2.p_node as Connection152
-        [
-            breakpoints = 8656, 8192
-        ]
-        connect S1.a_in Junction14 as Connection153
         connect load.out S1.ctrl_in as Connection154
         [
-            breakpoints = 8728, 8048; 8728, 8168
+            breakpoints = 8808, 8048; 8808, 8168
         ]
+        connect enable.out Flyback.En as Connection163
+        connect Vout.n_node Junction20 as Connection280
+        connect Junction20 RL1.n_node as Connection281
+        [
+            breakpoints = 8904, 8288; 8904, 8288
+        ]
+        connect Junction21 Flyback.a_out as Connection289
+        [
+            breakpoints = 8624, 8192; 8616, 8192
+        ]
+        connect C2.p_node Junction21 as Connection290
+        connect Flyback.b_out Junction22 as Connection291
+        connect C2.n_node Junction22 as Connection293
+        connect S1.a_in Junction23 as Connection294
+        connect Junction23 Junction21 as Connection295
+        [
+            breakpoints = 8728, 8192; 8704, 8192; 8704, 8192
+        ]
+        connect R1.p_node Junction23 as Connection296
+        connect Junction22 Junction24 as Connection297
+        [
+            breakpoints = 8704, 8288
+        ]
+        connect Junction24 Junction20 as Connection298
+        connect R1.n_node Junction24 as Connection299
+        connect Vsource.n_node "Single Phase Diode Rectifier.b_in" as Connection303
+        connect Flyback.a_in Junction25 as Connection387
+        [
+            breakpoints = 8376, 8192; 8312, 8192; 8264, 8192; 8248, 8192; 8248, 8192
+        ]
+        connect Vin.p_node Junction25 as Connection389
+        connect Junction26 Flyback.b_in as Connection391
+        [
+            breakpoints = 8248, 8384; 8248, 8384; 8264, 8384; 8264, 8384; 8264, 8384; 8312, 8384; 8312, 8384
+        ]
+        connect Vin.n_node Junction26 as Connection392
+        connect L1.n_node "Single Phase Diode Rectifier.a_in" as Connection393
+        connect L1.p_node Vsource.p_node as Connection394
+        connect Junction25 Junction27 as Connection395
+        [
+            breakpoints = 8184, 8192; 8184, 8192; 8184, 8192
+        ]
+        connect Junction27 "Single Phase Diode Rectifier.pos_out" as Connection396
+        connect C1.p_node Junction27 as Connection397
+        connect "Single Phase Diode Rectifier.neg_out" Junction28 as Connection398
+        connect Junction28 Junction26 as Connection399
+        [
+            breakpoints = 8160, 8384; 8160, 8384; 8184, 8384; 8208, 8384
+        ]
+        connect C1.n_node Junction28 as Connection400
     }
 
     default {
@@ -239,11 +333,17 @@ model "test" {
             visible = "True"
         }
 
-        "core/Constant" {
-            value = "1"
-            signal_type = "real"
-            execution_rate = "100e-6"
-            _tunable = "False"
+        "core/Inductor" {
+            signal_access = "inherit"
+            inductance = "1e-3"
+            initial_current = "0.0"
+            pole_shift_ignore = "False"
+            visible = "True"
+        }
+
+        "core/Resistor" {
+            resistance = "1"
+            param_set = ""
         }
 
         "core/SCADA Input" {
@@ -282,30 +382,6 @@ model "test" {
             init_phase = "0.0"
         }
 
-        "core/Current Measurement" {
-            signal_access = "inherit"
-            bw_limit = "False"
-            frequency = "10e3"
-            comparator_enable = "False"
-            operator = "greater"
-            threshold = "0"
-            cmp_abs_value = "False"
-            feed_forward = "false"
-            sig_output = "False"
-            sig_output_filt_and_full_bw = "False"
-            execution_rate = "100e-6"
-            addr = "0"
-            nd_msr_estimation = "false"
-            dev_cpl_msr = "false"
-            host_device = "0"
-            output_to_device = "0"
-            dev_cpl_index = "0"
-            dev_cpl_var_nb = "0"
-            visible = "True"
-            override_signal_name = "False"
-            signal_name = ""
-        }
-
         "core/Flyback" {
             signal_access = "inherit"
             ctrl_src = "Digital inputs"
@@ -332,6 +408,15 @@ model "test" {
             pwm_enabling = "False"
             pwm_enable_di = "13"
             pwm_enable_inv = "active high"
+        }
+
+        "core/Single Phase Diode Rectifier" {
+            signal_access = "inherit"
+            FSM_select = "converter"
+            show_monitoring = "False"
+            dynamic_ac_voltage = "False"
+            pesb_optimization = "True"
+            predictive_diode_turn_off = "False"
         }
 
         "core/Single Pole Single Throw Contactor" {
@@ -387,9 +472,9 @@ model "test" {
         # To get the model file path, use 'mdl.get_model_file_path()'
         # To print information to the console, use info()
         
-        Vin = 230 * np.sqrt(2)
-        Lm = 250e-3
-        C2 = 5e-3
+        Vrms = 230
+        Lm = 25e-3
+        C2 = 100e-3
         Iout = 20
         n = 0.37
         Rp = 1e-4

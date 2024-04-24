@@ -88,12 +88,12 @@ typedef double real;
 //@cmp.var.start
 // variables
     double _duty_ratio__out;
-         double _enable__out = 1.0;
+    double _enable__out;
     double _load__out;
     double _set_power__out;
-    X_UnInt32 _flyback1_pwm_modulator__channels[1] = {0};
-    double _flyback1_pwm_modulator__limited_in[1];
-    X_UnInt32 _flyback1_pwm_modulator__update_mask;
+    X_UnInt32 _flyback_pwm_modulator__channels[1] = {0};
+    double _flyback_pwm_modulator__limited_in[1];
+    X_UnInt32 _flyback_pwm_modulator__update_mask;
 
 //@cmp.var.end
 
@@ -133,15 +133,15 @@ void ReInit_user_sp_cpu0_dev0(){
     
     
     
-                _flyback1_pwm_modulator__update_mask = 1;
-            HIL_OutInt32(0x2000080 + _flyback1_pwm_modulator__channels[0], 80000); // divide by 2 is already implemented in hw
-        HIL_OutInt32(0x20000c0 + _flyback1_pwm_modulator__channels[0], 0);
-                HIL_OutInt32(0x20001c0 + _flyback1_pwm_modulator__channels[0], 0);
-                HIL_OutInt32(0x2000200 + _flyback1_pwm_modulator__channels[0], 0);
-        HIL_OutInt32(0x2000240 + _flyback1_pwm_modulator__channels[0], 0);
-        HIL_OutInt32(0x2000300 + _flyback1_pwm_modulator__channels[0], 1);
-            HIL_OutInt32(0x2000340 + _flyback1_pwm_modulator__channels[0], 0);
-HIL_OutInt32(0x2000140, _flyback1_pwm_modulator__update_mask);
+                _flyback_pwm_modulator__update_mask = 1;
+            HIL_OutInt32(0x2000080 + _flyback_pwm_modulator__channels[0], 80000); // divide by 2 is already implemented in hw
+        HIL_OutInt32(0x20000c0 + _flyback_pwm_modulator__channels[0], 0);
+                HIL_OutInt32(0x20001c0 + _flyback_pwm_modulator__channels[0], 0);
+                HIL_OutInt32(0x2000200 + _flyback_pwm_modulator__channels[0], 0);
+        HIL_OutInt32(0x2000240 + _flyback_pwm_modulator__channels[0], 0);
+        HIL_OutInt32(0x2000300 + _flyback_pwm_modulator__channels[0], 1);
+            HIL_OutInt32(0x2000340 + _flyback_pwm_modulator__channels[0], 0);
+HIL_OutInt32(0x2000140, _flyback_pwm_modulator__update_mask);
 
     
             HIL_OutFloat(137363456, 0.0);
@@ -207,10 +207,6 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     //////////////////////////////////////////////////////////////////////////
     // Set tunable parameters
     //////////////////////////////////////////////////////////////////////////
-             // Generated from the component: enable
-            
-
-
 //////////////////////////////////////////////////////////////////////////
     // Output block
     //////////////////////////////////////////////////////////////////////////
@@ -218,28 +214,31 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
          // Generated from the component: duty ratio
                     _duty_ratio__out = XIo_InFloat(0x55000100);
 
+         // Generated from the component: enable
+                    _enable__out = XIo_InFloat(0x55000104);
+
          // Generated from the component: load
-                    _load__out = XIo_InFloat(0x55000104);
+                    _load__out = XIo_InFloat(0x55000108);
 
          // Generated from the component: set power
-                    _set_power__out = XIo_InFloat(0x55000108);
+                    _set_power__out = XIo_InFloat(0x5500010c);
 
-         // Generated from the component: Flyback1.PWM_Modulator
-                    _flyback1_pwm_modulator__limited_in[0] = MIN(MAX(_duty_ratio__out, 0.0), 1.0);
+         // Generated from the component: Flyback.PWM_Modulator
+                    _flyback_pwm_modulator__limited_in[0] = MIN(MAX(_duty_ratio__out, 0.0), 1.0);
 
-                HIL_OutInt32(0x2000040 + _flyback1_pwm_modulator__channels[0], ((X_UnInt32)((_flyback1_pwm_modulator__limited_in[0]-(0.0)) * 80000.0)));
+                HIL_OutInt32(0x2000040 + _flyback_pwm_modulator__channels[0], ((X_UnInt32)((_flyback_pwm_modulator__limited_in[0]-(0.0)) * 80000.0)));
 
 
 
     if (_enable__out == 0x0) {
         // pwm_modulator_en
-            HIL_OutInt32(0x2000000 + _flyback1_pwm_modulator__channels[0], 0x0);
+            HIL_OutInt32(0x2000000 + _flyback_pwm_modulator__channels[0], 0x0);
     }
     else {
         // pwm_modulator_en
-            HIL_OutInt32(0x2000000 + _flyback1_pwm_modulator__channels[0], 0x1);
+            HIL_OutInt32(0x2000000 + _flyback_pwm_modulator__channels[0], 0x1);
     }
-    HIL_OutInt32(0x2000140, _flyback1_pwm_modulator__update_mask);
+    HIL_OutInt32(0x2000140, _flyback_pwm_modulator__update_mask);
 
 
 
