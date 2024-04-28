@@ -74,6 +74,8 @@ typedef double real;
 
 
 
+
+
 //@cmp.def.end
 
 
@@ -128,6 +130,7 @@ void ReInit_user_sp_cpu0_dev0() {
     printf("\n\rReInitTimer");
 #endif
     //@cmp.init.block.start
+    HIL_OutAO(0x4000, 0.0f);
     _flyback_pwm_modulator__update_mask = 1;
     HIL_OutInt32(0x2000080 + _flyback_pwm_modulator__channels[0], 80000); // divide by 2 is already implemented in hw
     HIL_OutInt32(0x20000c0 + _flyback_pwm_modulator__channels[0], 0);
@@ -137,7 +140,8 @@ void ReInit_user_sp_cpu0_dev0() {
     HIL_OutInt32(0x2000300 + _flyback_pwm_modulator__channels[0], 1);
     HIL_OutInt32(0x2000340 + _flyback_pwm_modulator__channels[0], 0);
     HIL_OutInt32(0x2000140, _flyback_pwm_modulator__update_mask);
-    HIL_OutFloat(137363456, 0.0);
+    HIL_OutFloat(137101312, 0.0);
+    HIL_OutAO(0x4001, 0.0f);
     //@cmp.init.block.end
 }
 
@@ -209,6 +213,8 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     _load__out = XIo_InFloat(0x55000108);
     // Generated from the component: set power
     _set_power__out = XIo_InFloat(0x5500010c);
+    // Generated from the component: duty ratio probe
+    HIL_OutAO(0x4000, (float)_duty_ratio__out);
     // Generated from the component: Flyback.PWM_Modulator
     _flyback_pwm_modulator__limited_in[0] = MIN(MAX(_duty_ratio__out, 0.0), 1.0);
     HIL_OutInt32(0x2000040 + _flyback_pwm_modulator__channels[0], ((X_UnInt32)((_flyback_pwm_modulator__limited_in[0] - (0.0)) * 80000.0)));
@@ -228,8 +234,10 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     else {
         HIL_OutInt32(0x8240480, 0x1);
     }
-    // Generated from the component: RL1.Vs
-    HIL_OutFloat(137363456, (float) _set_power__out);
+    // Generated from the component: Isp1.Is1
+    HIL_OutFloat(137101312, (float) _set_power__out);
+    // Generated from the component: set power probe
+    HIL_OutAO(0x4001, (float)_set_power__out);
 //@cmp.out.block.end
     //////////////////////////////////////////////////////////////////////////
     // Update block
