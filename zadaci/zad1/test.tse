@@ -78,8 +78,8 @@ model "test" {
             L1 = "1e-9"
             L2 = "1e-9"
             Lm = "Lm"
-            R1 = "Rp"
-            R2 = "Rs"
+            R1 = "1e-9"
+            R2 = "1e-9"
             Rm = "1000000"
             carrier_freq = "fs"
             ctrl_src = "Internal modulator"
@@ -164,6 +164,7 @@ model "test" {
         ]
 
         component "core/Voltage Source" Vsource {
+            init_frequency = "f"
             init_rms_value = "Vrms"
             init_source_nature = "Sine"
         }
@@ -189,7 +190,7 @@ model "test" {
         ]
 
         component "core/Capacitor" C1 {
-            capacitance = "C1"
+            capacitance = "2e-3"
             signal_access = "Inherit"
         }
         [
@@ -205,14 +206,6 @@ model "test" {
             size = 64, 32
         ]
 
-        component "core/Resistor" R {
-            resistance = "R"
-        }
-        [
-            position = 8720, 8240
-            rotation = right
-        ]
-
         component "core/Probe" "duty ratio probe" {
         }
         [
@@ -225,14 +218,24 @@ model "test" {
             position = 9024, 8120
         ]
 
+        component "core/Resistor" Req {
+            resistance = "0.00001"
+        }
+        [
+            position = 8312, 8192
+        ]
+
+        component "core/Resistor" R1 {
+            resistance = "50"
+        }
+        [
+            position = 8720, 8240
+            rotation = right
+        ]
+
         junction Junction21 pe
         [
             position = 8648, 8192
-        ]
-
-        junction Junction25 pe
-        [
-            position = 8240, 8192
         ]
 
         junction Junction26 pe
@@ -260,16 +263,6 @@ model "test" {
             position = 8888, 8288
         ]
 
-        junction Junction33 pe
-        [
-            position = 8720, 8192
-        ]
-
-        junction Junction34 pe
-        [
-            position = 8720, 8288
-        ]
-
         junction Junction35 pe
         [
             position = 8648, 8288
@@ -285,6 +278,21 @@ model "test" {
             position = 8856, 8120
         ]
 
+        junction Junction38 pe
+        [
+            position = 8240, 8192
+        ]
+
+        junction Junction39 pe
+        [
+            position = 8720, 8192
+        ]
+
+        junction Junction40 pe
+        [
+            position = 8720, 8288
+        ]
+
         connect load.out S1.ctrl_in as Connection154
         [
             breakpoints = 8808, 8048; 8808, 8168
@@ -296,22 +304,12 @@ model "test" {
         ]
         connect C2.p_node Junction21 as Connection290
         connect Vsource.n_node "Single Phase Diode Rectifier.b_in" as Connection303
-        connect Flyback.a_in Junction25 as Connection387
-        [
-            breakpoints = 8376, 8192; 8312, 8192; 8264, 8192; 8248, 8192; 8248, 8192
-        ]
-        connect Vin.p_node Junction25 as Connection389
         connect Junction26 Flyback.b_in as Connection391
         [
             breakpoints = 8248, 8384; 8248, 8384; 8264, 8384; 8264, 8384; 8264, 8384; 8312, 8384; 8312, 8384
         ]
         connect Vin.n_node Junction26 as Connection392
         connect L1.n_node "Single Phase Diode Rectifier.a_in" as Connection393
-        connect L1.p_node Vsource.p_node as Connection394
-        connect Junction25 Junction27 as Connection395
-        [
-            breakpoints = 8184, 8192; 8184, 8192; 8184, 8192
-        ]
         connect Junction27 "Single Phase Diode Rectifier.pos_out" as Connection396
         connect C1.p_node Junction27 as Connection397
         connect "Single Phase Diode Rectifier.neg_out" Junction28 as Connection398
@@ -331,24 +329,6 @@ model "test" {
             breakpoints = 8904, 8288; 8904, 8288
         ]
         connect Isp1.p_node Junction32 as Connection416
-        connect Junction21 Junction33 as Connection453
-        [
-            breakpoints = 8648, 8192; 8648, 8192; 8704, 8192; 8704, 8192
-        ]
-        connect Junction33 S1.a_in as Connection454
-        [
-            breakpoints = 8728, 8192; 8720, 8192; 8728, 8192; 8720, 8192; 8720, 8192; 8736, 8192
-        ]
-        connect R.p_node Junction33 as Connection455
-        connect Junction34 Junction32 as Connection457
-        [
-            breakpoints = 8720, 8288; 8720, 8288; 8720, 8288; 8728, 8288; 8736, 8288; 8736, 8288; 8888, 8288; 8888, 8288
-        ]
-        connect R.n_node Junction34 as Connection458
-        connect Junction34 Junction35 as Connection465
-        [
-            breakpoints = 8720, 8288; 8720, 8288; 8704, 8288; 8704, 8288; 8680, 8288
-        ]
         connect Junction35 Flyback.b_out as Connection466
         [
             breakpoints = 8648, 8288; 8648, 8288; 8648, 8288; 8648, 8288; 8648, 8288
@@ -366,6 +346,32 @@ model "test" {
             breakpoints = 8856, 8120
         ]
         connect "set power probe.in" Junction37 as Connection481
+        connect Req.n_node Flyback.a_in as Connection493
+        connect Vin.p_node Junction38 as Connection494
+        connect Junction38 Junction27 as Connection495
+        [
+            breakpoints = 8240, 8192; 8240, 8192; 8184, 8192; 8184, 8192; 8184, 8192; 8152, 8192
+        ]
+        connect Req.p_node Junction38 as Connection496
+        connect S1.a_in Junction39 as Connection497
+        [
+            breakpoints = 8736, 8192
+        ]
+        connect Junction39 Junction21 as Connection498
+        [
+            breakpoints = 8720, 8192; 8720, 8192; 8728, 8192; 8720, 8192; 8728, 8192; 8720, 8192; 8704, 8192; 8704, 8192; 8648, 8192; 8648, 8192
+        ]
+        connect R1.p_node Junction39 as Connection499
+        connect Junction32 Junction40 as Connection500
+        [
+            breakpoints = 8888, 8288; 8888, 8288; 8888, 8288; 8736, 8288; 8736, 8288; 8728, 8288
+        ]
+        connect Junction40 Junction35 as Connection501
+        [
+            breakpoints = 8720, 8288; 8720, 8288; 8720, 8288; 8720, 8288; 8720, 8288; 8720, 8288; 8704, 8288; 8704, 8288; 8680, 8288
+        ]
+        connect R1.n_node Junction40 as Connection502
+        connect L1.p_node Vsource.p_node as Connection503
     }
 
     default {
@@ -526,13 +532,86 @@ model "test" {
         # To print information to the console, use info()
         
         Vrms = 230
-        C1 = 2e-3
-        C2 = 5e-3
-        Lm = 20e-3
-        n = 0.37
-        Rp = 1e-4
-        Rs = 1e-5
-        fs = 2500
+        Vin = Vrms * np.sqrt(2)
         R = 50
+        n = 0.37
+        f = 50
+        fs = 2500
+        PlossT = 0.01
+        k1 = 0.01
+        k2 = 0.01
+        
+        
+        def get_duty_ratio(Vout: float, Pout: float):
+            return np.roots(
+                [
+                    R * PlossT,
+                    (n * Vin + Vout) * (Vout + R * Pout / Vout) - R * PlossT,
+                    -(Vout**2) - R * Pout,
+                ]
+            )[1]
+        
+        
+        # Magnetizing inductance
+        def get_inductance(Vout: float, Pout: float, D: float):
+            return (R * Vout * (1 - D) ** 2) / (2 * (n**2) * fs * (Vout + R * Pout / Vout))
+        
+        
+        def get_minimum_inductance(Vout: list[float], Pout: list[float]):
+            Lm_min = max(
+                [
+                    get_inductance(vout, pout, get_duty_ratio(vout, pout))
+                    for vout in Vout
+                    for pout in Pout
+                ]
+            )
+            info(f"Minimum magnetizing inductance Lm for CCM is: {Lm_min}.")
+            return Lm_min
+        
+        
+        # Capacitive filter C1
+        def get_capacitance_C1(Vout: float, Pout: float, D: float):
+            return (D * n * (Vout + R * Pout / Vout)) / (2 * k1 * f * Vin * R * (1 - D))
+        
+        
+        def get_minimum_capacitance_C1(Vout: list[float], Pout: list[float]):
+            C1_min = max(
+                [
+                    get_capacitance_C1(vout, pout, get_duty_ratio(vout, pout))
+                    for vout in Vout
+                    for pout in Pout
+                ]
+            )
+            info(f"Minimum capacitance C1 required for ripple to be k1 = {k1} is: {C1_min}.")
+            return C1_min
+        
+        # Capacitive filter C2
+        def get_capacitance_C2(Vout: float, Pout: float, D: float):
+            return D * (R * Pout / Vout - Vout) / (2 * k2 * fs * R * Vout)
+        
+        
+        def get_minimum_capacitance_C2(Vout: list[float], Pout: list[float]):
+            C2_min = max(
+                [
+                    get_capacitance_C2(vout, pout, get_duty_ratio(vout, pout))
+                    for vout in Vout
+                    for pout in Pout
+                ]
+            )
+            info(f"Minimum capacitance C2 required for ripple to be k2 = {k2} is: {C2_min}.")
+            return C2_min
+        
+        
+        Vout = [5, 12]
+        Pout = [7.5, 100]
+        C1 = round(get_minimum_capacitance_C1(Vout, Pout) + 1e-2, 3)
+        info(f"For better dynamics, we're choosing C1 to be {C1}F.")
+        info("---------------------------------------")
+        C2 = round(get_minimum_capacitance_C2(Vout, Pout) + 1e-2, 3)
+        info(f"For better dynamics, we're choosing C1 to be {C2}F.")
+        info("---------------------------------------")
+        Lm = round(get_minimum_inductance(Vout, Pout) + 1e-2, 3)
+        info(f"For better dynamics, we're choosing Lm to be {Lm}H.")
+        info("---------------------------------------")
     ENDCODE
 }
