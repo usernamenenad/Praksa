@@ -74,8 +74,6 @@ typedef double real;
 
 
 
-
-
 //@cmp.def.end
 
 
@@ -91,7 +89,6 @@ typedef double real;
 // variables
 double _duty_ratio__out;
 double _enable__out;
-double _load__out;
 double _set_power__out;
 X_UnInt32 _flyback_pwm_modulator__channels[1] = {0};
 double _flyback_pwm_modulator__limited_in[1];
@@ -209,10 +206,8 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     _duty_ratio__out = XIo_InFloat(0x55000100);
     // Generated from the component: enable
     _enable__out = XIo_InFloat(0x55000104);
-    // Generated from the component: load
-    _load__out = XIo_InFloat(0x55000108);
     // Generated from the component: set power
-    _set_power__out = XIo_InFloat(0x5500010c);
+    _set_power__out = XIo_InFloat(0x55000108);
     // Generated from the component: duty ratio probe
     HIL_OutAO(0x4000, (float)_duty_ratio__out);
     // Generated from the component: Flyback.PWM_Modulator
@@ -227,13 +222,6 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
         HIL_OutInt32(0x2000000 + _flyback_pwm_modulator__channels[0], 0x1);
     }
     HIL_OutInt32(0x2000140, _flyback_pwm_modulator__update_mask);
-    // Generated from the component: S1.CTC_Wrapper
-    if (_load__out == 0x0) {
-        HIL_OutInt32(0x8240480, 0x0);
-    }
-    else {
-        HIL_OutInt32(0x8240480, 0x1);
-    }
     // Generated from the component: Isp1.Is1
     HIL_OutFloat(137101312, (float) _set_power__out);
     // Generated from the component: set power probe

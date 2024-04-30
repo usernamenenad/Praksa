@@ -252,7 +252,7 @@ widgetValue = None
 widgetValue = None
 ]]></on_timer_code>
                 <on_start_code_source><![CDATA[Custom code]]></on_start_code_source>
-                <inputValue><![CDATA[100.0]]></inputValue>
+                <inputValue><![CDATA[7.5]]></inputValue>
                 <min>7.5</min>
                 <max>100.0</max>
                 <step>1.0</step>
