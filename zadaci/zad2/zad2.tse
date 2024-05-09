@@ -75,8 +75,15 @@ model "zad2" {
 
     component Subsystem Root {
         component "core/Flyback" Flyback {
+            L1 = "1e-9"
+            L2 = "1e-9"
+            Lm = "Lm"
+            R1 = "Rp"
+            R2 = "Rs"
+            Rm = "1e6"
             ctrl_src = "Internal modulator"
             d_time = "0"
+            n1 = "10"
             ref_sig_min_max = "[0.0, 1.0]"
             signal_access = "Inherit"
         }
@@ -86,6 +93,7 @@ model "zad2" {
         ]
 
         component "core/Voltage Source" Vin {
+            init_const_value = "Vin"
         }
         [
             position = 8216, 8256
@@ -93,32 +101,16 @@ model "zad2" {
         ]
 
         component "core/Capacitor" Cf {
+            capacitance = "Cf"
+            signal_access = "Inherit"
         }
         [
             position = 8704, 8208
             rotation = right
         ]
 
-        component "core/PID controller" Controller {
-        }
-        [
-            position = 8280, 7992
-        ]
-
-        component "core/Sum" D {
-        }
-        [
-            position = 8416, 8000
-        ]
-
-        component "core/SCADA Input" D0 {
-            unit = ""
-        }
-        [
-            position = 8280, 8064
-        ]
-
         component "core/Current Source" Iout {
+            init_const_value = "20"
         }
         [
             position = 8824, 8208
@@ -135,24 +127,43 @@ model "zad2" {
             size = 64, 32
         ]
 
-        component "core/Sum" vhat {
-            signs = "+-"
-        }
-        [
-            position = 8144, 7992
-        ]
-
-        component "core/SCADA Input" Vout0 {
-            unit = ""
-        }
-        [
-            position = 8016, 7944
-        ]
-
         component "core/Constant" Enable {
         }
         [
             position = 8416, 8080
+        ]
+
+        component "core/PID controller" PI {
+        }
+        [
+            position = 8352, 7952
+        ]
+
+        component "core/Sum" Sum1 {
+        }
+        [
+            position = 8448, 7960
+        ]
+
+        component "core/Constant" D0 {
+            value = "0.133245"
+        }
+        [
+            position = 8352, 8024
+        ]
+
+        component "core/Sum" Sum2 {
+            signs = "+-"
+        }
+        [
+            position = 8272, 7952
+        ]
+
+        component "core/Constant" Vref {
+            value = "0"
+        }
+        [
+            position = 8112, 7904
         ]
 
         tag Goto1 {
@@ -173,7 +184,7 @@ model "zad2" {
             direction = out
         }
         [
-            position = 8016, 8000
+            position = 8112, 7960
             size = 60, 20
         ]
 
@@ -197,11 +208,7 @@ model "zad2" {
             position = 8824, 8256
         ]
 
-        connect Vin.p_node Flyback.a_in as Connection1
         connect Vin.n_node Flyback.b_in as Connection2
-        connect Controller.out D.in as Connection5
-        connect D0.out D.in1 as Connection6
-        connect D.out Flyback.In as Connection7
         connect Cf.p_node Junction1 as Connection17
         connect Junction1 Flyback.a_out as Connection18
         [
@@ -222,10 +229,14 @@ model "zad2" {
         connect Junction4 Junction2 as Connection27
         connect Vout.n_node Junction4 as Connection28
         connect Goto1 Vout.out as Connection29
-        connect vhat.out Controller.in as Connection30
-        connect From1 vhat.in1 as Connection31
-        connect Vout0.out vhat.in as Connection32
         connect Enable.out Flyback.En as Connection33
+        connect Flyback.a_in Vin.p_node as Connection35
+        connect PI.out Sum1.in as Connection36
+        connect Sum1.out Flyback.In as Connection37
+        connect D0.out Sum1.in1 as Connection38
+        connect Sum2.out PI.in as Connection39
+        connect From1 Sum2.in1 as Connection40
+        connect Vref.out Sum2.in as Connection41
     }
 
     default {
@@ -287,20 +298,6 @@ model "zad2" {
             signal_out_type = "inherit"
             _tunable = "False"
             execution_rate = "inherit"
-        }
-
-        "core/SCADA Input" {
-            signal_access = "inherit"
-            addr = "0"
-            format = "real"
-            override_signal_name = "False"
-            signal_name = ""
-            signal_type = "real"
-            min = "-1e6"
-            max = "1e6"
-            def_value = "0"
-            unit = " "
-            execution_rate = "100e-6"
         }
 
         "core/Sum" {
@@ -382,4 +379,18 @@ model "zad2" {
             signal_name = ""
         }
     }
+
+    CODE model_init
+        # Numpy module is imported as 'np'
+        # Scipy module is imported as 'sp'
+        # The Schematic API is imported as 'mdl'
+        # To get the model file path, use 'mdl.get_model_file_path()'
+        # To print information to the console, use info()
+        
+        Rp = 0.001
+        Rs = 0.0001
+        Lm = 5e-3
+        Cf = 5e-3
+        Vin = 230 * np.sqrt(2)
+    ENDCODE
 }
