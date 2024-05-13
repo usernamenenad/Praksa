@@ -12,7 +12,7 @@
         <vhil_adio_loopback>False</vhil_adio_loopback>
     </hw_properties>
     <sim_setup>
-        <sim_time_step>1e-07</sim_time_step>
+        <sim_time_step>2e-05</sim_time_step>
     </sim_setup>
     <pesb>
         <cell>
@@ -33,15 +33,8 @@
     </pesb>
     <analog_variables>
         <cell>
-            <name>Flyback.L2</name>
-            <address>2</address>
-            <type>current</type>
-            <initial_condition>0.0</initial_condition>
-            <visible>True</visible>
-        </cell>
-        <cell>
-            <name>Flyback.Lm</name>
-            <address>3</address>
+            <name>Flyback.L1</name>
+            <address>1</address>
             <type>current</type>
             <initial_condition>0.0</initial_condition>
             <visible>True</visible>
@@ -54,24 +47,17 @@
             <visible>True</visible>
         </cell>
         <cell>
-            <name>Flyback.L1</name>
-            <address>1</address>
+            <name>Flyback.Lm</name>
+            <address>3</address>
             <type>current</type>
             <initial_condition>0.0</initial_condition>
             <visible>True</visible>
         </cell>
         <cell>
-            <name>Flyback.il</name>
-            <address>384</address>
+            <name>Flyback.L2</name>
+            <address>2</address>
             <type>current</type>
-            <initial_condition>None</initial_condition>
-            <visible>False</visible>
-        </cell>
-        <cell>
-            <name>Vout</name>
-            <address>4</address>
-            <type>voltage</type>
-            <initial_condition>None</initial_condition>
+            <initial_condition>0.0</initial_condition>
             <visible>True</visible>
         </cell>
         <cell>
@@ -89,23 +75,23 @@
             <visible>False</visible>
         </cell>
         <cell>
+            <name>Vout</name>
+            <address>4</address>
+            <type>voltage</type>
+            <initial_condition>None</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
+            <name>Flyback.il</name>
+            <address>384</address>
+            <type>current</type>
+            <initial_condition>None</initial_condition>
+            <visible>False</visible>
+        </cell>
+        <cell>
             <name>Vin</name>
             <address>33280</address>
             <type>voltage</type>
-            <initial_condition>None</initial_condition>
-            <visible>True</visible>
-        </cell>
-        <cell>
-            <name>Vs1</name>
-            <address>33281</address>
-            <type>voltage</type>
-            <initial_condition>None</initial_condition>
-            <visible>True</visible>
-        </cell>
-        <cell>
-            <name>Iout</name>
-            <address>33282</address>
-            <type>current</type>
             <initial_condition>None</initial_condition>
             <visible>True</visible>
         </cell>
@@ -619,20 +605,20 @@
             <address>768</address>
         </cell>
         <cell>
-            <name>Flyback.PWM_Modulator.TOP_1</name>
-            <address>768</address>
-        </cell>
-        <cell>
-            <name>Flyback.PWM_Modulator_TOP_1</name>
-            <address>768</address>
-        </cell>
-        <cell>
             <name>Flyback.PWM_Modulator.BOT_1</name>
             <address>769</address>
         </cell>
         <cell>
             <name>Flyback.PWM_Modulator_BOT_1</name>
             <address>769</address>
+        </cell>
+        <cell>
+            <name>Flyback.PWM_Modulator.TOP_1</name>
+            <address>768</address>
+        </cell>
+        <cell>
+            <name>Flyback.PWM_Modulator_TOP_1</name>
+            <address>768</address>
         </cell>
     </digital_variables>
     <sources>
@@ -642,20 +628,6 @@
             <address>[0]</address>
             <unit>V</unit>
             <init_settings>['Constant', 325.2691193458119]</init_settings>
-        </cell>
-        <cell>
-            <name>Vs1</name>
-            <type>1phase</type>
-            <address>[1]</address>
-            <unit>V</unit>
-            <init_settings>['Sine', 65.05382386916237, 5.0, 0.0]</init_settings>
-        </cell>
-        <cell>
-            <name>Iout</name>
-            <type>1phase</type>
-            <address>[2]</address>
-            <unit>A</unit>
-            <init_settings>['Constant', 20.0]</init_settings>
         </cell>
     </sources>
     <machines>

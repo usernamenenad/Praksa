@@ -71,6 +71,10 @@ typedef double real;
 
 
 
+
+
+
+
 //@cmp.def.end
 
 
@@ -84,9 +88,15 @@ typedef double real;
 
 //@cmp.var.start
 // variables
-double _constant1__out = 0.133245;
+double _d0__out = 0.13324492554237707;
 double _enable__out = 1.0;
 double _vout_va1__out;
+double _vref__out;
+double _sum1__out;
+double _pid__out;
+double _pid__pi_reg_out_int;
+double _pid__derivative;
+double _sum2__out;
 X_UnInt32 _flyback_pwm_modulator__channels[1] = {0};
 double _flyback_pwm_modulator__limited_in[1];
 X_UnInt32 _flyback_pwm_modulator__update_mask;
@@ -95,7 +105,9 @@ X_UnInt32 _flyback_pwm_modulator__update_mask;
 
 //@cmp.svar.start
 // state variables
-//@cmp.svar.end
+double _vref__state;
+double _pid__integrator_state;
+double _pid__filter_state;//@cmp.svar.end
 
 //
 // Tunable parameters
@@ -124,8 +136,11 @@ void ReInit_user_sp_cpu0_dev0() {
     printf("\n\rReInitTimer");
 #endif
     //@cmp.init.block.start
+    _vref__state = 0x0;
+    _pid__integrator_state =  0.0;
+    _pid__filter_state =  0.0;
     _flyback_pwm_modulator__update_mask = 1;
-    HIL_OutInt32(0x2000080 + _flyback_pwm_modulator__channels[0], 20000); // divide by 2 is already implemented in hw
+    HIL_OutInt32(0x2000080 + _flyback_pwm_modulator__channels[0], 80000); // divide by 2 is already implemented in hw
     HIL_OutInt32(0x20000c0 + _flyback_pwm_modulator__channels[0], 0);
     HIL_OutInt32(0x20001c0 + _flyback_pwm_modulator__channels[0], 0);
     HIL_OutInt32(0x2000200 + _flyback_pwm_modulator__channels[0], 0);
@@ -192,7 +207,7 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     //////////////////////////////////////////////////////////////////////////
     // Set tunable parameters
     //////////////////////////////////////////////////////////////////////////
-    // Generated from the component: Constant1
+    // Generated from the component: D0
     // Generated from the component: Enable
 //////////////////////////////////////////////////////////////////////////
     // Output block
@@ -200,9 +215,23 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     //@cmp.out.block.start
     // Generated from the component: Vout.Va1
     _vout_va1__out = (HIL_InFloat(0xc80000 + 0x4));
+    // Generated from the component: Vref
+    if (_vref__state < 0.0) {
+        _vref__out = 0.0;
+    } else {
+        _vref__out = 5.0;
+    }
+    // Generated from the component: Sum1
+    _sum1__out = _vref__out - _vout_va1__out;
+    // Generated from the component: PID
+    _pid__derivative = (4e-05 * _sum1__out - _pid__filter_state) * 10000.0;
+    _pid__pi_reg_out_int = _pid__integrator_state + 0.0004 * _sum1__out + _pid__derivative;
+    _pid__out = _pid__pi_reg_out_int;
+    // Generated from the component: Sum2
+    _sum2__out = _pid__out + _d0__out;
     // Generated from the component: Flyback.PWM_Modulator
-    _flyback_pwm_modulator__limited_in[0] = MIN(MAX(_constant1__out, 0.0), 1.0);
-    HIL_OutInt32(0x2000040 + _flyback_pwm_modulator__channels[0], ((X_UnInt32)((_flyback_pwm_modulator__limited_in[0] - (0.0)) * 20000.0)));
+    _flyback_pwm_modulator__limited_in[0] = MIN(MAX(_sum2__out, 0.0), 1.0);
+    HIL_OutInt32(0x2000040 + _flyback_pwm_modulator__channels[0], ((X_UnInt32)((_flyback_pwm_modulator__limited_in[0] - (0.0)) * 80000.0)));
     if (_enable__out == 0x0) {
         // pwm_modulator_en
         HIL_OutInt32(0x2000000 + _flyback_pwm_modulator__channels[0], 0x0);
@@ -217,6 +246,12 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     // Update block
     //////////////////////////////////////////////////////////////////////////
     //@cmp.update.block.start
+    // Generated from the component: Vref
+    if (_vref__state <= 0.0)
+        _vref__state += 0.0001;
+    // Generated from the component: PID
+    _pid__integrator_state += 4.0 * _sum1__out * 0.0001;
+    _pid__filter_state += _pid__derivative * 0.0001;
     //@cmp.update.block.end
 }
 // ----------------------------------------------------------------------------------------
