@@ -191,7 +191,7 @@ model "zad2" {
             init_const_value = "20"
         }
         [
-            position = 8816, 8208
+            position = 8792, 8208
             rotation = left
         ]
 
@@ -229,12 +229,12 @@ model "zad2" {
 
         junction Junction9 pe
         [
-            position = 8816, 8160
+            position = 8792, 8160
         ]
 
         junction Junction10 pe
         [
-            position = 8816, 8256
+            position = 8792, 8256
         ]
 
         connect Goto1 Vout.out as Connection29
@@ -257,24 +257,24 @@ model "zad2" {
         connect Gain2.in Gain1.out as Connection156
         connect Flyback.a_in Vin.p_node as Connection157
         connect Lag.out Sum2.in as Connection158
-        connect Junction7 Junction9 as Connection169
+        connect Vout.p_node Junction9 as Connection185
         [
-            breakpoints = 8704, 8160; 8704, 8160; 8704, 8160; 8704, 8160; 8704, 8160; 8704, 8160; 8800, 8160; 8808, 8160; 8808, 8160; 8808, 8160; 8808, 8160
+            breakpoints = 8824, 8160; 8816, 8160; 8816, 8160; 8816, 8160; 8808, 8160; 8808, 8160; 8808, 8160; 8808, 8160; 8800, 8160; 8808, 8160
         ]
-        connect Junction9 Vout.p_node as Connection170
+        connect Junction9 Junction7 as Connection186
         [
-            breakpoints = 8816, 8160; 8816, 8160; 8824, 8160
+            breakpoints = 8704, 8160; 8704, 8160; 8704, 8160; 8704, 8160; 8704, 8160; 8704, 8160; 8704, 8160
         ]
-        connect Is1.n_node Junction9 as Connection171
-        connect Junction8 Junction10 as Connection172
+        connect Is1.n_node Junction9 as Connection187
+        connect Junction8 Junction10 as Connection188
         [
-            breakpoints = 8704, 8256; 8704, 8256; 8704, 8256; 8704, 8256; 8704, 8256; 8704, 8256; 8704, 8256; 8800, 8256; 8808, 8256; 8808, 8256; 8808, 8256; 8808, 8256
+            breakpoints = 8704, 8256; 8704, 8256; 8704, 8256; 8704, 8256; 8704, 8256; 8704, 8256; 8704, 8256; 8704, 8256; 8704, 8256
         ]
-        connect Junction10 Vout.n_node as Connection173
+        connect Junction10 Vout.n_node as Connection189
         [
-            breakpoints = 8816, 8256; 8816, 8256; 8816, 8256; 8816, 8256
+            breakpoints = 8800, 8256; 8808, 8256; 8808, 8256; 8808, 8256; 8808, 8256; 8808, 8256; 8816, 8256; 8816, 8256; 8816, 8256; 8816, 8256; 8816, 8256
         ]
-        connect Is1.p_node Junction10 as Connection174
+        connect Is1.p_node Junction10 as Connection190
     }
 
     default {
@@ -428,19 +428,19 @@ model "zad2" {
         
         Rp = 0.001
         Rs = 0.0001
-        Lm = 5e-3
-        Cf = 15e-3
+        Lm = 100e-3
+        Cf = 250e-3
         Vin = 230 * np.sqrt(2)
         D0 = 0.13324492554237707
         Vref = 5
         
         fs = 2500
         fc = fs / 10
-        k = 1/29.8538
-        phicor = np.deg2rad(52)
+        k = 10**(22/20)
+        phicor = np.deg2rad(92)
         p = np.sqrt((1 + np.sin(phicor)) / (1 - np.sin(phicor)))
         wz = 2 * np.pi * fc / p
         wp = 2 * np.pi * fc * p
-        wl = 2 * np.pi * fc / 100
+        wl = 2 * np.pi * fc / 10
     ENDCODE
 }

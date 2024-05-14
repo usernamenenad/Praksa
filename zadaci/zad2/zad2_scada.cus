@@ -66,6 +66,18 @@ SETTINGS_DIR = get_settings_dir_path()
                                         <num_viewport>1</num_viewport>
                                    </viewports>
                                </analog>
+                                <analog>
+                                    <channel>1</channel>
+                                    <name><![CDATA[Flyback.Lm]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>1</row>
+                                    <viewports>
+                                        <num_viewport>2</num_viewport>
+                                   </viewports>
+                               </analog>
                             </analog_signals>
                             <digital_signals>
                             </digital_signals>
@@ -148,6 +160,18 @@ SETTINGS_DIR = get_settings_dir_path()
                                         <num_viewport>1</num_viewport>
                                    </viewports>
                                </analog>
+                            <analog>
+                                    <channel>1</channel>
+                                    <name><![CDATA[Flyback.Lm]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>1</row>
+                                    <viewports>
+                                        <num_viewport>2</num_viewport>
+                                   </viewports>
+                               </analog>
                         </analog_signals>
                          <digital_signals>
                          </digital_signals>
@@ -211,7 +235,7 @@ displayValue = 0.0
                 <signal_name><![CDATA[Vout]]></signal_name>
                 <unit><![CDATA[V]]></unit>
                 <automatic_unit>True</automatic_unit>
-                <updateRate>500</updateRate>
+                <updateRate>250</updateRate>
                 <decimals>2</decimals>
                 <scaling_factor>1.0</scaling_factor>
                 <widget_settings>
