@@ -133,19 +133,11 @@ model "zad2" {
             position = 8352, 8024
         ]
 
-        component "core/Resistor" Rl {
-            resistance = "Rl"
-        }
-        [
-            position = 8816, 8208
-            rotation = right
-        ]
-
         component "core/Sum" Sum1 {
             signs = "+-"
         }
         [
-            position = 8248, 7944
+            position = 8024, 7944
         ]
 
         component "core/Sum" Sum2 {
@@ -155,21 +147,52 @@ model "zad2" {
         ]
 
         component "core/Step" Vref {
-            final_value = "5"
+            final_value = "Vref"
             step_time = "0"
         }
         [
-            position = 8088, 7912
+            position = 7864, 7912
         ]
 
-        component "core/PID controller" PID {
-            filt_coef = "N"
-            kd = "Kd"
-            ki = "Ki"
-            kp = "Kp"
+        component "core/Discrete Transfer Function" Lead {
+            a_coeff = "[1/wp,1]"
+            b_coeff = "[1/wz,1]"
+            domain = "S-domain"
         }
         [
-            position = 8328, 7944
+            position = 8240, 7944
+        ]
+
+        component "core/Discrete Transfer Function" Lag {
+            a_coeff = "[1,0]"
+            b_coeff = "[1, wl]"
+            domain = "S-domain"
+        }
+        [
+            position = 8320, 7944
+            scale = 1, -1
+        ]
+
+        component "core/Gain" Gain1 {
+            gain = "k"
+        }
+        [
+            position = 8112, 7944
+        ]
+
+        component "core/Gain" Gain2 {
+            gain = "1/p"
+        }
+        [
+            position = 8176, 7944
+        ]
+
+        component "core/Current Source" Is1 {
+            init_const_value = "20"
+        }
+        [
+            position = 8816, 8208
+            rotation = left
         ]
 
         tag Goto1 {
@@ -190,18 +213,8 @@ model "zad2" {
             direction = out
         }
         [
-            position = 8096, 7984
+            position = 7872, 7984
             size = 60, 20
-        ]
-
-        junction Junction3 pe
-        [
-            position = 8816, 8160
-        ]
-
-        junction Junction4 pe
-        [
-            position = 8816, 8256
         ]
 
         junction Junction7 pe
@@ -214,41 +227,54 @@ model "zad2" {
             position = 8704, 8256
         ]
 
+        junction Junction9 pe
+        [
+            position = 8816, 8160
+        ]
+
+        junction Junction10 pe
+        [
+            position = 8816, 8256
+        ]
+
         connect Goto1 Vout.out as Connection29
         connect Enable.out Flyback.En as Connection33
-        connect Junction3 Vout.p_node as Connection82
-        [
-            breakpoints = 8816, 8160; 8824, 8160
-        ]
-        connect Rl.p_node Junction3 as Connection83
         connect Vin.n_node Flyback.b_in as Connection87
-        connect Rl.n_node Junction4 as Connection98
-        connect Vout.n_node Junction4 as Connection100
         connect Sum2.in1 D0.out as Connection107
         connect From1 Sum1.in1 as Connection108
         connect Vref.out Sum1.in as Connection109
-        connect Vin.p_node Flyback.a_in as Connection116
         connect Cf.p_node Junction7 as Connection123
-        connect Junction7 Junction3 as Connection124
-        [
-            breakpoints = 8704, 8160; 8704, 8160; 8704, 8160; 8808, 8160; 8808, 8160; 8808, 8160
-        ]
         connect Flyback.a_out Junction7 as Connection125
         connect Flyback.b_out Junction8 as Connection136
-        connect Junction8 Junction4 as Connection137
-        [
-            breakpoints = 8704, 8256; 8704, 8256; 8704, 8256; 8704, 8256; 8704, 8256; 8704, 8256; 8808, 8256; 8808, 8256; 8808, 8256; 8816, 8256; 8816, 8256; 8816, 8256
-        ]
         connect Cf.n_node Junction8 as Connection138
         connect Flyback.In Sum2.out as Connection140
         [
             breakpoints = 8488, 8040
         ]
-        connect PID.out Sum2.in as Connection141
-        connect PID.in Sum1.out as Connection142
+        connect Lead.out Lag.in as Connection152
+        connect Sum1.out Gain1.in as Connection154
+        connect Gain2.out Lead.in as Connection155
+        connect Gain2.in Gain1.out as Connection156
+        connect Flyback.a_in Vin.p_node as Connection157
+        connect Lag.out Sum2.in as Connection158
+        connect Junction7 Junction9 as Connection169
         [
-            breakpoints = 8280, 7944
+            breakpoints = 8704, 8160; 8704, 8160; 8704, 8160; 8704, 8160; 8704, 8160; 8704, 8160; 8800, 8160; 8808, 8160; 8808, 8160; 8808, 8160; 8808, 8160
         ]
+        connect Junction9 Vout.p_node as Connection170
+        [
+            breakpoints = 8816, 8160; 8816, 8160; 8824, 8160
+        ]
+        connect Is1.n_node Junction9 as Connection171
+        connect Junction8 Junction10 as Connection172
+        [
+            breakpoints = 8704, 8256; 8704, 8256; 8704, 8256; 8704, 8256; 8704, 8256; 8704, 8256; 8704, 8256; 8800, 8256; 8808, 8256; 8808, 8256; 8808, 8256; 8808, 8256
+        ]
+        connect Junction10 Vout.n_node as Connection173
+        [
+            breakpoints = 8816, 8256; 8816, 8256; 8816, 8256; 8816, 8256
+        ]
+        connect Is1.p_node Junction10 as Connection174
     }
 
     default {
@@ -267,32 +293,42 @@ model "zad2" {
             _tunable = "False"
         }
 
-        "core/PID controller" {
-            controller_type = "PID"
-            kp = "1"
-            kp_source = "internal"
-            ki = "1"
-            ki_source = "internal"
-            kd = "0"
-            kd_source = "internal"
-            filt_coef = "100"
-            int_init_value = "0"
-            filt_init_value = "0"
-            enb_output_limit_out = "False"
-            show_reset = "none"
-            upper_sat_lim = "1"
-            upper_sat_lim_source = "internal"
-            lower_sat_lim = "-1"
-            lower_sat_lim_source = "internal"
-            enb_anti_windup_out = "False"
+        "core/Current Source" {
+            sig_input = "False"
+            type = "signal generator"
+            param_set = "1phase"
+            parent_label = ""
+            addr = "0"
+            spc_nb = "0"
+            execution_rate = "100e-6"
+            cpd_visible = "True"
+            enable_snb = "False"
+            snb_type = "R1"
+            R1 = "inf"
+            C1 = "1e-06"
+            override_signal_name = "False"
+            signal_name = ""
+            init_source_nature = "Constant"
+            init_const_value = "0.0"
+            init_rms_value = "0.0"
+            init_frequency = "50.0"
+            init_phase = "0.0"
+        }
+
+        "core/Discrete Transfer Function" {
+            domain = "Z-domain"
+            method = "Zero-order hold"
+            b_coeff = "[1,1]"
+            a_coeff = "[1,1]"
             signal_out_type = "inherit"
-            _tunable = "False"
             execution_rate = "inherit"
         }
 
-        "core/Resistor" {
-            resistance = "1"
-            param_set = ""
+        "core/Gain" {
+            gain = "1"
+            multiplication = "Element-wise(K.*u)"
+            _tunable = "False"
+            execution_rate = "inherit"
         }
 
         "core/Step" {
@@ -396,13 +432,15 @@ model "zad2" {
         Cf = 15e-3
         Vin = 230 * np.sqrt(2)
         D0 = 0.13324492554237707
-        Rl = 3.33
+        Vref = 5
         
-        Kp = 0.0004
-        Ti = 0.0001
-        Td = 0.1
-        Ki = Kp / Ti
-        Kd = Kp * Td
-        N = 10000
+        fs = 2500
+        fc = fs / 10
+        k = 1/29.8538
+        phicor = np.deg2rad(52)
+        p = np.sqrt((1 + np.sin(phicor)) / (1 - np.sin(phicor)))
+        wz = 2 * np.pi * fc / p
+        wp = 2 * np.pi * fc * p
+        wl = 2 * np.pi * fc / 100
     ENDCODE
 }

@@ -33,23 +33,9 @@
     </pesb>
     <analog_variables>
         <cell>
-            <name>Flyback.L1</name>
-            <address>1</address>
-            <type>current</type>
-            <initial_condition>0.0</initial_condition>
-            <visible>True</visible>
-        </cell>
-        <cell>
             <name>Cf</name>
             <address>0</address>
             <type>voltage</type>
-            <initial_condition>0.0</initial_condition>
-            <visible>True</visible>
-        </cell>
-        <cell>
-            <name>Flyback.Lm</name>
-            <address>3</address>
-            <type>current</type>
             <initial_condition>0.0</initial_condition>
             <visible>True</visible>
         </cell>
@@ -61,11 +47,18 @@
             <visible>True</visible>
         </cell>
         <cell>
-            <name>Flyback.v1</name>
-            <address>385</address>
-            <type>voltage</type>
-            <initial_condition>None</initial_condition>
-            <visible>False</visible>
+            <name>Flyback.L1</name>
+            <address>1</address>
+            <type>current</type>
+            <initial_condition>0.0</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
+            <name>Flyback.Lm</name>
+            <address>3</address>
+            <type>current</type>
+            <initial_condition>0.0</initial_condition>
+            <visible>True</visible>
         </cell>
         <cell>
             <name>Flyback.v2</name>
@@ -82,6 +75,13 @@
             <visible>True</visible>
         </cell>
         <cell>
+            <name>Flyback.v1</name>
+            <address>385</address>
+            <type>voltage</type>
+            <initial_condition>None</initial_condition>
+            <visible>False</visible>
+        </cell>
+        <cell>
             <name>Flyback.il</name>
             <address>384</address>
             <type>current</type>
@@ -92,6 +92,13 @@
             <name>Vin</name>
             <address>33280</address>
             <type>voltage</type>
+            <initial_condition>None</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
+            <name>Is1</name>
+            <address>33281</address>
+            <type>current</type>
             <initial_condition>None</initial_condition>
             <visible>True</visible>
         </cell>
@@ -605,20 +612,20 @@
             <address>768</address>
         </cell>
         <cell>
-            <name>Flyback.PWM_Modulator.BOT_1</name>
-            <address>769</address>
-        </cell>
-        <cell>
-            <name>Flyback.PWM_Modulator_BOT_1</name>
-            <address>769</address>
-        </cell>
-        <cell>
             <name>Flyback.PWM_Modulator.TOP_1</name>
             <address>768</address>
         </cell>
         <cell>
             <name>Flyback.PWM_Modulator_TOP_1</name>
             <address>768</address>
+        </cell>
+        <cell>
+            <name>Flyback.PWM_Modulator.BOT_1</name>
+            <address>769</address>
+        </cell>
+        <cell>
+            <name>Flyback.PWM_Modulator_BOT_1</name>
+            <address>769</address>
         </cell>
     </digital_variables>
     <sources>
@@ -628,6 +635,13 @@
             <address>[0]</address>
             <unit>V</unit>
             <init_settings>['Constant', 325.2691193458119]</init_settings>
+        </cell>
+        <cell>
+            <name>Is1</name>
+            <type>1phase</type>
+            <address>[1]</address>
+            <unit>A</unit>
+            <init_settings>['Constant', 20.0]</init_settings>
         </cell>
     </sources>
     <machines>
