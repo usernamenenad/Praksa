@@ -12,11 +12,11 @@
         <vhil_adio_loopback>False</vhil_adio_loopback>
     </hw_properties>
     <sim_setup>
-        <sim_time_step>2e-05</sim_time_step>
+        <sim_time_step>1e-05</sim_time_step>
     </sim_setup>
     <pesb>
         <cell>
-            <name>Flyback</name>
+            <name>Flyback1</name>
             <type>
                 <cell>igbt_leg</cell>
             </type>
@@ -33,15 +33,22 @@
     </pesb>
     <analog_variables>
         <cell>
-            <name>Flyback.L2</name>
-            <address>2</address>
+            <name>Flyback1.Lm</name>
+            <address>3</address>
             <type>current</type>
             <initial_condition>0.0</initial_condition>
             <visible>True</visible>
         </cell>
         <cell>
-            <name>Flyback.Lm</name>
-            <address>3</address>
+            <name>Flyback1.L1</name>
+            <address>1</address>
+            <type>current</type>
+            <initial_condition>0.0</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
+            <name>Flyback1.L2</name>
+            <address>2</address>
             <type>current</type>
             <initial_condition>0.0</initial_condition>
             <visible>True</visible>
@@ -54,14 +61,7 @@
             <visible>True</visible>
         </cell>
         <cell>
-            <name>Flyback.L1</name>
-            <address>1</address>
-            <type>current</type>
-            <initial_condition>0.0</initial_condition>
-            <visible>True</visible>
-        </cell>
-        <cell>
-            <name>Flyback.il</name>
+            <name>Flyback1.il</name>
             <address>384</address>
             <type>current</type>
             <initial_condition>None</initial_condition>
@@ -75,15 +75,15 @@
             <visible>True</visible>
         </cell>
         <cell>
-            <name>Flyback.v2</name>
-            <address>386</address>
+            <name>Flyback1.v1</name>
+            <address>385</address>
             <type>voltage</type>
             <initial_condition>None</initial_condition>
             <visible>False</visible>
         </cell>
         <cell>
-            <name>Flyback.v1</name>
-            <address>385</address>
+            <name>Flyback1.v2</name>
+            <address>386</address>
             <type>voltage</type>
             <initial_condition>None</initial_condition>
             <visible>False</visible>
@@ -608,23 +608,23 @@
             <address>575</address>
         </cell>
         <cell>
-            <name>Flyback.S1</name>
+            <name>Flyback1.S1</name>
             <address>768</address>
         </cell>
         <cell>
-            <name>Flyback.PWM_Modulator.BOT_1</name>
+            <name>Flyback1.PWM_Modulator.BOT_1</name>
             <address>769</address>
         </cell>
         <cell>
-            <name>Flyback.PWM_Modulator_BOT_1</name>
+            <name>Flyback1.PWM_Modulator_BOT_1</name>
             <address>769</address>
         </cell>
         <cell>
-            <name>Flyback.PWM_Modulator.TOP_1</name>
+            <name>Flyback1.PWM_Modulator.TOP_1</name>
             <address>768</address>
         </cell>
         <cell>
-            <name>Flyback.PWM_Modulator_TOP_1</name>
+            <name>Flyback1.PWM_Modulator_TOP_1</name>
             <address>768</address>
         </cell>
     </digital_variables>
@@ -660,7 +660,7 @@
         <spc_dtv>
             <cell>
                 <address>0</address>
-                <fqn>Flyback</fqn>
+                <fqn>Flyback1</fqn>
             </cell>
         </spc_dtv>
         <par_dtv>
@@ -676,10 +676,37 @@
         <sig_stim>off</sig_stim>
     </model_properties>
 
+    <analog_variables>
+        <cell>
+            <name>Probe1</name>
+            <type>generic</type>
+            <address>16384</address>
+            <initial_condition>None</initial_condition>
+            <visible>True</visible>
+        </cell>
+    </analog_variables>
 
 <digital_variables>
     </digital_variables>
 
+    <tunable_params>
+        <tunable_param>
+            <name>Enable flyback</name>
+            <addr>[1426063616]</addr>
+            <min>0.0</min>
+            <max>1.0</max>
+            <def_value>0.0</def_value>
+            <unit></unit>
+            <widget_type>int</widget_type>
+            <format>integer</format>
+            <size>1</size>
+            <param_type>scada input</param_type>
+            <cpu_type>user_sp_cpu</cpu_type>
+            <cpu_idx>0</cpu_idx>
+            <execution_rate>0.0001</execution_rate>
+            <visible>True</visible>
+        </tunable_param>
+    </tunable_params>
 
 
     <dsp_monitors>
@@ -696,6 +723,11 @@
 
     <sp_compiler_type>gcc</sp_compiler_type>
 
+    <streaming>
+
+
+
+     </streaming>
 
 
 </model_description>

@@ -91,37 +91,30 @@ typedef double real;
 
 //@cmp.var.start
 // variables
-double _d0__out = 0.13324492554237707;
-double _enable__out = 1.0;
+double _constant1__out = 0.133244925;
+X_Int32 _enable_flyback__out;
+double _step1__out;
 double _vout_va1__out;
-double _vref__out;
 double _sum1__out;
 double _gain1__out;
 double _gain2__out;
 double _lead__out;
-double _lead__b_coeff[2] = {3282.13970365406, -3281.139827176696};
-double _lead__a_coeff[2] = {1.0, -0.00012352263625440562};
+double _lead__b_coeff[2] = {7.423043770029485, -7.083335138251549};
+double _lead__a_coeff[2] = {1.0, -0.6602913682220635};
 double _lead__a_sum;
 double _lead__b_sum;
 double _lead__delay_line_in;
-double _lag__out;
-double _lag__b_coeff[2] = {1.0, -0.984292036732051};
-double _lag__a_coeff[2] = {1.0, -1.0};
-double _lag__a_sum;
-double _lag__b_sum;
-double _lag__delay_line_in;
 double _sum2__out;
-X_UnInt32 _flyback_pwm_modulator__channels[1] = {0};
-double _flyback_pwm_modulator__limited_in[1];
-X_UnInt32 _flyback_pwm_modulator__update_mask;
+X_UnInt32 _flyback1_pwm_modulator__channels[1] = {0};
+double _flyback1_pwm_modulator__limited_in[1];
+X_UnInt32 _flyback1_pwm_modulator__update_mask;
 
 //@cmp.var.end
 
 //@cmp.svar.start
 // state variables
-double _vref__state;
+double _step1__state;
 double _lead__states[1];
-double _lag__states[1];
 //@cmp.svar.end
 
 //
@@ -151,24 +144,21 @@ void ReInit_user_sp_cpu0_dev0() {
     printf("\n\rReInitTimer");
 #endif
     //@cmp.init.block.start
-    _vref__state = 0x0;
+    _step1__state = 0x0;
     X_UnInt32 _lead__i;
     for (_lead__i = 0; _lead__i < 1; _lead__i++) {
         _lead__states[_lead__i] = 0;
     }
-    X_UnInt32 _lag__i;
-    for (_lag__i = 0; _lag__i < 1; _lag__i++) {
-        _lag__states[_lag__i] = 0;
-    }
-    _flyback_pwm_modulator__update_mask = 1;
-    HIL_OutInt32(0x2000080 + _flyback_pwm_modulator__channels[0], 80000); // divide by 2 is already implemented in hw
-    HIL_OutInt32(0x20000c0 + _flyback_pwm_modulator__channels[0], 0);
-    HIL_OutInt32(0x20001c0 + _flyback_pwm_modulator__channels[0], 0);
-    HIL_OutInt32(0x2000200 + _flyback_pwm_modulator__channels[0], 0);
-    HIL_OutInt32(0x2000240 + _flyback_pwm_modulator__channels[0], 0);
-    HIL_OutInt32(0x2000300 + _flyback_pwm_modulator__channels[0], 1);
-    HIL_OutInt32(0x2000340 + _flyback_pwm_modulator__channels[0], 0);
-    HIL_OutInt32(0x2000140, _flyback_pwm_modulator__update_mask);
+    _flyback1_pwm_modulator__update_mask = 1;
+    HIL_OutInt32(0x2000080 + _flyback1_pwm_modulator__channels[0], 80000); // divide by 2 is already implemented in hw
+    HIL_OutInt32(0x20000c0 + _flyback1_pwm_modulator__channels[0], 0);
+    HIL_OutInt32(0x20001c0 + _flyback1_pwm_modulator__channels[0], 0);
+    HIL_OutInt32(0x2000200 + _flyback1_pwm_modulator__channels[0], 0);
+    HIL_OutInt32(0x2000240 + _flyback1_pwm_modulator__channels[0], 0);
+    HIL_OutInt32(0x2000300 + _flyback1_pwm_modulator__channels[0], 1);
+    HIL_OutInt32(0x2000340 + _flyback1_pwm_modulator__channels[0], 0);
+    HIL_OutInt32(0x2000140, _flyback1_pwm_modulator__update_mask);
+    HIL_OutAO(0x4000, 0.0f);
     //@cmp.init.block.end
 }
 
@@ -228,26 +218,27 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     //////////////////////////////////////////////////////////////////////////
     // Set tunable parameters
     //////////////////////////////////////////////////////////////////////////
-    // Generated from the component: D0
-    // Generated from the component: Enable
+    // Generated from the component: Constant1
 //////////////////////////////////////////////////////////////////////////
     // Output block
     //////////////////////////////////////////////////////////////////////////
     //@cmp.out.block.start
+    // Generated from the component: Enable flyback
+    _enable_flyback__out = XIo_InInt32(0x55000100);
+    // Generated from the component: Step1
+    if (_step1__state < 0.0) {
+        _step1__out = 0.0;
+    } else {
+        _step1__out = 5.0;
+    }
     // Generated from the component: Vout.Va1
     _vout_va1__out = (HIL_InFloat(0xc80000 + 0x4));
-    // Generated from the component: Vref
-    if (_vref__state < 0.0) {
-        _vref__out = 0.0;
-    } else {
-        _vref__out = 5.0;
-    }
     // Generated from the component: Sum1
-    _sum1__out = _vref__out - _vout_va1__out;
+    _sum1__out = _step1__out - _vout_va1__out;
     // Generated from the component: Gain1
-    _gain1__out = 12.589254117941675 * _sum1__out;
+    _gain1__out = 0.39994474976109745 * _sum1__out;
     // Generated from the component: Gain2
-    _gain2__out = 0.017455064928217124 * _gain1__out;
+    _gain2__out = 0.3053155436143254 * _gain1__out;
     // Generated from the component: Lead
     X_UnInt32 _lead__i;
     _lead__a_sum = 0.0f;
@@ -260,44 +251,32 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     _lead__delay_line_in = _gain2__out - _lead__a_sum;
     _lead__b_sum += _lead__b_coeff[0] * _lead__delay_line_in;
     _lead__out = _lead__b_sum;
-    // Generated from the component: Lag
-    X_UnInt32 _lag__i;
-    _lag__a_sum = 0.0f;
-    _lag__b_sum = 0.0f;
-    _lag__delay_line_in = 0.0f;
-    for (_lag__i = 0; _lag__i < 1; _lag__i++) {
-        _lag__b_sum += _lag__b_coeff[_lag__i + 1] * _lag__states[_lag__i];
-    }
-    _lag__a_sum += _lag__states[0] * _lag__a_coeff[1];
-    _lag__delay_line_in = _lead__out - _lag__a_sum;
-    _lag__b_sum += _lag__b_coeff[0] * _lag__delay_line_in;
-    _lag__out = _lag__b_sum;
     // Generated from the component: Sum2
-    _sum2__out = _lag__out + _d0__out;
-    // Generated from the component: Flyback.PWM_Modulator
-    _flyback_pwm_modulator__limited_in[0] = MIN(MAX(_sum2__out, 0.0), 1.0);
-    HIL_OutInt32(0x2000040 + _flyback_pwm_modulator__channels[0], ((X_UnInt32)((_flyback_pwm_modulator__limited_in[0] - (0.0)) * 80000.0)));
-    if (_enable__out == 0x0) {
+    _sum2__out = _lead__out + _constant1__out;
+    // Generated from the component: Flyback1.PWM_Modulator
+    _flyback1_pwm_modulator__limited_in[0] = MIN(MAX(_sum2__out, 0.0), 1.0);
+    HIL_OutInt32(0x2000040 + _flyback1_pwm_modulator__channels[0], ((X_UnInt32)((_flyback1_pwm_modulator__limited_in[0] - (0.0)) * 80000.0)));
+    if (_enable_flyback__out == 0x0) {
         // pwm_modulator_en
-        HIL_OutInt32(0x2000000 + _flyback_pwm_modulator__channels[0], 0x0);
+        HIL_OutInt32(0x2000000 + _flyback1_pwm_modulator__channels[0], 0x0);
     }
     else {
         // pwm_modulator_en
-        HIL_OutInt32(0x2000000 + _flyback_pwm_modulator__channels[0], 0x1);
+        HIL_OutInt32(0x2000000 + _flyback1_pwm_modulator__channels[0], 0x1);
     }
-    HIL_OutInt32(0x2000140, _flyback_pwm_modulator__update_mask);
+    HIL_OutInt32(0x2000140, _flyback1_pwm_modulator__update_mask);
+    // Generated from the component: Probe1
+    HIL_OutAO(0x4000, (float)_sum2__out);
 //@cmp.out.block.end
     //////////////////////////////////////////////////////////////////////////
     // Update block
     //////////////////////////////////////////////////////////////////////////
     //@cmp.update.block.start
-    // Generated from the component: Vref
-    if (_vref__state <= 0.0)
-        _vref__state += 0.0001;
+    // Generated from the component: Step1
+    if (_step1__state <= 0.0)
+        _step1__state += 0.0001;
     // Generated from the component: Lead
     _lead__states[0] = _lead__delay_line_in;
-    // Generated from the component: Lag
-    _lag__states[0] = _lag__delay_line_in;
     //@cmp.update.block.end
 }
 // ----------------------------------------------------------------------------------------
