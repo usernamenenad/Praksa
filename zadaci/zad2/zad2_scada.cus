@@ -215,8 +215,8 @@ displayValue = 0.0
                 <decimals>2</decimals>
                 <scaling_factor>1.0</scaling_factor>
                 <widget_settings>
-                    <x>400</x>
-                    <y>72</y>
+                    <x>408</x>
+                    <y>128</y>
                     <width>248</width>
                     <height>144</height>
                     <appearance><![CDATA[Flat]]></appearance>
