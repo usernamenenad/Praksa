@@ -33,8 +33,8 @@
     </pesb>
     <analog_variables>
         <cell>
-            <name>Flyback1.L1</name>
-            <address>1</address>
+            <name>Flyback1.L2</name>
+            <address>2</address>
             <type>current</type>
             <initial_condition>0.0</initial_condition>
             <visible>True</visible>
@@ -47,6 +47,13 @@
             <visible>True</visible>
         </cell>
         <cell>
+            <name>Flyback1.L1</name>
+            <address>1</address>
+            <type>current</type>
+            <initial_condition>0.0</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
             <name>Cf</name>
             <address>0</address>
             <type>voltage</type>
@@ -54,10 +61,10 @@
             <visible>True</visible>
         </cell>
         <cell>
-            <name>Flyback1.L2</name>
-            <address>2</address>
-            <type>current</type>
-            <initial_condition>0.0</initial_condition>
+            <name>Vout</name>
+            <address>4</address>
+            <type>voltage</type>
+            <initial_condition>None</initial_condition>
             <visible>True</visible>
         </cell>
         <cell>
@@ -80,13 +87,6 @@
             <type>current</type>
             <initial_condition>None</initial_condition>
             <visible>False</visible>
-        </cell>
-        <cell>
-            <name>Vout</name>
-            <address>4</address>
-            <type>voltage</type>
-            <initial_condition>None</initial_condition>
-            <visible>True</visible>
         </cell>
         <cell>
             <name>Vin</name>
@@ -677,6 +677,13 @@
     </model_properties>
 
     <analog_variables>
+        <cell>
+            <name>Probe2</name>
+            <type>generic</type>
+            <address>16385</address>
+            <initial_condition>None</initial_condition>
+            <visible>True</visible>
+        </cell>
         <cell>
             <name>Probe1</name>
             <type>generic</type>

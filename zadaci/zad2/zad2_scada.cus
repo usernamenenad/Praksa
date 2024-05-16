@@ -275,5 +275,48 @@ displayValue = 0.0
                     <red_range>(0, 0, 0, 0)</red_range>
                 </advance_widget_settings>
             </component_data>
+        <component_data>
+                <id>773f57fa134d11efb871975e4b91290d</id>
+                <name><![CDATA[Probe2]]></name>
+                <type>Gauge</type>
+                <description><![CDATA[]]></description>
+                <data_type>Analog signal</data_type>
+                <code><![CDATA[# HIL API is imported as 'hil'
+# NOTE: Only read functions are available from the HIL API
+
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+# mandatory variable used for storing value that will be displayed
+displayValue = 0.0
+
+]]></code>
+                <signal_name><![CDATA[Probe2]]></signal_name>
+                <unit><![CDATA[]]></unit>
+                <automatic_unit>True</automatic_unit>
+                <updateRate>500</updateRate>
+                <decimals>2</decimals>
+                <scaling_factor>1.0</scaling_factor>
+                <widget_settings>
+                    <x>168</x>
+                    <y>344</y>
+                    <width>248</width>
+                    <height>144</height>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
+                    <is_background><![CDATA[False]]></is_background>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+                <advance_widget_settings>
+                    <color_range>False</color_range>
+                    <min>0.0</min>
+                    <max>100.0</max>
+                    <warning_range>(0, 0, 0, 0)</warning_range>
+                    <critical_range>(0, 0, 0, 0)</critical_range>
+                </advance_widget_settings>
+            </component_data>
         </components>
 </ui_settings>

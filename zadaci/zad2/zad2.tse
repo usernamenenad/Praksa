@@ -139,7 +139,7 @@ model "zad2" {
             signs = "+-"
         }
         [
-            position = 8136, 7936
+            position = 8048, 7936
         ]
 
         component "core/Step" Step1 {
@@ -147,7 +147,7 @@ model "zad2" {
             step_time = "0"
         }
         [
-            position = 8016, 7912
+            position = 7928, 7912
         ]
 
         component "core/Sum" Sum2 {
@@ -195,6 +195,65 @@ model "zad2" {
             position = 8216, 7936
         ]
 
+        component "core/Discrete State Space" ss {
+            A = "A"
+            B = "B"
+            C = "C"
+            D = "D"
+            initial_conditions = "[0, 0]"
+        }
+        [
+            position = 8416, 8544
+        ]
+
+        component "core/Probe" Probe2 {
+        }
+        [
+            position = 8688, 8544
+        ]
+
+        component "core/Sum" Sum4 {
+            signs = "+-"
+        }
+        [
+            position = 7824, 8544
+        ]
+
+        component "core/Step" Step2 {
+            final_value = "5"
+            step_time = "0"
+        }
+        [
+            position = 7704, 8512
+        ]
+
+        component "core/PID controller" Lead1 {
+            controller_type = "PD"
+            filt_coef = "p * wc"
+            kd = "(p**2 - 1) / p"
+            kp = "1/p"
+        }
+        [
+            position = 8064, 8544
+        ]
+
+        component "core/PID controller" Lag1 {
+            controller_type = "PI"
+            enb_output_limit_out = "True"
+            ki = "wc/10"
+            lower_sat_lim = "0"
+        }
+        [
+            position = 8160, 8544
+        ]
+
+        component "core/Gain" k1 {
+            gain = "k"
+        }
+        [
+            position = 7992, 8544
+        ]
+
         tag Goto1 {
             value = "tag"
             scope = local
@@ -213,7 +272,7 @@ model "zad2" {
             direction = out
         }
         [
-            position = 8040, 8000
+            position = 7952, 8000
             size = 60, 20
         ]
 
@@ -242,6 +301,11 @@ model "zad2" {
             position = 8704, 8256
         ]
 
+        junction Junction18 sp
+        [
+            position = 8488, 8544
+        ]
+
         connect Goto1 Vout.out as Connection29
         connect Vout.p_node Junction9 as Connection185
         [
@@ -261,10 +325,8 @@ model "zad2" {
         connect Junction13 Flyback1.In as Connection215
         connect Probe1.in Junction13 as Connection216
         connect Constant2.out Flyback1.En as Connection217
-        connect Sum1.out k.in as Connection218
         connect k.out Lead.in as Connection219
         connect Lead.out Lag.in as Connection220
-        connect Lag.out Sum2.in as Connection221
         connect Flyback1.a_in Vin.p_node as Connection222
         connect Is1.p_node Junction16 as Connection238
         connect Flyback1.b_out Junction17 as Connection240
@@ -281,6 +343,31 @@ model "zad2" {
         [
             breakpoints = 8792, 8256; 8952, 8256; 8952, 8256
         ]
+        connect Sum1.out k.in as Connection258
+        [
+            breakpoints = 8104, 7936; 8176, 7936
+        ]
+        connect Lag.out Sum2.in as Connection262
+        [
+            breakpoints = 8424, 7936
+        ]
+        connect Step2.out Sum4.in as Connection264
+        connect k1.out Lead1.in as Connection266
+        connect Lead1.out Lag1.in as Connection267
+        connect Sum4.out k1.in as Connection268
+        [
+            breakpoints = 7880, 8544; 7952, 8544
+        ]
+        connect Lag1.out ss.in as Connection274
+        connect Sum4.in1 Junction18 as Connection280
+        [
+            breakpoints = 7784, 8600; 8488, 8600
+        ]
+        connect Junction18 ss.out as Connection281
+        [
+            breakpoints = 8488, 8544
+        ]
+        connect Probe2.in Junction18 as Connection282
     }
 
     default {
@@ -319,6 +406,17 @@ model "zad2" {
             init_rms_value = "0.0"
             init_frequency = "50.0"
             init_phase = "0.0"
+        }
+
+        "core/Discrete State Space" {
+            domain = "S-domain"
+            method = "Zero-order hold"
+            A = "[[-1]]"
+            B = "[[1]]"
+            C = "[[1], [0]]"
+            D = "[[0],[1]]"
+            initial_conditions = "[0]"
+            execution_rate = "inherit"
         }
 
         "core/Gain" {
@@ -470,5 +568,10 @@ model "zad2" {
         p = 1.145886501293211e+2
         fc = fs / 50
         wc = 2 * np.pi * fs
+        
+        A = [[-6.388778817672120e-04, -2.407480788218585e+02], [4.814961576437170e+02, 0]]
+        B = [[3.377690881929153e+04], [-4.153719543240674e+03]]
+        C = [[0, 1]]
+        D = [[0]]
     ENDCODE
 }
