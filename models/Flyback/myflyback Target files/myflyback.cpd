@@ -33,9 +33,9 @@
     </pesb>
     <analog_variables>
         <cell>
-            <name>C</name>
-            <address>0</address>
-            <type>voltage</type>
+            <name>Flyback1.L1</name>
+            <address>1</address>
+            <type>current</type>
             <initial_condition>0.0</initial_condition>
             <visible>True</visible>
         </cell>
@@ -47,9 +47,9 @@
             <visible>True</visible>
         </cell>
         <cell>
-            <name>Flyback1.L1</name>
-            <address>1</address>
-            <type>current</type>
+            <name>C</name>
+            <address>0</address>
+            <type>voltage</type>
             <initial_condition>0.0</initial_condition>
             <visible>True</visible>
         </cell>
@@ -61,9 +61,16 @@
             <visible>True</visible>
         </cell>
         <cell>
-            <name>Vout</name>
-            <address>4</address>
+            <name>Flyback1.v1</name>
+            <address>385</address>
             <type>voltage</type>
+            <initial_condition>None</initial_condition>
+            <visible>False</visible>
+        </cell>
+        <cell>
+            <name>Iout</name>
+            <address>5</address>
+            <type>current</type>
             <initial_condition>None</initial_condition>
             <visible>True</visible>
         </cell>
@@ -82,16 +89,9 @@
             <visible>False</visible>
         </cell>
         <cell>
-            <name>Flyback1.v1</name>
-            <address>385</address>
+            <name>Vout</name>
+            <address>4</address>
             <type>voltage</type>
-            <initial_condition>None</initial_condition>
-            <visible>False</visible>
-        </cell>
-        <cell>
-            <name>Iout</name>
-            <address>5</address>
-            <type>current</type>
             <initial_condition>None</initial_condition>
             <visible>True</visible>
         </cell>
