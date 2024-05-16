@@ -26,14 +26,57 @@ SETTINGS_DIR = get_settings_dir_path()
 ]]></initialization_code>
     <components>
         <component_data>
-                <id>9630e43c0dcf11efab5aa871e5984792</id>
+                <id>5526969d0f7411ef8d45e6d2b79f8780</id>
+                <name><![CDATA[Vout]]></name>
+                <type>Gauge</type>
+                <description><![CDATA[]]></description>
+                <data_type>Analog signal</data_type>
+                <code><![CDATA[# HIL API is imported as 'hil'
+# NOTE: Only read functions are available from the HIL API
+
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+# mandatory variable used for storing value that will be displayed
+displayValue = 0.0
+
+]]></code>
+                <signal_name><![CDATA[Vout]]></signal_name>
+                <unit><![CDATA[V]]></unit>
+                <automatic_unit>True</automatic_unit>
+                <updateRate>250</updateRate>
+                <decimals>2</decimals>
+                <scaling_factor>1.0</scaling_factor>
+                <widget_settings>
+                    <x>232</x>
+                    <y>200</y>
+                    <width>248</width>
+                    <height>144</height>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
+                    <is_background><![CDATA[False]]></is_background>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+                <advance_widget_settings>
+                    <color_range>False</color_range>
+                    <min>0.0</min>
+                    <max>100.0</max>
+                    <warning_range>(0, 0, 0, 0)</warning_range>
+                    <critical_range>(0, 0, 0, 0)</critical_range>
+                </advance_widget_settings>
+            </component_data>
+        <component_data>
+                <id>7fade2a2135511efae45ab4344fb7075</id>
                 <name><![CDATA[Capture/Scope]]></name>
                 <type>Capture/Scope</type>
                 <description><![CDATA[]]></description>
                 <working_mode>windowed</working_mode>
                 <widget_settings>
-                    <x>160</x>
-                    <y>112</y>
+                    <x>496</x>
+                    <y>440</y>
                     <width>120</width>
                     <height>120</height>
                     <hierarchy_position>1</hierarchy_position>
@@ -48,7 +91,7 @@ SETTINGS_DIR = get_settings_dir_path()
                         <active_capture_preset><![CDATA[Default]]></active_capture_preset>
                         <active_scope_preset><![CDATA[Default]]></active_scope_preset>
                         <capture name="Default">
-                            <time_interval>3.0</time_interval>
+                            <time_interval>5.0</time_interval>
                             <sample_rate>50000.0</sample_rate>
                             <background_color>white</background_color>
                             <layout>Grid</layout>
@@ -64,6 +107,18 @@ SETTINGS_DIR = get_settings_dir_path()
                                     <row>0</row>
                                     <viewports>
                                         <num_viewport>1</num_viewport>
+                                   </viewports>
+                               </analog>
+                                <analog>
+                                    <channel>1</channel>
+                                    <name><![CDATA[Probe1]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>1</row>
+                                    <viewports>
+                                        <num_viewport>2</num_viewport>
                                    </viewports>
                                </analog>
                             </analog_signals>
@@ -91,7 +146,7 @@ SETTINGS_DIR = get_settings_dir_path()
                             <layout>Grid</layout>
                             <legend>True</legend>
                             <show_viewports>1</show_viewports>
-                            <decimation>26.0</decimation>
+                            <decimation>1.0</decimation>
                             <time_base>0.005</time_base>
                             <analog_signals>
                                 <analog>
@@ -122,7 +177,7 @@ SETTINGS_DIR = get_settings_dir_path()
                         </scope>
                         </presets>
                     <capture>
-                        <time_interval>3.0</time_interval>
+                        <time_interval>5.0</time_interval>
                         <sample_rate>50000.0</sample_rate>
                         <background_color>white</background_color>
                         <layout>Grid</layout>
@@ -146,6 +201,18 @@ SETTINGS_DIR = get_settings_dir_path()
                                     <row>0</row>
                                     <viewports>
                                         <num_viewport>1</num_viewport>
+                                   </viewports>
+                               </analog>
+                            <analog>
+                                    <channel>1</channel>
+                                    <name><![CDATA[Probe1]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>1</row>
+                                    <viewports>
+                                        <num_viewport>2</num_viewport>
                                    </viewports>
                                </analog>
                         </analog_signals>
@@ -189,134 +256,6 @@ SETTINGS_DIR = get_settings_dir_path()
                     </plotting_options>
                 </widget_settings>
 
-            </component_data>
-        <component_data>
-                <id>5526969d0f7411ef8d45e6d2b79f8780</id>
-                <name><![CDATA[Vout]]></name>
-                <type>Gauge</type>
-                <description><![CDATA[]]></description>
-                <data_type>Analog signal</data_type>
-                <code><![CDATA[# HIL API is imported as 'hil'
-# NOTE: Only read functions are available from the HIL API
-
-# SCADA API is imported as 'panel'
-# SCADA API constants are imported as 'api_const'
-# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
-# This object can be used as an argument in SCADA API functions.
-
-# mandatory variable used for storing value that will be displayed
-displayValue = 0.0
-
-]]></code>
-                <signal_name><![CDATA[Vout]]></signal_name>
-                <unit><![CDATA[V]]></unit>
-                <automatic_unit>True</automatic_unit>
-                <updateRate>250</updateRate>
-                <decimals>2</decimals>
-                <scaling_factor>1.0</scaling_factor>
-                <widget_settings>
-                    <x>408</x>
-                    <y>128</y>
-                    <width>248</width>
-                    <height>144</height>
-                    <appearance><![CDATA[Flat]]></appearance>
-                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
-                    <is_background><![CDATA[False]]></is_background>
-                    <label><![CDATA[]]></label>
-                    <use_label>False</use_label>
-                </widget_settings>
-                <advance_widget_settings>
-                    <color_range>False</color_range>
-                    <min>0.0</min>
-                    <max>100.0</max>
-                    <warning_range>(0, 0, 0, 0)</warning_range>
-                    <critical_range>(0, 0, 0, 0)</critical_range>
-                </advance_widget_settings>
-            </component_data>
-        <component_data>
-                <id>fc082dd912d011efbde5b28d80ffe0e0</id>
-                <name><![CDATA[Probe1]]></name>
-                <type>DigitalDisplay</type>
-                <description><![CDATA[]]></description>
-                <data_type>Analog signal</data_type>
-                <code><![CDATA[# HIL API is imported as 'hil'
-# NOTE: Only read functions are available from the HIL API
-
-# SCADA API is imported as 'panel'
-# SCADA API constants are imported as 'api_const'
-# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
-# This object can be used as an argument in SCADA API functions.
-
-# mandatory variable used for storing value that will be displayed
-displayValue = 0.0
-
-]]></code>
-                <signal_name><![CDATA[Probe1]]></signal_name>
-                <unit><![CDATA[]]></unit>
-                <automatic_unit>True</automatic_unit>
-                <decimals><![CDATA[8]]></decimals>
-                <updateRate>500</updateRate>
-                <scaling_factor>1.0</scaling_factor>
-                <widget_settings>
-                    <x>672</x>
-                    <y>416</y>
-                    <width>296</width>
-                    <height>48</height>
-                    <appearance><![CDATA[Flat]]></appearance>
-                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
-                    <is_background><![CDATA[False]]></is_background>
-                    <label><![CDATA[]]></label>
-                    <use_label>False</use_label>
-                </widget_settings>
-                <advance_widget_settings>
-                    <color_range>False</color_range>
-                    <green_range>(0, 0, 0, 0)</green_range>
-                    <orange_range>(0, 0, 0, 0)</orange_range>
-                    <red_range>(0, 0, 0, 0)</red_range>
-                </advance_widget_settings>
-            </component_data>
-        <component_data>
-                <id>773f57fa134d11efb871975e4b91290d</id>
-                <name><![CDATA[Probe2]]></name>
-                <type>Gauge</type>
-                <description><![CDATA[]]></description>
-                <data_type>Analog signal</data_type>
-                <code><![CDATA[# HIL API is imported as 'hil'
-# NOTE: Only read functions are available from the HIL API
-
-# SCADA API is imported as 'panel'
-# SCADA API constants are imported as 'api_const'
-# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
-# This object can be used as an argument in SCADA API functions.
-
-# mandatory variable used for storing value that will be displayed
-displayValue = 0.0
-
-]]></code>
-                <signal_name><![CDATA[Probe2]]></signal_name>
-                <unit><![CDATA[]]></unit>
-                <automatic_unit>True</automatic_unit>
-                <updateRate>500</updateRate>
-                <decimals>2</decimals>
-                <scaling_factor>1.0</scaling_factor>
-                <widget_settings>
-                    <x>168</x>
-                    <y>344</y>
-                    <width>248</width>
-                    <height>144</height>
-                    <appearance><![CDATA[Flat]]></appearance>
-                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
-                    <is_background><![CDATA[False]]></is_background>
-                    <label><![CDATA[]]></label>
-                    <use_label>False</use_label>
-                </widget_settings>
-                <advance_widget_settings>
-                    <color_range>False</color_range>
-                    <min>0.0</min>
-                    <max>100.0</max>
-                    <warning_range>(0, 0, 0, 0)</warning_range>
-                    <critical_range>(0, 0, 0, 0)</critical_range>
-                </advance_widget_settings>
             </component_data>
         </components>
 </ui_settings>

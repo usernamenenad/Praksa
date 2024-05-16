@@ -78,13 +78,6 @@ typedef double real;
 
 
 
-
-
-
-
-
-
-
 //@cmp.def.end
 
 
@@ -98,39 +91,24 @@ typedef double real;
 
 //@cmp.var.start
 // variables
-double _constant1__out = 0.037007684712566;
 double _constant2__out = 1.0;
+double _constant3__out = 0.071403118;
 double _step1__out;
-double _step2__out;
 double _vout_va1__out;
-double _ss__A_values[4] = {0.9994203957488299, -0.02407015615907818, 0.04814031231815637, 0.9994204596242737};
-X_Int32 _ss__A_indices[4] = {0, 1, 0, 1};
-double _ss__B_values[2] = {3.382037762993528, -0.33398230717508204};
-X_Int32 _ss__B_indices[2] = {0, 0};
-;
-double _ss__C_values[1] = {1.0};
-X_Int32 _ss__C_indices[1] = {1};
-double _ss__out;
-double _ss__y1[1];
-double _ss__y2[1];
-
-double _ss__x1_new[2];
-double _ss__x2_new[2];
-double _ss__x_new[2];
 double _sum1__out;
-double _sum4__out;
-double _k__out;
-double _k1__out;
+double _gain1__out;
 double _lead__out;
-double _lead__pi_reg_out_int;
-double _lead__derivative;
-double _lead1__out;
-double _lead1__pi_reg_out_int;
-double _lead1__derivative;
+double _lead__b_coeff[2] = {114.5887, -114.58089299234136};
+double _lead__a_coeff[2] = {1.0, -0.1054051415081348};
+double _lead__a_sum;
+double _lead__b_sum;
+double _lead__delay_line_in;
 double _lag__out;
-double _lag__pi_reg_out_int;
-double _lag1__out;
-double _lag1__pi_reg_out_int;
+double _lag__b_coeff[2] = {1.0, -0.9980365045915064};
+double _lag__a_coeff[2] = {1.0, -1.0};
+double _lag__a_sum;
+double _lag__b_sum;
+double _lag__delay_line_in;
 double _sum2__out;
 X_UnInt32 _flyback1_pwm_modulator__channels[1] = {0};
 double _flyback1_pwm_modulator__limited_in[1];
@@ -141,18 +119,9 @@ X_UnInt32 _flyback1_pwm_modulator__update_mask;
 //@cmp.svar.start
 // state variables
 double _step1__state;
-double _step2__state;
-double _ss__x[2];
-double _lead__integrator_state;
-double _lead__filter_state;
-double _lead1__integrator_state;
-double _lead1__filter_state;
-double _lag__integrator_state;
-X_Int32 _lag__av_active;
-double _lag__filter_state;
-double _lag1__integrator_state;
-X_Int32 _lag1__av_active;
-double _lag1__filter_state;//@cmp.svar.end
+double _lead__states[1];
+double _lag__states[1];
+//@cmp.svar.end
 
 //
 // Tunable parameters
@@ -182,19 +151,15 @@ void ReInit_user_sp_cpu0_dev0() {
 #endif
     //@cmp.init.block.start
     _step1__state = 0x0;
-    _step2__state = 0x0;
-    double _ss__initial_conditions[2] = {0.0, 0.0};
-    _ss__x[0] = _ss__initial_conditions[0];
-    _ss__x[1] = _ss__initial_conditions[1];
-    HIL_OutAO(0x4001, 0.0f);
-    _lead__integrator_state =  0.0;
-    _lead__filter_state =  0.0;
-    _lead1__integrator_state =  0.0;
-    _lead1__filter_state =  0.0;
-    _lag__integrator_state =  0.0;
-    _lag__filter_state =  0.0;
-    _lag1__integrator_state =  0.0;
-    _lag1__filter_state =  0.0;
+    X_UnInt32 _lead__i;
+    for (_lead__i = 0; _lead__i < 1; _lead__i++) {
+        _lead__states[_lead__i] = 0;
+    }
+    X_UnInt32 _lag__i;
+    for (_lag__i = 0; _lag__i < 1; _lag__i++) {
+        _lag__states[_lag__i] = 0;
+    }
+    HIL_OutAO(0x4000, 0.0f);
     _flyback1_pwm_modulator__update_mask = 1;
     HIL_OutInt32(0x2000080 + _flyback1_pwm_modulator__channels[0], 80000); // divide by 2 is already implemented in hw
     HIL_OutInt32(0x20000c0 + _flyback1_pwm_modulator__channels[0], 0);
@@ -204,7 +169,6 @@ void ReInit_user_sp_cpu0_dev0() {
     HIL_OutInt32(0x2000300 + _flyback1_pwm_modulator__channels[0], 1);
     HIL_OutInt32(0x2000340 + _flyback1_pwm_modulator__channels[0], 0);
     HIL_OutInt32(0x2000140, _flyback1_pwm_modulator__update_mask);
-    HIL_OutAO(0x4000, 0.0f);
     //@cmp.init.block.end
 }
 
@@ -264,8 +228,8 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     //////////////////////////////////////////////////////////////////////////
     // Set tunable parameters
     //////////////////////////////////////////////////////////////////////////
-    // Generated from the component: Constant1
     // Generated from the component: Constant2
+    // Generated from the component: Constant3
 //////////////////////////////////////////////////////////////////////////
     // Output block
     //////////////////////////////////////////////////////////////////////////
@@ -276,56 +240,40 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     } else {
         _step1__out = 5.0;
     }
-    // Generated from the component: Step2
-    if (_step2__state < 0.0) {
-        _step2__out = 0.0;
-    } else {
-        _step2__out = 5.0;
-    }
     // Generated from the component: Vout.Va1
     _vout_va1__out = (HIL_InFloat(0xc80000 + 0x4));
-    // Generated from the component: ss
-    _ss__y1[0] = _ss__C_values[0] * _ss__x[_ss__C_indices[0]];
-    _ss__y2[0] = 0;
-    _ss__out = _ss__y1[0] +  _ss__y2[0];;
     // Generated from the component: Sum1
     _sum1__out = _step1__out - _vout_va1__out;
-    // Generated from the component: Probe2
-    HIL_OutAO(0x4001, (float)_ss__out);
-    // Generated from the component: Sum4
-    _sum4__out = _step2__out - _ss__out;
-    // Generated from the component: k
-    _k__out = 0.030199450595804 * _sum1__out;
-    // Generated from the component: k1
-    _k1__out = 0.030199450595804 * _sum4__out;
+    // Generated from the component: Gain1
+    _gain1__out = 0.0014 * _sum1__out;
     // Generated from the component: Lead
-    _lead__derivative = (114.57992326153034 * _k__out - _lead__filter_state) * 1799954.3071552312;
-    _lead__pi_reg_out_int = 0.008726867790757915 * _k__out + _lead__derivative;
-    _lead__out = _lead__pi_reg_out_int;
-    // Generated from the component: Lead1
-    _lead1__derivative = (114.57992326153034 * _k1__out - _lead1__filter_state) * 1799954.3071552312;
-    _lead1__pi_reg_out_int = 0.008726867790757915 * _k1__out + _lead1__derivative;
-    _lead1__out = _lead1__pi_reg_out_int;
+    X_UnInt32 _lead__i;
+    _lead__a_sum = 0.0f;
+    _lead__b_sum = 0.0f;
+    _lead__delay_line_in = 0.0f;
+    for (_lead__i = 0; _lead__i < 1; _lead__i++) {
+        _lead__b_sum += _lead__b_coeff[_lead__i + 1] * _lead__states[_lead__i];
+    }
+    _lead__a_sum += _lead__states[0] * _lead__a_coeff[1];
+    _lead__delay_line_in = _gain1__out - _lead__a_sum;
+    _lead__b_sum += _lead__b_coeff[0] * _lead__delay_line_in;
+    _lead__out = _lead__b_sum;
     // Generated from the component: Lag
-    _lag__pi_reg_out_int = _lag__integrator_state + 1.0 * _lead__out;
-    if (_lag__pi_reg_out_int < 0.0)
-        _lag__av_active = -1;
-    else if (_lag__pi_reg_out_int > 1.0)
-        _lag__av_active = 1;
-    else
-        _lag__av_active = 0;
-    _lag__out = MIN(MAX(_lag__pi_reg_out_int, 0.0), 1.0);
-    // Generated from the component: Lag1
-    _lag1__pi_reg_out_int = _lag1__integrator_state + 1.0 * _lead1__out;
-    if (_lag1__pi_reg_out_int < 0.0)
-        _lag1__av_active = -1;
-    else if (_lag1__pi_reg_out_int > 1.0)
-        _lag1__av_active = 1;
-    else
-        _lag1__av_active = 0;
-    _lag1__out = MIN(MAX(_lag1__pi_reg_out_int, 0.0), 1.0);
+    X_UnInt32 _lag__i;
+    _lag__a_sum = 0.0f;
+    _lag__b_sum = 0.0f;
+    _lag__delay_line_in = 0.0f;
+    for (_lag__i = 0; _lag__i < 1; _lag__i++) {
+        _lag__b_sum += _lag__b_coeff[_lag__i + 1] * _lag__states[_lag__i];
+    }
+    _lag__a_sum += _lag__states[0] * _lag__a_coeff[1];
+    _lag__delay_line_in = _lead__out - _lag__a_sum;
+    _lag__b_sum += _lag__b_coeff[0] * _lag__delay_line_in;
+    _lag__out = _lag__b_sum;
+    // Generated from the component: Probe1
+    HIL_OutAO(0x4000, (float)_lag__out);
     // Generated from the component: Sum2
-    _sum2__out = _lag__out + _constant1__out;
+    _sum2__out = _lag__out + _constant3__out;
     // Generated from the component: Flyback1.PWM_Modulator
     _flyback1_pwm_modulator__limited_in[0] = MIN(MAX(_sum2__out, 0.0), 1.0);
     HIL_OutInt32(0x2000040 + _flyback1_pwm_modulator__channels[0], ((X_UnInt32)((_flyback1_pwm_modulator__limited_in[0] - (0.0)) * 80000.0)));
@@ -338,8 +286,6 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
         HIL_OutInt32(0x2000000 + _flyback1_pwm_modulator__channels[0], 0x1);
     }
     HIL_OutInt32(0x2000140, _flyback1_pwm_modulator__update_mask);
-    // Generated from the component: Probe1
-    HIL_OutAO(0x4000, (float)_sum2__out);
 //@cmp.out.block.end
     //////////////////////////////////////////////////////////////////////////
     // Update block
@@ -348,28 +294,10 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     // Generated from the component: Step1
     if (_step1__state <= 0.0)
         _step1__state += 0.0001;
-    // Generated from the component: Step2
-    if (_step2__state <= 0.0)
-        _step2__state += 0.0001;
-    // Generated from the component: ss
-    _ss__x1_new[0] = _ss__A_values[0] * _ss__x[_ss__A_indices[0]];
-    _ss__x1_new[0] = _ss__x1_new[0] + _ss__A_values[1] * _ss__x[_ss__A_indices[1]];
-    _ss__x1_new[1] = _ss__A_values[2] * _ss__x[_ss__A_indices[2]];
-    _ss__x1_new[1] = _ss__x1_new[1] + _ss__A_values[3] * _ss__x[_ss__A_indices[3]];
-    _ss__x2_new[0] = _ss__B_values[0] * _lag1__out;
-    _ss__x2_new[1] = _ss__B_values[1] * _lag1__out;
-    _ss__x_new[0] = _ss__x1_new[0] +  _ss__x2_new[0];
-    _ss__x_new[1] = _ss__x1_new[1] +  _ss__x2_new[1];
-    _ss__x[0] = _ss__x_new[0];
-    _ss__x[1] = _ss__x_new[1];
     // Generated from the component: Lead
-    _lead__filter_state += _lead__derivative * 0.0001;
-    // Generated from the component: Lead1
-    _lead1__filter_state += _lead1__derivative * 0.0001;
+    _lead__states[0] = _lead__delay_line_in;
     // Generated from the component: Lag
-    _lag__integrator_state += 1570.7963267948967 * _lead__out * 0.0001;
-    // Generated from the component: Lag1
-    _lag1__integrator_state += 1570.7963267948967 * _lead1__out * 0.0001;
+    _lag__states[0] = _lag__delay_line_in;
     //@cmp.update.block.end
 }
 // ----------------------------------------------------------------------------------------

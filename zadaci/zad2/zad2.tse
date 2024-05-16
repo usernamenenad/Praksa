@@ -101,32 +101,17 @@ model "zad2" {
             size = 64, 32
         ]
 
-        component "core/Current Source" Is1 {
-            init_const_value = "20"
-        }
-        [
-            position = 8792, 8208
-            rotation = left
-        ]
-
-        component "core/Constant" Constant1 {
-            value = "D0"
-        }
-        [
-            position = 8392, 8024
-        ]
-
         component "core/Flyback" Flyback1 {
             L1 = "1e-9"
             L2 = "1e-9"
             Lm = "Lm"
             R1 = "Rp"
             R2 = "Rs"
-            Rm = "1e9"
+            Rm = "1e6"
             carrier_freq = "fs"
             ctrl_src = "Internal modulator"
             d_time = "0"
-            n1 = "10"
+            n1 = "1/n"
             ref_sig_min_max = "[0.0, 1.0]"
             signal_access = "Inherit"
         }
@@ -135,11 +120,18 @@ model "zad2" {
             size = 144, 256
         ]
 
-        component "core/Sum" Sum1 {
-            signs = "+-"
+        component "core/Constant" Constant2 {
         }
         [
-            position = 8048, 7936
+            position = 8352, 8096
+        ]
+
+        component "core/Resistor" R1 {
+            resistance = "5**2 / 100"
+        }
+        [
+            position = 8784, 8208
+            rotation = right
         ]
 
         component "core/Step" Step1 {
@@ -147,111 +139,58 @@ model "zad2" {
             step_time = "0"
         }
         [
-            position = 7928, 7912
+            position = 7896, 7944
+        ]
+
+        component "core/Sum" Sum1 {
+            signs = "+-"
+        }
+        [
+            position = 8024, 7960
+        ]
+
+        component "core/Gain" Gain1 {
+            gain = "k"
+        }
+        [
+            position = 8120, 7960
+        ]
+
+        component "core/Discrete Transfer Function" Lead {
+            a_coeff = "[1,p*wc]"
+            b_coeff = "[p,wc]"
+            domain = "S-domain"
+        }
+        [
+            position = 8200, 7960
+        ]
+
+        component "core/Discrete Transfer Function" Lag {
+            a_coeff = "[1, 0]"
+            b_coeff = "[1,wc/10]"
+            domain = "S-domain"
+        }
+        [
+            position = 8296, 7960
+        ]
+
+        component "core/Constant" Constant3 {
+            value = "D0"
+        }
+        [
+            position = 8296, 8016
         ]
 
         component "core/Sum" Sum2 {
         }
         [
-            position = 8488, 7944
+            position = 8464, 7984
         ]
 
         component "core/Probe" Probe1 {
         }
         [
-            position = 8688, 8016
-        ]
-
-        component "core/Constant" Constant2 {
-        }
-        [
-            position = 8352, 8096
-        ]
-
-        component "core/PID controller" Lead {
-            controller_type = "PD"
-            filt_coef = "p * wc"
-            kd = "(p**2 - 1) / p"
-            kp = "1/p"
-        }
-        [
-            position = 8288, 7936
-        ]
-
-        component "core/PID controller" Lag {
-            controller_type = "PI"
-            enb_output_limit_out = "True"
-            ki = "wc/10"
-            lower_sat_lim = "0"
-        }
-        [
-            position = 8384, 7936
-        ]
-
-        component "core/Gain" k {
-            gain = "k"
-        }
-        [
-            position = 8216, 7936
-        ]
-
-        component "core/Discrete State Space" ss {
-            A = "A"
-            B = "B"
-            C = "C"
-            D = "D"
-            initial_conditions = "[0, 0]"
-        }
-        [
-            position = 8416, 8544
-        ]
-
-        component "core/Probe" Probe2 {
-        }
-        [
-            position = 8688, 8544
-        ]
-
-        component "core/Sum" Sum4 {
-            signs = "+-"
-        }
-        [
-            position = 7824, 8544
-        ]
-
-        component "core/Step" Step2 {
-            final_value = "5"
-            step_time = "0"
-        }
-        [
-            position = 7704, 8512
-        ]
-
-        component "core/PID controller" Lead1 {
-            controller_type = "PD"
-            filt_coef = "p * wc"
-            kd = "(p**2 - 1) / p"
-            kp = "1/p"
-        }
-        [
-            position = 8064, 8544
-        ]
-
-        component "core/PID controller" Lag1 {
-            controller_type = "PI"
-            enb_output_limit_out = "True"
-            ki = "wc/10"
-            lower_sat_lim = "0"
-        }
-        [
-            position = 8160, 8544
-        ]
-
-        component "core/Gain" k1 {
-            gain = "k"
-        }
-        [
-            position = 7992, 8544
+            position = 8400, 7888
         ]
 
         tag Goto1 {
@@ -272,13 +211,8 @@ model "zad2" {
             direction = out
         }
         [
-            position = 7952, 8000
+            position = 7912, 8000
             size = 60, 20
-        ]
-
-        junction Junction9 pe
-        [
-            position = 8792, 8160
         ]
 
         junction Junction11 pe
@@ -286,88 +220,65 @@ model "zad2" {
             position = 8704, 8160
         ]
 
-        junction Junction13 sp
-        [
-            position = 8528, 8016
-        ]
-
-        junction Junction16 pe
-        [
-            position = 8792, 8256
-        ]
-
         junction Junction17 pe
         [
             position = 8704, 8256
         ]
 
-        junction Junction18 sp
+        junction Junction18 pe
         [
-            position = 8488, 8544
+            position = 8784, 8160
         ]
 
-        connect Goto1 Vout.out as Connection29
-        connect Vout.p_node Junction9 as Connection185
+        junction Junction19 pe
         [
-            breakpoints = 8824, 8160; 8816, 8160; 8816, 8160; 8816, 8160; 8808, 8160; 8808, 8160; 8808, 8160; 8808, 8160; 8800, 8160; 8808, 8160
+            position = 8784, 8256
         ]
-        connect Is1.n_node Junction9 as Connection187
+
+        junction Junction20 sp
+        [
+            position = 8352, 7960
+        ]
+
         connect Cf.p_node Junction11 as Connection194
-        connect Junction11 Junction9 as Connection195
-        [
-            breakpoints = 8704, 8160; 8704, 8160; 8704, 8160; 8704, 8160; 8704, 8160; 8704, 8160; 8704, 8160; 8704, 8160
-        ]
         connect Flyback1.a_out Junction11 as Connection196
-        connect Sum1.in1 From1 as Connection203
-        connect Step1.out Sum1.in as Connection204
-        connect Constant1.out Sum2.in1 as Connection209
-        connect Sum2.out Junction13 as Connection214
-        connect Junction13 Flyback1.In as Connection215
-        connect Probe1.in Junction13 as Connection216
         connect Constant2.out Flyback1.En as Connection217
-        connect k.out Lead.in as Connection219
-        connect Lead.out Lag.in as Connection220
         connect Flyback1.a_in Vin.p_node as Connection222
-        connect Is1.p_node Junction16 as Connection238
         connect Flyback1.b_out Junction17 as Connection240
-        connect Junction17 Junction16 as Connection241
-        [
-            breakpoints = 8704, 8256
-        ]
         connect Cf.n_node Junction17 as Connection242
         connect Flyback1.b_in Vin.n_node as Connection246
         [
             breakpoints = 8240, 8352
         ]
-        connect Junction16 Vout.n_node as Connection247
+        connect Vout.out Goto1 as Connection257
+        connect Junction11 Junction18 as Connection265
         [
-            breakpoints = 8792, 8256; 8952, 8256; 8952, 8256
+            breakpoints = 8704, 8160; 8704, 8160; 8704, 8160; 8704, 8160; 8704, 8160; 8704, 8160; 8704, 8160; 8704, 8160; 8704, 8160
         ]
-        connect Sum1.out k.in as Connection258
+        connect Junction18 Vout.p_node as Connection266
         [
-            breakpoints = 8104, 7936; 8176, 7936
+            breakpoints = 8792, 8160; 8808, 8160; 8800, 8160; 8808, 8160; 8808, 8160; 8808, 8160; 8808, 8160; 8816, 8160; 8816, 8160; 8816, 8160; 8824, 8160
         ]
-        connect Lag.out Sum2.in as Connection262
+        connect R1.p_node Junction18 as Connection267
+        connect Junction17 Junction19 as Connection268
         [
-            breakpoints = 8424, 7936
+            breakpoints = 8704, 8256; 8704, 8256
         ]
-        connect Step2.out Sum4.in as Connection264
-        connect k1.out Lead1.in as Connection266
-        connect Lead1.out Lag1.in as Connection267
-        connect Sum4.out k1.in as Connection268
+        connect Junction19 Vout.n_node as Connection269
         [
-            breakpoints = 7880, 8544; 7952, 8544
+            breakpoints = 8792, 8256; 8792, 8256; 8952, 8256; 8952, 8256
         ]
-        connect Lag1.out ss.in as Connection274
-        connect Sum4.in1 Junction18 as Connection280
-        [
-            breakpoints = 7784, 8600; 8488, 8600
-        ]
-        connect Junction18 ss.out as Connection281
-        [
-            breakpoints = 8488, 8544
-        ]
-        connect Probe2.in Junction18 as Connection282
+        connect R1.n_node Junction19 as Connection270
+        connect Step1.out Sum1.in as Connection271
+        connect From1 Sum1.in1 as Connection272
+        connect Sum1.out Gain1.in as Connection273
+        connect Gain1.out Lead.in as Connection274
+        connect Lead.out Lag.in as Connection275
+        connect Sum2.out Flyback1.In as Connection276
+        connect Constant3.out Sum2.in1 as Connection278
+        connect Lag.out Junction20 as Connection279
+        connect Junction20 Sum2.in as Connection280
+        connect Probe1.in Junction20 as Connection281
     }
 
     default {
@@ -386,65 +297,18 @@ model "zad2" {
             _tunable = "False"
         }
 
-        "core/Current Source" {
-            sig_input = "False"
-            type = "signal generator"
-            param_set = "1phase"
-            parent_label = ""
-            addr = "0"
-            spc_nb = "0"
-            execution_rate = "100e-6"
-            cpd_visible = "True"
-            enable_snb = "False"
-            snb_type = "R1"
-            R1 = "inf"
-            C1 = "1e-06"
-            override_signal_name = "False"
-            signal_name = ""
-            init_source_nature = "Constant"
-            init_const_value = "0.0"
-            init_rms_value = "0.0"
-            init_frequency = "50.0"
-            init_phase = "0.0"
-        }
-
-        "core/Discrete State Space" {
-            domain = "S-domain"
+        "core/Discrete Transfer Function" {
+            domain = "Z-domain"
             method = "Zero-order hold"
-            A = "[[-1]]"
-            B = "[[1]]"
-            C = "[[1], [0]]"
-            D = "[[0],[1]]"
-            initial_conditions = "[0]"
+            b_coeff = "[1,1]"
+            a_coeff = "[1,1]"
+            signal_out_type = "inherit"
             execution_rate = "inherit"
         }
 
         "core/Gain" {
             gain = "1"
             multiplication = "Element-wise(K.*u)"
-            _tunable = "False"
-            execution_rate = "inherit"
-        }
-
-        "core/PID controller" {
-            controller_type = "PID"
-            kp = "1"
-            kp_source = "internal"
-            ki = "1"
-            ki_source = "internal"
-            kd = "0"
-            kd_source = "internal"
-            filt_coef = "100"
-            int_init_value = "0"
-            filt_init_value = "0"
-            enb_output_limit_out = "False"
-            show_reset = "none"
-            upper_sat_lim = "1"
-            upper_sat_lim_source = "internal"
-            lower_sat_lim = "-1"
-            lower_sat_lim_source = "internal"
-            enb_anti_windup_out = "False"
-            signal_out_type = "inherit"
             _tunable = "False"
             execution_rate = "inherit"
         }
@@ -458,6 +322,11 @@ model "zad2" {
             streaming_en = "False"
             streaming_er_idx = "0"
             execution_rate = "inherit"
+        }
+
+        "core/Resistor" {
+            resistance = "1"
+            param_set = ""
         }
 
         "core/Step" {
@@ -555,23 +424,19 @@ model "zad2" {
         # To get the model file path, use 'mdl.get_model_file_path()'
         # To print information to the console, use info()
         
-        Rp = 0.00001
-        Rs = 0.000001
-        Lm = 10e-3
-        Cf = 5e-3
+        Rp = 0.001
+        Rs = 0.0001
+        Lm = 5e-3
+        Cf = 10e-3
         Vin = 230 * np.sqrt(2)
-        D0 = 0.037007684712566
+        D0 = 0.071403118
         Vref = 5
         fs = 2500
+        n = 0.2
         
-        k = 0.030199450595804
-        p = 1.145886501293211e+2
-        fc = fs / 50
-        wc = 2 * np.pi * fs
-        
-        A = [[-6.388778817672120e-04, -2.407480788218585e+02], [4.814961576437170e+02, 0]]
-        B = [[3.377690881929153e+04], [-4.153719543240674e+03]]
-        C = [[0, 1]]
-        D = [[0]]
+        k = 0.0014
+        p = 114.5887
+        fc = fs / 80
+        wc = 2 * np.pi * fc
     ENDCODE
 }
