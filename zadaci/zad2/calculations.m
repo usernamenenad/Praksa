@@ -1,83 +1,118 @@
 %% Parametri sistema
-Pout = [7.5, 100];
+PoutList = [7.5, 100];
 Vout = 5;
 Vin = 230 * sqrt(2);
-n = 0.4;
-Rp = 0.00001;
-Rs = 0.000001;
-fs = 2500;
-PlossT = 0.4;
+n = 0.2;
 k = 0.03;
+Rp = 0.001;
+Rs = 0.0001;
+fs = 2500;
 
-%% Računanje radnog ciklusa
-D0 = zeros(1, 2);
+%% Load
+IoutList = zeros(1, 2);
 for i = 1:2
-    pout = Pout(i);
-    d = roots([n * Vin + Vout, (n^2 * Rp - Rs)*pout/Vout - n*Vin - 2*Vout, pout/Vout * Rs + Vout]);
-    D0(i) = d(2);
-end
-clear d;
-%% Računanje magnetizacione induktivnosti Lm
-LmCalc = zeros(1, 2);
-for i = 1:2
-    d0 = D0(i);
-    Iout = Pout(i) / Vout;
-    a = d0 * ((1 - d0) * Vin - n*Rp*Iout);
-    b = 2 * fs * n * Iout;
-    LmCalc(i) = a / b * 1e3;
-end
-Lm = 10e-3;
-clear d0 Iout a b
-%% Provjera
-ILMCalc = zeros(1, 2);
-deltaILMCalc = zeros(1, 2);
-Losses = zeros(1, 2);
-for i = 1:2
-    ILMCalc(i) = n * Pout(i) / ((1 - D0(i)) * Vout);
-    Losses(i) = (D0(i) * Rp + (1 - D0(i)) * Rs / n^2) * ILMCalc(i);
+    IoutList(i) = PoutList(i) / Vout;
 end
 
-%% Odabir izlazne kapacitivnosti Cf
-CfCalc = zeros(1, 2);
+%% Duty ratio
+D0List = zeros(1, 2);
 for i = 1:2
-    CfCalc(i) = D0(i) * Pout(i) / (2 * k * fs * Vout^2) * 1e3;
+    Iout = IoutList(i);
+    a = n * Vin + Vout;
+    b = (n^2 * Rp - Rs) * Iout - n * Vin - 2 * Vout;
+    c = Vout + Rs * Iout;
+    d = roots([a, b, c]);
+    D0List(i) = d(2);
 end
-Cf = 5e-3;
+clear a b c d Rl
 
-%% State space and transfer function
-pout = Pout(2);
-d0 = D0(2);
-A = [-(n^2 * d0 * Rp + (1 - d0) * Rs) / (n^2 * Lm), -(1 - d0)/(n * Lm); (1 - d0)/(n * Cf), 0];
-B = [0, d0/Lm, ((1 - d0)*Vin - n*Rp*pout/Vout)/(Lm * (1- d0)^2); -1/Cf, 0, -pout/(Vout * Cf * (1-d0))];
+%% Induktivnost Lm
+LmList = zeros(1, 2);
+for i = 1:2
+    D0 = D0List(i);
+    Iout = IoutList(i);
+    a = D0 * ((1 - D0)*Vin - n * Rp * Iout);
+    b = 2 * n * fs * Iout;
+    LmList(i) = a / b * 1e3;
+end
+Lm = 20e-3;
+
+clear D0 Rl a b
+
+%% Kapacitivnost Cf
+CfList = zeros(1, 2);
+for i = 1:2
+    D0 = D0List(i);
+    Iout = IoutList(i); 
+    a = D0 * Iout;
+    b = 2 * k * fs * Vout;
+    CfList(i) = a / b * 1e3;
+end
+Cf = 100e-3;
+
+clear D0 Rl a b
+
+%% Funkcija prenosa
+D0 = D0List(1);
+Iout = IoutList(1);
+
+A11 = - (n^2 * D0 * Rp + (1 - D0) * Rs) / (n^2 * Lm);
+A12 = -(1 - D0) / (n * Lm);
+A21 = (1 - D0) / (n * Cf);
+A22 = 0;
+
+A = [A11, A12; A21, A22];
+
+clear A11 A12 A21 A22
+
+B11 = 0;
+B12 = D0 / Lm;
+B13 = ((1 - D0) * Vin - n * Rp * Iout) / (Lm * (1 - D0)^2);
+B21 = -1/Cf;
+B22 = 0;
+B23 = -Iout / (Cf * (1 - D0));
+
+B = [B11, B12, B13; B21, B22, B23];
+
+clear B11 B12 B21 B22
+
 C = [0, 1];
 D = [0, 0, 0];
 
 sys = ss(A, B, C, D);
 G = tf(sys);
-
 GDV = G(3);
-
-%% Projektovanje Lead-Lag regulatora
-fc = fs / 20;
-wc = 2 * pi * fc;
-k = 1 / abs(evalfr(GDV, 1j*wc));
-G1 = k * GDV;
-
-%% Trenutna margina faze
-
-phi1 = rad2deg(angle(evalfr(G1, 1j*wc))) - 180;
-phim = 80;
-phicor = 89;
-
-p = sqrt((1 + sind(phicor)) / (1 - sind(phicor)));
-
 s = tf("s");
-Glead = (p*s + wc) / (s + p*wc);
-Glag = (s + wc/10) / s;
-margin(Glead * G1)
 
+%% 
+
+fc = fs / 50;
+wc = 2 * pi * fc;
+wl = wc / 10;
+
+k = 1 / abs(evalfr(GDV, 1j*wc));
+phicor = 86;
+p = sqrt((1 + sind(phicor)) / (1 - sind(phicor)));
+Glead = (p*s + wc) / (s + p*wc);
+Glag = (s + wl) / s;
+
+REG = k * Glead * Glag;
+N = p * wc;
+I = k * wl / p;
+P = k/p + k * (1 - 1/p^2) * wl/wc;
+D = k/N * (p - 1/p + (1/p^2 -1) * wl/wc);
+PID = P + I/s + D * N * s / (s + N);
+
+margin(k * Glead * GDV)
+X = feedback(PID * GDV, 1);
 %%
-X = feedback(Glag * Glead * G1, 1);
-step(X, RespConfig("Amplitude", 5));
-%%
-bode(X)
+ILMList = zeros(1, 2);
+ReqList = zeros(1, 2);
+Losses = zeros(1, 2);
+for i = 1:2
+    D0 = D0List(i);
+    Rl = RlList(i);
+    ILMList(i) = n^2 * D0 * Vin / ((1 - D0)^2 * Rl + (1 - D0)*Rs + n^2 * D0 * Rp);
+    ReqList(i) = D0 * Rp + (1 - D0) / n^2 * Rs;
+    Losses(i) = ILMList(i)^2 * ReqList(i);
+end

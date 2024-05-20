@@ -33,6 +33,13 @@
     </pesb>
     <analog_variables>
         <cell>
+            <name>Flyback1.Lm</name>
+            <address>3</address>
+            <type>current</type>
+            <initial_condition>0.0</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
             <name>Flyback1.L1</name>
             <address>1</address>
             <type>current</type>
@@ -42,13 +49,6 @@
         <cell>
             <name>Flyback1.L2</name>
             <address>2</address>
-            <type>current</type>
-            <initial_condition>0.0</initial_condition>
-            <visible>True</visible>
-        </cell>
-        <cell>
-            <name>Flyback1.Lm</name>
-            <address>3</address>
             <type>current</type>
             <initial_condition>0.0</initial_condition>
             <visible>True</visible>
@@ -68,16 +68,23 @@
             <visible>True</visible>
         </cell>
         <cell>
-            <name>Flyback1.il</name>
-            <address>384</address>
+            <name>Ia1</name>
+            <address>5</address>
             <type>current</type>
             <initial_condition>None</initial_condition>
-            <visible>False</visible>
+            <visible>True</visible>
         </cell>
         <cell>
             <name>Flyback1.v1</name>
             <address>385</address>
             <type>voltage</type>
+            <initial_condition>None</initial_condition>
+            <visible>False</visible>
+        </cell>
+        <cell>
+            <name>Flyback1.il</name>
+            <address>384</address>
+            <type>current</type>
             <initial_condition>None</initial_condition>
             <visible>False</visible>
         </cell>
@@ -675,6 +682,24 @@
 <digital_variables>
     </digital_variables>
 
+    <tunable_params>
+        <tunable_param>
+            <name>Output power</name>
+            <addr>[1426063616]</addr>
+            <min>1.5</min>
+            <max>20.0</max>
+            <def_value>1.5</def_value>
+            <unit></unit>
+            <widget_type>float</widget_type>
+            <format>real</format>
+            <size>1</size>
+            <param_type>scada input</param_type>
+            <cpu_type>user_sp_cpu</cpu_type>
+            <cpu_idx>0</cpu_idx>
+            <execution_rate>0.0001</execution_rate>
+            <visible>True</visible>
+        </tunable_param>
+    </tunable_params>
 
 
     <dsp_monitors>
