@@ -90,7 +90,7 @@ typedef double real;
 //@cmp.var.start
 // variables
 double _enable_flyback__out = 1.0;
-double _output_power__out;
+double _output_current__out;
 double _step1__out;
 double _vout_va1__out;
 double _sum1__out;
@@ -215,8 +215,8 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     // Output block
     //////////////////////////////////////////////////////////////////////////
     //@cmp.out.block.start
-    // Generated from the component: Output power
-    _output_power__out = XIo_InFloat(0x55000100);
+    // Generated from the component: Output current
+    _output_current__out = XIo_InFloat(0x55000100);
     // Generated from the component: Step1
     if (_step1__state < 0.0) {
         _step1__out = 0.0;
@@ -226,12 +226,12 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     // Generated from the component: Vout.Va1
     _vout_va1__out = (HIL_InFloat(0xc80000 + 0x4));
     // Generated from the component: Isp1.Is1
-    HIL_OutFloat(137101312, (float) _output_power__out);
+    HIL_OutFloat(137101312, (float) _output_current__out);
     // Generated from the component: Sum1
     _sum1__out = _step1__out - _vout_va1__out;
     // Generated from the component: PID
-    _pid__derivative = (0.0003425175542010109 * _sum1__out - _pid__filter_state) * 8996.344293994334;
-    _pid__pi_reg_out_int = _pid__integrator_state + 0.014573638094981542 * _sum1__out + _pid__derivative;
+    _pid__derivative = (4.6130356800000005e-08 * _sum1__out - _pid__filter_state) * 100.0;
+    _pid__pi_reg_out_int = _pid__integrator_state + 5.556000000000001e-06 * _sum1__out + _pid__derivative;
     if (_pid__pi_reg_out_int < 0.0)
         _pid__av_active = -1;
     else if (_pid__pi_reg_out_int > 1.0)
@@ -262,7 +262,9 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     if (_step1__state <= 0.0)
         _step1__state += 0.0001;
     // Generated from the component: PID
-    _pid__integrator_state += 0.11860842979798401 * _sum1__out * 0.0001;
+    if (!_pid__av_active || ((_pid__av_active < 0 && _sum1__out > 0 ) || (_pid__av_active > 0 && _sum1__out < 0 ))) {
+        _pid__integrator_state += 0.00044165341812400647 * _sum1__out * 0.0001;
+    }
     _pid__filter_state += _pid__derivative * 0.0001;
     //@cmp.update.block.end
 }

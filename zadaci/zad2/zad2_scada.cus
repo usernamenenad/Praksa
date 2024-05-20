@@ -66,30 +66,6 @@ SETTINGS_DIR = get_settings_dir_path()
                                         <num_viewport>1</num_viewport>
                                    </viewports>
                                </analog>
-                                <analog>
-                                    <channel>1</channel>
-                                    <name><![CDATA[Ia1]]></name>
-                                    <is_locked>False</is_locked>
-                                    <vertical_scale>Auto</vertical_scale>
-                                    <vertical_offset>0</vertical_offset>
-                                    <coupling>False</coupling>
-                                    <row>1</row>
-                                    <viewports>
-                                        <num_viewport>2</num_viewport>
-                                   </viewports>
-                               </analog>
-                                <analog>
-                                    <channel>2</channel>
-                                    <name><![CDATA[Flyback1.Lm]]></name>
-                                    <is_locked>False</is_locked>
-                                    <vertical_scale>Auto</vertical_scale>
-                                    <vertical_offset>0</vertical_offset>
-                                    <coupling>False</coupling>
-                                    <row>2</row>
-                                    <viewports>
-                                        <num_viewport>2</num_viewport>
-                                   </viewports>
-                               </analog>
                             </analog_signals>
                             <digital_signals>
                             </digital_signals>
@@ -158,30 +134,6 @@ SETTINGS_DIR = get_settings_dir_path()
                                     <row>0</row>
                                     <viewports>
                                         <num_viewport>1</num_viewport>
-                                   </viewports>
-                               </analog>
-                            <analog>
-                                    <channel>1</channel>
-                                    <name><![CDATA[Ia1]]></name>
-                                    <is_locked>False</is_locked>
-                                    <vertical_scale>Auto</vertical_scale>
-                                    <vertical_offset>0</vertical_offset>
-                                    <coupling>False</coupling>
-                                    <row>1</row>
-                                    <viewports>
-                                        <num_viewport>2</num_viewport>
-                                   </viewports>
-                               </analog>
-                            <analog>
-                                    <channel>2</channel>
-                                    <name><![CDATA[Flyback1.Lm]]></name>
-                                    <is_locked>False</is_locked>
-                                    <vertical_scale>Auto</vertical_scale>
-                                    <vertical_offset>0</vertical_offset>
-                                    <coupling>False</coupling>
-                                    <row>2</row>
-                                    <viewports>
-                                        <num_viewport>2</num_viewport>
                                    </viewports>
                                </analog>
                         </analog_signals>
@@ -258,8 +210,8 @@ displayValue = 0.0
                 </advance_widget_settings>
             </component_data>
         <component_data>
-                <id>a681f5d915e711ef9f6e870ea07a573f</id>
-                <name><![CDATA[Output power]]></name>
+                <id>da52dae5168a11ef9d93f3447f08d04b</id>
+                <name><![CDATA[Output current]]></name>
                 <type>TextBoxMacro</type>
                 <description><![CDATA[]]></description>
                 <on_use_code active="True"><![CDATA[# HIL API is imported as 'hil'
@@ -269,7 +221,7 @@ displayValue = 0.0
 # This object can be used as an argument in SCADA API functions.
 # NOTE: entered value is available through variable 'inputValue'
 
-hil.model_write('Output power', inputValue)]]></on_use_code>
+hil.model_write('Output current', inputValue)]]></on_use_code>
                 <on_start_code active="True"><![CDATA[# NOTE: The code specified in this handler will be executed on simulation start.
 # NOTE: Variables specified here will be available in other handlers.
 # HIL API is imported as 'hil'
@@ -306,15 +258,15 @@ widgetValue = None
 # Change the widget value by setting this variable.
 # NOTE: If you do not specify a 'widgetValue' variable or assign 'None' to it,
 # the widget value will not be changed.
-widgetValue = hil.model_read('Output power')
+widgetValue = hil.model_read('Output current')
 ]]></on_timer_code>
                 <on_start_code_source><![CDATA[Macro code]]></on_start_code_source>
-                <inputValue><![CDATA[20.0]]></inputValue>
+                <inputValue><![CDATA[1.5]]></inputValue>
                 <inputValueType>float</inputValueType>
                 <unit><![CDATA[]]></unit>
                 <widget_settings>
-                    <x>992</x>
-                    <y>416</y>
+                    <x>1032</x>
+                    <y>368</y>
                     <width>144</width>
                     <height>32</height>
                     <inputWidgetWidth>80</inputWidgetWidth>

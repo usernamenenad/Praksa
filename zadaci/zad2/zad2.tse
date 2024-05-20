@@ -9,7 +9,7 @@ model "zad2" {
         hil_device = "VHIL+"
         hil_configuration_id = 1
         simulation_method = exact
-        simulation_time_step = 20e-6
+        simulation_time_step = 1e-6
         simulation_discret_scaling = 1.0
         dsp_timer_periods = 100e-6, 50e-3
         ss_calc_method = "systematic elimination"
@@ -80,7 +80,7 @@ model "zad2" {
             Lm = "Lm"
             R1 = "Rp"
             R2 = "Rs"
-            Rm = "1e9"
+            Rm = "1e6"
             carrier_freq = "fs"
             ctrl_src = "Internal modulator"
             d_time = "0"
@@ -97,7 +97,7 @@ model "zad2" {
             init_const_value = "Vin"
         }
         [
-            position = 8208, 8208
+            position = 8208, 8160
             rotation = right
         ]
 
@@ -142,40 +142,21 @@ model "zad2" {
         ]
 
         component "core/PID controller" PID {
+            enb_anti_windup_out = "True"
             enb_output_limit_out = "True"
-            filt_coef = "N"
-            kd = "D"
-            ki = "I"
-            kp = "P"
+            kd = "Kd"
+            ki = "Ki"
+            kp = "Kp"
             lower_sat_lim = "0"
         }
         [
-            position = 8616, 8472
-        ]
-
-        component "core/SCADA Input" "Output power" {
-            def_value = "1.5"
-            max = "20"
-            min = "1.5"
-            signal_access = "Inherit"
-            unit = ""
-        }
-        [
-            position = 8656, 7984
+            position = 8568, 8472
         ]
 
         component "core/Probe" Probe1 {
         }
         [
-            position = 8768, 8376
-        ]
-
-        component "core/Current Measurement" Ia1 {
-        }
-        [
-            position = 8704, 8248
-            rotation = right
-            size = 64, 32
+            position = 8728, 8376
         ]
 
         component "core/Signal Controlled Current Source" Isp1 {
@@ -184,6 +165,17 @@ model "zad2" {
             position = 8784, 8128
             rotation = left
             size = 64, 32
+        ]
+
+        component "core/SCADA Input" "Output current" {
+            def_value = "1.5"
+            max = "20"
+            min = "1.5"
+            signal_access = "Inherit"
+            unit = ""
+        }
+        [
+            position = 8632, 7888
         ]
 
         tag Goto1 {
@@ -215,7 +207,7 @@ model "zad2" {
             direction = in
         }
         [
-            position = 8800, 8472
+            position = 8760, 8472
             size = 60, 20
         ]
 
@@ -230,66 +222,71 @@ model "zad2" {
             size = 60, 20
         ]
 
-        junction Junction1 pe
-        [
-            position = 8656, 8080
-        ]
-
-        junction Junction5 sp
-        [
-            position = 8704, 8472
-        ]
-
-        junction Junction6 pe
-        [
-            position = 8656, 8176
-        ]
-
-        junction Junction7 pe
-        [
-            position = 8784, 8080
-        ]
-
         junction Junction8 pe
         [
             position = 8784, 8176
         ]
 
-        connect Vin.p_node Flyback1.a_in as Connection1
+        junction Junction9 sp
+        [
+            position = 8664, 8472
+        ]
+
+        junction Junction10 pe
+        [
+            position = 8784, 8080
+        ]
+
+        junction Junction11 pe
+        [
+            position = 8656, 8080
+        ]
+
+        junction Junction12 pe
+        [
+            position = 8656, 8176
+        ]
+
         connect Vin.n_node Flyback1.b_in as Connection2
+        [
+            breakpoints = 8208, 8200; 8208, 8272
+        ]
         connect Flyback1.En "Enable flyback.out" as Connection3
-        connect Cf.p_node Junction1 as Connection7
-        connect Junction1 Flyback1.a_out as Connection8
         connect From1 Sum1.in1 as Connection20
         connect From2 Flyback1.In as Connection26
         connect Vout.out Goto1 as Connection37
         connect Step1.out Sum1.in as Connection38
         connect PID.in Sum1.out as Connection39
-        connect PID.out Junction5 as Connection50
-        connect Junction5 Goto2 as Connection51
-        connect Probe1.in Junction5 as Connection52
-        connect Ia1.p_node Cf.n_node as Connection54
-        connect Flyback1.b_out Junction6 as Connection55
-        connect Ia1.n_node Junction6 as Connection57
-        connect Junction1 Junction7 as Connection77
-        [
-            breakpoints = 8656, 8080; 8656, 8080; 8664, 8080
-        ]
-        connect Junction7 Vout.p_node as Connection78
-        [
-            breakpoints = 8784, 8080; 8784, 8080; 8792, 8080; 8808, 8080
-        ]
-        connect Isp1.n_node Junction7 as Connection79
         connect Vout.n_node Junction8 as Connection80
         [
             breakpoints = 8808, 8176; 8792, 8176
         ]
-        connect Junction8 Junction6 as Connection81
-        [
-            breakpoints = 8784, 8176; 8784, 8176; 8656, 8176
-        ]
         connect Isp1.p_node Junction8 as Connection82
-        connect "Output power.out" Isp1.in as Connection83
+        connect Goto2 Junction9 as Connection113
+        connect Junction9 Probe1.in as Connection114
+        [
+            breakpoints = 8664, 8472; 8664, 8472
+        ]
+        connect PID.out Junction9 as Connection115
+        connect "Output current.out" Isp1.in as Connection116
+        connect Isp1.n_node Junction10 as Connection118
+        connect Junction10 Vout.p_node as Connection119
+        [
+            breakpoints = 8784, 8080; 8784, 8080; 8784, 8080; 8792, 8080; 8808, 8080
+        ]
+        connect Flyback1.a_out Junction11 as Connection121
+        connect Junction11 Junction10 as Connection122
+        connect Cf.p_node Junction11 as Connection123
+        connect Vin.p_node Flyback1.a_in as Connection124
+        connect Junction8 Junction12 as Connection126
+        [
+            breakpoints = 8784, 8176; 8784, 8176; 8784, 8176
+        ]
+        connect Junction12 Flyback1.b_out as Connection127
+        [
+            breakpoints = 8656, 8176; 8656, 8176
+        ]
+        connect Cf.n_node Junction12 as Connection128
     }
 
     default {
@@ -391,30 +388,6 @@ model "zad2" {
             init_phase = "0.0"
         }
 
-        "core/Current Measurement" {
-            signal_access = "inherit"
-            bw_limit = "False"
-            frequency = "10e3"
-            comparator_enable = "False"
-            operator = "greater"
-            threshold = "0"
-            cmp_abs_value = "False"
-            feed_forward = "false"
-            sig_output = "False"
-            sig_output_filt_and_full_bw = "False"
-            execution_rate = "100e-6"
-            addr = "0"
-            nd_msr_estimation = "false"
-            dev_cpl_msr = "false"
-            host_device = "0"
-            output_to_device = "0"
-            dev_cpl_index = "0"
-            dev_cpl_var_nb = "0"
-            visible = "True"
-            override_signal_name = "False"
-            signal_name = ""
-        }
-
         "core/Flyback" {
             signal_access = "inherit"
             ctrl_src = "Digital inputs"
@@ -487,17 +460,13 @@ model "zad2" {
         fs = 2500
         
         Lm = 20e-3
-        Cf = 100e-3
+        Cf = 5e-3
         
-        fc = fs / 50
-        wc = 2 * np.pi * fc
-        wl = wc / 10
-        k = 0.108113985856915
-        p = 28.636253282915310
+        Ku = 2.778e-5
+        Tu = 0.02516
         
-        N = p * wc
-        I = k * wl / p
-        P = k/p + k * (1 - 1/(p**2)) * wl/wc
-        D = k/N * (p - 1/p + (1/(p**2) - 1) * wl/wc)
+        Kp = 0.2 * Ku
+        Ki = 0.4 * Ku / Tu
+        Kd = 0.066 * Ku * Tu
     ENDCODE
 }
