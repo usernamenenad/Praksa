@@ -80,6 +80,9 @@ typedef double real;
 
 
 
+
+
+
 //@cmp.def.end
 
 
@@ -93,16 +96,23 @@ typedef double real;
 
 //@cmp.var.start
 // variables
-double _constant1__out = 5.0;
 double _enable_flyback__out = 1.0;
-double _output_resistance__out;
+double _output_power__out;
+double _referent_voltage__out = 5.0;
 double _vout_va1__out;
+double _product2__out;
 double _sum1__out;
+double _product1__out;
 double _gain1__out;
+double _rate_limiter__out;
+
+double _rate_limiter__rising_rate_lim[1];
+double _rate_limiter__falling_rate_lim[1];
+
 double _gain2__out;
 double _glag1__out;
-double _glag1__b_coeff[2] = {1.0, -0.9999963525299823};
-double _glag1__a_coeff[2] = {1.0, -0.9999999997222151};
+double _glag1__b_coeff[2] = {1.0, -0.999992705059966};
+double _glag1__a_coeff[2] = {1.0, -0.9999999994444304};
 double _glag1__a_sum;
 double _glag1__b_sum;
 double _glag1__delay_line_in;
@@ -121,6 +131,8 @@ X_UnInt32 _flyback1_pwm_modulator__update_mask;
 
 //@cmp.svar.start
 // state variables
+double _rate_limiter__state;
+X_Int32 _rate_limiter__first_step;
 double _glag1__states[1];
 double _glag2__states[1];
 //@cmp.svar.end
@@ -129,6 +141,7 @@ double _glag2__states[1];
 // Tunable parameters
 //
 static struct Tunable_params {
+    double _gain1__gain;
 } __attribute__((__packed__)) tunable_params;
 
 void *tunable_params_dev0_cpu0_ptr = &tunable_params;
@@ -152,6 +165,8 @@ void ReInit_user_sp_cpu0_dev0() {
     printf("\n\rReInitTimer");
 #endif
     //@cmp.init.block.start
+    _rate_limiter__state = 0;
+    _rate_limiter__first_step = 1;
     HIL_OutFloat(137363456, 0.0);
     X_UnInt32 _glag1__i;
     for (_glag1__i = 0; _glag1__i < 1; _glag1__i++) {
@@ -161,6 +176,7 @@ void ReInit_user_sp_cpu0_dev0() {
     for (_glag2__i = 0; _glag2__i < 1; _glag2__i++) {
         _glag2__states[_glag2__i] = 0;
     }
+    HIL_OutAO(0x4000, 0.0f);
     _flyback1_pwm_modulator__update_mask = 1;
     HIL_OutInt32(0x2000080 + _flyback1_pwm_modulator__channels[0], 80000); // divide by 2 is already implemented in hw
     HIL_OutInt32(0x20000c0 + _flyback1_pwm_modulator__channels[0], 0);
@@ -170,7 +186,6 @@ void ReInit_user_sp_cpu0_dev0() {
     HIL_OutInt32(0x2000300 + _flyback1_pwm_modulator__channels[0], 1);
     HIL_OutInt32(0x2000340 + _flyback1_pwm_modulator__channels[0], 0);
     HIL_OutInt32(0x2000140, _flyback1_pwm_modulator__update_mask);
-    HIL_OutAO(0x4000, 0.0f);
     //@cmp.init.block.end
 }
 
@@ -230,24 +245,41 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     //////////////////////////////////////////////////////////////////////////
     // Set tunable parameters
     //////////////////////////////////////////////////////////////////////////
-    // Generated from the component: Constant1
     // Generated from the component: Enable flyback
+    // Generated from the component: Referent voltage
 //////////////////////////////////////////////////////////////////////////
     // Output block
     //////////////////////////////////////////////////////////////////////////
     //@cmp.out.block.start
-    // Generated from the component: Output resistance
-    _output_resistance__out = XIo_InFloat(0x55000100);
+    // Generated from the component: Output power
+    _output_power__out = XIo_InFloat(0x55000100);
     // Generated from the component: Vout.Va1
     _vout_va1__out = (HIL_InFloat(0xc80000 + 0x5));
-    // Generated from the component: RL1.Vs
-    HIL_OutFloat(137363456, (float) _output_resistance__out);
+    // Generated from the component: Product2
+    _product2__out = (_referent_voltage__out * _referent_voltage__out);
     // Generated from the component: Sum1
-    _sum1__out = _constant1__out - _vout_va1__out;
+    _sum1__out = _referent_voltage__out - _vout_va1__out;
+    // Generated from the component: Product1
+    _product1__out = (_product2__out) * 1.0 / (_output_power__out);
     // Generated from the component: Gain1
-    _gain1__out = 0.456309445756021 * _sum1__out;
+    _gain1__out = tunable_params._gain1__gain * _sum1__out;
+    // Generated from the component: Rate limiter
+    _rate_limiter__rising_rate_lim[0] = 2.0 * 0.0001;
+    _rate_limiter__falling_rate_lim[0] = -2.0 * 0.0001;
+    if (_rate_limiter__first_step) {
+        _rate_limiter__out = _product1__out;
+        _rate_limiter__state = _product1__out;
+    } else {
+        _rate_limiter__out = _product1__out;
+        if (_product1__out - _rate_limiter__state > _rate_limiter__rising_rate_lim[0])
+            _rate_limiter__out = _rate_limiter__state + (_rate_limiter__rising_rate_lim[0]);
+        if (_product1__out - _rate_limiter__state < _rate_limiter__falling_rate_lim[0])
+            _rate_limiter__out = _rate_limiter__state + (_rate_limiter__falling_rate_lim[0]);
+    }
     // Generated from the component: Gain2
     _gain2__out = 0.008726867790758 * _gain1__out;
+    // Generated from the component: RL1.Vs
+    HIL_OutFloat(137363456, (float) _rate_limiter__out);
     // Generated from the component: Glag1
     X_UnInt32 _glag1__i;
     _glag1__a_sum = 0.0f;
@@ -274,6 +306,8 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     _glag2__out = _glag2__b_sum;
     // Generated from the component: Limit1
     _limit1__out = MIN(MAX(_glag2__out, 0.0), 1.0);
+    // Generated from the component: Duty ratio probe
+    HIL_OutAO(0x4000, (float)_limit1__out);
     // Generated from the component: Flyback1.PWM_Modulator
     _flyback1_pwm_modulator__limited_in[0] = MIN(MAX(_limit1__out, 0.0), 1.0);
     HIL_OutInt32(0x2000040 + _flyback1_pwm_modulator__channels[0], ((X_UnInt32)((_flyback1_pwm_modulator__limited_in[0] - (0.0)) * 80000.0)));
@@ -286,13 +320,21 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
         HIL_OutInt32(0x2000000 + _flyback1_pwm_modulator__channels[0], 0x1);
     }
     HIL_OutInt32(0x2000140, _flyback1_pwm_modulator__update_mask);
-    // Generated from the component: Probe1
-    HIL_OutAO(0x4000, (float)_limit1__out);
 //@cmp.out.block.end
     //////////////////////////////////////////////////////////////////////////
     // Update block
     //////////////////////////////////////////////////////////////////////////
     //@cmp.update.block.start
+    // Generated from the component: Rate limiter
+    _rate_limiter__rising_rate_lim[0] = 2.0 * 0.0001;
+    _rate_limiter__falling_rate_lim[0] = -2.0 * 0.0001;
+    if (_product1__out - _rate_limiter__state > _rate_limiter__rising_rate_lim[0])
+        _rate_limiter__state += _rate_limiter__rising_rate_lim[0];
+    else  if (_product1__out - _rate_limiter__state < _rate_limiter__falling_rate_lim[0])
+        _rate_limiter__state += (_rate_limiter__falling_rate_lim[0]);
+    else
+        _rate_limiter__state = _product1__out;
+    _rate_limiter__first_step = 0;
     // Generated from the component: Glag1
     _glag1__states[0] = _glag1__delay_line_in;
     // Generated from the component: Glag2

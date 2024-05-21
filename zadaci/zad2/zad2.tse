@@ -97,7 +97,7 @@ model "zad2" {
             init_const_value = "Vin"
         }
         [
-            position = 8208, 8160
+            position = 8208, 8208
             rotation = right
         ]
 
@@ -126,35 +126,36 @@ model "zad2" {
             size = 64, 32
         ]
 
-        component "core/Probe" Probe1 {
+        component "core/Probe" "Duty ratio probe" {
         }
         [
-            position = 8736, 8376
+            position = 9016, 7536
         ]
 
-        component "core/SCADA Input" "Output resistance" {
-            def_value = "0.25"
-            max = "3.33"
-            min = "0.25"
+        component "core/SCADA Input" "Output power" {
+            def_value = "7.5"
+            max = "100"
+            min = "7.5"
             signal_access = "Inherit"
             unit = ""
         }
         [
-            position = 8632, 7888
+            position = 8392, 7840
         ]
 
         component "core/Gain" Gain1 {
+            _tunable = "True"
             gain = "k"
         }
         [
-            position = 8208, 8472
+            position = 8496, 7616
         ]
 
         component "core/Gain" Gain2 {
             gain = "p"
         }
         [
-            position = 8304, 8472
+            position = 8592, 7616
         ]
 
         component "core/Discrete Transfer Function" Glag1 {
@@ -163,21 +164,21 @@ model "zad2" {
             domain = "S-domain"
         }
         [
-            position = 8416, 8472
+            position = 8672, 7616
         ]
 
         component "core/Sum" Sum1 {
             signs = "+-"
         }
         [
-            position = 8104, 8472
+            position = 8392, 7616
         ]
 
-        component "core/Constant" Constant1 {
+        component "core/Constant" "Referent voltage" {
             value = "Vout"
         }
         [
-            position = 7944, 8432
+            position = 8248, 7576
         ]
 
         component "core/Limit" Limit1 {
@@ -185,16 +186,16 @@ model "zad2" {
             upper_limit = "1"
         }
         [
-            position = 8600, 8472
+            position = 8864, 7616
         ]
 
         component "core/Discrete Transfer Function" Glag2 {
             a_coeff = "[1,0]"
-            b_coeff = "[1,wc/20]"
+            b_coeff = "[1,wc/10]"
             domain = "S-domain"
         }
         [
-            position = 8512, 8472
+            position = 8760, 7616
         ]
 
         component "core/Variable Resistor" RL1 {
@@ -205,53 +206,86 @@ model "zad2" {
             size = 64, 48
         ]
 
-        tag Goto1 {
-            value = "VM"
+        component "core/Product" Product1 {
+            signs = "*/"
+        }
+        [
+            position = 8624, 7768
+        ]
+
+        component "core/Product" Product2 {
+        }
+        [
+            position = 8392, 7760
+        ]
+
+        component "core/Rate Limiter" "Rate limiter" {
+            falling_limit = "-2"
+            rising_limit = "2"
+        }
+        [
+            position = 8720, 7768
+        ]
+
+        component "core/Current Measurement" Iout {
+        }
+        [
+            position = 8720, 8080
+            size = 64, 32
+        ]
+
+        component "core/Voltage Source" Vs1 {
+            init_frequency = "5"
+            init_rms_value = "0.2 * Vin"
+            init_source_nature = "Sine"
+        }
+        [
+            position = 8208, 8144
+            rotation = right
+        ]
+
+        tag "Current output voltage" {
+            value = "Voutcurr"
+            scope = local
+            kind = sp
+            direction = out
+        }
+        [
+            position = 8256, 7656
+            size = 60, 20
+        ]
+
+        tag "Measured output voltage" {
+            value = "Voutcurr"
             scope = local
             kind = sp
             direction = in
         }
         [
-            position = 9152, 8136
+            position = 9024, 8128
             size = 60, 20
         ]
 
-        tag Goto2 {
+        tag Control {
             value = "u"
             scope = local
             kind = sp
             direction = in
         }
         [
-            position = 8768, 8472
+            position = 9040, 7616
             size = 60, 20
         ]
 
-        tag From2 {
+        tag "Duty ratio" {
             value = "u"
             scope = local
             kind = sp
             direction = out
         }
         [
-            position = 8288, 7904
+            position = 8296, 7904
             size = 60, 20
-        ]
-
-        tag From3 {
-            value = "VM"
-            scope = local
-            kind = sp
-            direction = out
-        }
-        [
-            position = 7968, 8536
-            size = 60, 20
-        ]
-
-        junction Junction11 pe
-        [
-            position = 8656, 8080
         ]
 
         junction Junction12 pe
@@ -259,31 +293,37 @@ model "zad2" {
             position = 8656, 8176
         ]
 
-        junction Junction13 sp
-        [
-            position = 8672, 8472
-        ]
-
-        junction Junction14 pe
-        [
-            position = 8784, 8080
-        ]
-
         junction Junction15 pe
         [
             position = 8784, 8176
         ]
 
-        connect Vin.n_node Flyback1.b_in as Connection2
+        junction Junction24 pe
         [
-            breakpoints = 8208, 8200; 8208, 8272
+            position = 8784, 8080
         ]
+
+        junction Junction25 pe
+        [
+            position = 8656, 8080
+        ]
+
+        junction Junction26 sp
+        [
+            position = 8944, 7616
+        ]
+
+        junction Junction27 sp
+        [
+            position = 8336, 7576
+        ]
+
+        junction Junction28 sp
+        [
+            position = 8336, 7752
+        ]
+
         connect Flyback1.En "Enable flyback.out" as Connection3
-        connect From2 Flyback1.In as Connection26
-        connect Vout.out Goto1 as Connection37
-        connect Flyback1.a_out Junction11 as Connection121
-        connect Cf.p_node Junction11 as Connection123
-        connect Vin.p_node Flyback1.a_in as Connection124
         connect Junction12 Flyback1.b_out as Connection127
         [
             breakpoints = 8656, 8176; 8656, 8176
@@ -292,25 +332,7 @@ model "zad2" {
         connect Gain1.out Gain2.in as Connection158
         connect Gain2.out Glag1.in as Connection159
         connect Sum1.out Gain1.in as Connection160
-        connect From3 Sum1.in1 as Connection161
-        connect Constant1.out Sum1.in as Connection162
-        connect Probe1.in Junction13 as Connection168
-        connect Junction13 Goto2 as Connection169
-        [
-            breakpoints = 8672, 8472; 8672, 8472; 8672, 8472; 8672, 8472; 8672, 8472; 8672, 8472
-        ]
-        connect Limit1.out Junction13 as Connection170
         connect Glag1.out Glag2.in as Connection171
-        connect Glag2.out Limit1.in as Connection172
-        connect Vout.p_node Junction14 as Connection183
-        [
-            breakpoints = 8808, 8080; 8792, 8080
-        ]
-        connect Junction14 Junction11 as Connection184
-        [
-            breakpoints = 8784, 8080; 8784, 8080; 8784, 8080; 8784, 8080; 8784, 8080; 8656, 8080
-        ]
-        connect RL1.p_node Junction14 as Connection185
         connect Vout.n_node Junction15 as Connection186
         [
             breakpoints = 8808, 8176; 8792, 8176
@@ -320,7 +342,40 @@ model "zad2" {
             breakpoints = 8784, 8176; 8784, 8176; 8784, 8176; 8784, 8176; 8784, 8176
         ]
         connect RL1.n_node Junction15 as Connection188
-        connect "Output resistance.out" RL1.In as Connection189
+        connect Product2.out Product1.in as Connection191
+        connect Glag2.out Limit1.in as Connection287
+        connect Product1.out "Rate limiter.in" as Connection301
+        connect "Output power.out" Product1.in1 as Connection302
+        connect "Rate limiter.out" RL1.In as Connection303
+        connect RL1.p_node Junction24 as Connection310
+        connect Junction24 Vout.p_node as Connection311
+        [
+            breakpoints = 8784, 8080
+        ]
+        connect Iout.n_node Junction24 as Connection312
+        connect Flyback1.a_out Junction25 as Connection313
+        connect Junction25 Cf.p_node as Connection314
+        [
+            breakpoints = 8656, 8080; 8656, 8080; 8656, 8080
+        ]
+        connect Iout.p_node Junction25 as Connection315
+        connect "Current output voltage" Sum1.in1 as Connection317
+        connect Vout.out "Measured output voltage" as Connection318
+        connect Limit1.out Junction26 as Connection319
+        connect Junction26 "Duty ratio probe.in" as Connection320
+        [
+            breakpoints = 8944, 7616; 8944, 7616; 8944, 7536
+        ]
+        connect Control Junction26 as Connection321
+        connect "Duty ratio" Flyback1.In as Connection322
+        connect "Referent voltage.out" Junction27 as Connection323
+        connect Junction27 Sum1.in as Connection324
+        connect Product2.in Junction28 as Connection326
+        connect Junction28 Junction27 as Connection327
+        connect Product2.in1 Junction28 as Connection328
+        connect Vs1.n_node Vin.p_node as Connection329
+        connect Vs1.p_node Flyback1.a_in as Connection330
+        connect Vin.n_node Flyback1.b_in as Connection331
     }
 
     default {
@@ -372,6 +427,19 @@ model "zad2" {
             execution_rate = "inherit"
         }
 
+        "core/Product" {
+            signs = "2"
+            execution_rate = "inherit"
+        }
+
+        "core/Rate Limiter" {
+            rising_limit = "1"
+            rising_limit_source = "internal"
+            falling_limit = "-1"
+            falling_limit_source = "internal"
+            execution_rate = "inherit"
+        }
+
         "core/SCADA Input" {
             signal_access = "inherit"
             addr = "0"
@@ -411,6 +479,30 @@ model "zad2" {
             init_rms_value = "0.0"
             init_frequency = "50.0"
             init_phase = "0.0"
+        }
+
+        "core/Current Measurement" {
+            signal_access = "inherit"
+            bw_limit = "False"
+            frequency = "10e3"
+            comparator_enable = "False"
+            operator = "greater"
+            threshold = "0"
+            cmp_abs_value = "False"
+            feed_forward = "false"
+            sig_output = "False"
+            sig_output_filt_and_full_bw = "False"
+            execution_rate = "100e-6"
+            addr = "0"
+            nd_msr_estimation = "false"
+            dev_cpl_msr = "false"
+            host_device = "0"
+            output_to_device = "0"
+            dev_cpl_index = "0"
+            dev_cpl_var_nb = "0"
+            visible = "True"
+            override_signal_name = "False"
+            signal_name = ""
         }
 
         "core/Flyback" {
@@ -489,8 +581,8 @@ model "zad2" {
         Lm = 20e-3
         Cf = 5e-3
         
-        wc = 2 * np.pi * fs/5
-        k = 0.456309445756021
+        wc = 2 * np.pi * fs/10
+        k = 0.127841775727543
         p = 0.008726867790758
     ENDCODE
 }

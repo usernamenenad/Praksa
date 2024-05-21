@@ -33,13 +33,6 @@
     </pesb>
     <analog_variables>
         <cell>
-            <name>Flyback1.L2</name>
-            <address>2</address>
-            <type>current</type>
-            <initial_condition>0.0</initial_condition>
-            <visible>True</visible>
-        </cell>
-        <cell>
             <name>Flyback1.L1</name>
             <address>1</address>
             <type>current</type>
@@ -54,13 +47,6 @@
             <visible>True</visible>
         </cell>
         <cell>
-            <name>Cf</name>
-            <address>0</address>
-            <type>voltage</type>
-            <initial_condition>0.0</initial_condition>
-            <visible>True</visible>
-        </cell>
-        <cell>
             <name>RL1.L</name>
             <address>4</address>
             <type>current</type>
@@ -68,29 +54,29 @@
             <visible>True</visible>
         </cell>
         <cell>
-            <name>Flyback1.il</name>
-            <address>384</address>
+            <name>Flyback1.L2</name>
+            <address>2</address>
+            <type>current</type>
+            <initial_condition>0.0</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
+            <name>Cf</name>
+            <address>0</address>
+            <type>voltage</type>
+            <initial_condition>0.0</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
+            <name>Iout</name>
+            <address>6</address>
             <type>current</type>
             <initial_condition>None</initial_condition>
-            <visible>False</visible>
-        </cell>
-        <cell>
-            <name>Flyback1.v1</name>
-            <address>385</address>
-            <type>voltage</type>
-            <initial_condition>None</initial_condition>
-            <visible>False</visible>
-        </cell>
-        <cell>
-            <name>Flyback1.v2</name>
-            <address>386</address>
-            <type>voltage</type>
-            <initial_condition>None</initial_condition>
-            <visible>False</visible>
+            <visible>True</visible>
         </cell>
         <cell>
             <name>RL1.I</name>
-            <address>6</address>
+            <address>7</address>
             <type>current</type>
             <initial_condition>None</initial_condition>
             <visible>True</visible>
@@ -103,8 +89,36 @@
             <visible>True</visible>
         </cell>
         <cell>
+            <name>Flyback1.il</name>
+            <address>384</address>
+            <type>current</type>
+            <initial_condition>None</initial_condition>
+            <visible>False</visible>
+        </cell>
+        <cell>
+            <name>Flyback1.v2</name>
+            <address>386</address>
+            <type>voltage</type>
+            <initial_condition>None</initial_condition>
+            <visible>False</visible>
+        </cell>
+        <cell>
+            <name>Flyback1.v1</name>
+            <address>385</address>
+            <type>voltage</type>
+            <initial_condition>None</initial_condition>
+            <visible>False</visible>
+        </cell>
+        <cell>
             <name>Vin</name>
             <address>33280</address>
+            <type>voltage</type>
+            <initial_condition>None</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
+            <name>Vs1</name>
+            <address>33281</address>
             <type>voltage</type>
             <initial_condition>None</initial_condition>
             <visible>True</visible>
@@ -619,20 +633,20 @@
             <address>768</address>
         </cell>
         <cell>
-            <name>Flyback1.PWM_Modulator.BOT_1</name>
-            <address>769</address>
-        </cell>
-        <cell>
-            <name>Flyback1.PWM_Modulator_BOT_1</name>
-            <address>769</address>
-        </cell>
-        <cell>
             <name>Flyback1.PWM_Modulator.TOP_1</name>
             <address>768</address>
         </cell>
         <cell>
             <name>Flyback1.PWM_Modulator_TOP_1</name>
             <address>768</address>
+        </cell>
+        <cell>
+            <name>Flyback1.PWM_Modulator.BOT_1</name>
+            <address>769</address>
+        </cell>
+        <cell>
+            <name>Flyback1.PWM_Modulator_BOT_1</name>
+            <address>769</address>
         </cell>
     </digital_variables>
     <sources>
@@ -642,6 +656,13 @@
             <address>[0]</address>
             <unit>V</unit>
             <init_settings>['Constant', 325.2691193458119]</init_settings>
+        </cell>
+        <cell>
+            <name>Vs1</name>
+            <type>1phase</type>
+            <address>[1]</address>
+            <unit>V</unit>
+            <init_settings>['Sine', 65.05382386916237, 5.0, 0.0]</init_settings>
         </cell>
     </sources>
     <machines>
@@ -678,7 +699,7 @@
 
     <analog_variables>
         <cell>
-            <name>Probe1</name>
+            <name>Duty ratio probe</name>
             <type>generic</type>
             <address>16384</address>
             <initial_condition>None</initial_condition>
@@ -691,11 +712,27 @@
 
     <tunable_params>
         <tunable_param>
-            <name>Output resistance</name>
+            <name>Gain1.gain</name>
+            <addr>[0]</addr>
+            <min></min>
+            <max></max>
+            <def_value>0.127841775727543</def_value>
+            <unit></unit>
+            <widget_type>float</widget_type>
+            <format>real</format>
+            <size>1</size>
+            <param_type>tunable property</param_type>
+            <cpu_type>user_sp_cpu</cpu_type>
+            <cpu_idx>0</cpu_idx>
+            <execution_rate>0.0001</execution_rate>
+            <visible>True</visible>
+        </tunable_param>
+        <tunable_param>
+            <name>Output power</name>
             <addr>[1426063616]</addr>
-            <min>0.25</min>
-            <max>3.33</max>
-            <def_value>0.25</def_value>
+            <min>7.5</min>
+            <max>100.0</max>
+            <def_value>7.5</def_value>
             <unit></unit>
             <widget_type>float</widget_type>
             <format>real</format>

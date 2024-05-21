@@ -26,13 +26,123 @@ SETTINGS_DIR = get_settings_dir_path()
 ]]></initialization_code>
     <components>
         <component_data>
+                <id>9765fb2015e411efa87e870ea07a573f</id>
+                <name><![CDATA[Vout]]></name>
+                <type>Gauge</type>
+                <description><![CDATA[]]></description>
+                <data_type>Analog signal</data_type>
+                <code><![CDATA[# HIL API is imported as 'hil'
+# NOTE: Only read functions are available from the HIL API
+
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+# mandatory variable used for storing value that will be displayed
+displayValue = 0.0
+
+]]></code>
+                <signal_name><![CDATA[Vout]]></signal_name>
+                <unit><![CDATA[V]]></unit>
+                <automatic_unit>True</automatic_unit>
+                <updateRate>250</updateRate>
+                <decimals>4</decimals>
+                <scaling_factor>1.0</scaling_factor>
+                <widget_settings>
+                    <x>656</x>
+                    <y>72</y>
+                    <width>248</width>
+                    <height>144</height>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
+                    <is_background><![CDATA[False]]></is_background>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+                <advance_widget_settings>
+                    <color_range>False</color_range>
+                    <min>0.0</min>
+                    <max>100.0</max>
+                    <warning_range>(0, 0, 0, 0)</warning_range>
+                    <critical_range>(0, 0, 0, 0)</critical_range>
+                </advance_widget_settings>
+            </component_data>
+        <component_data>
+                <id>48b808b9175911ef85aaf3447f08d04b</id>
+                <name><![CDATA[Output power]]></name>
+                <type>TextBoxMacro</type>
+                <description><![CDATA[]]></description>
+                <on_use_code active="True"><![CDATA[# HIL API is imported as 'hil'
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+# NOTE: entered value is available through variable 'inputValue'
+
+hil.model_write('Output power', inputValue)]]></on_use_code>
+                <on_start_code active="True"><![CDATA[# NOTE: The code specified in this handler will be executed on simulation start.
+# NOTE: Variables specified here will be available in other handlers.
+# HIL API is imported as 'hil'
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+# Change widget value by setting this variable.
+# NOTE: If you not specify 'widgetValue' variable or assign 'None' to it,
+# widget value won't be changed.
+widgetValue = None
+]]></on_start_code>
+                <on_stop_code active="False"><![CDATA[# NOTE: The code specified in this handler will be executed after simulation is stopped.
+# HIL API is imported as 'hil'
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+# Change widget value by setting this variable.
+# NOTE: If you not specify 'widgetValue' variable or assign 'None' to it,
+# widget value won't be changed.
+widgetValue = None
+]]></on_stop_code>
+                <on_timer_code active="True"><![CDATA[# NOTE: The code specified in this handler will be executed periodically each 1000ms.
+# HIL API is imported as 'hil'
+# NOTE: Only read functions are available from the HIL API
+# SCADA API is imported as 'panel'
+# SCADA API constants are imported as 'api_const'
+# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
+# This object can be used as an argument in SCADA API functions.
+
+# Change the widget value by setting this variable.
+# NOTE: If you do not specify a 'widgetValue' variable or assign 'None' to it,
+# the widget value will not be changed.
+widgetValue = hil.model_read('Output power')
+]]></on_timer_code>
+                <on_start_code_source><![CDATA[Macro code]]></on_start_code_source>
+                <inputValue><![CDATA[7.5]]></inputValue>
+                <inputValueType>float</inputValueType>
+                <unit><![CDATA[]]></unit>
+                <widget_settings>
+                    <x>952</x>
+                    <y>408</y>
+                    <width>144</width>
+                    <height>32</height>
+                    <inputWidgetWidth>80</inputWidgetWidth>
+                    <appearance><![CDATA[Flat]]></appearance>
+                    <hierarchy_position>1</hierarchy_position>
+                    <label><![CDATA[]]></label>
+                    <use_label>False</use_label>
+                </widget_settings>
+            </component_data>
+        <component_data>
                 <id>5ecdd2c815d211efbfa1870ea07a573f</id>
                 <name><![CDATA[Capture/Scope]]></name>
                 <type>Capture/Scope</type>
                 <description><![CDATA[]]></description>
                 <working_mode>windowed</working_mode>
                 <widget_settings>
-                    <x>408</x>
+                    <x>416</x>
                     <y>264</y>
                     <width>120</width>
                     <height>120</height>
@@ -48,7 +158,7 @@ SETTINGS_DIR = get_settings_dir_path()
                         <active_capture_preset><![CDATA[Default]]></active_capture_preset>
                         <active_scope_preset><![CDATA[Default]]></active_scope_preset>
                         <capture name="Default">
-                            <time_interval>8.0</time_interval>
+                            <time_interval>2.0</time_interval>
                             <sample_rate>50000.0</sample_rate>
                             <background_color>white</background_color>
                             <layout>Vertical</layout>
@@ -64,6 +174,30 @@ SETTINGS_DIR = get_settings_dir_path()
                                     <row>0</row>
                                     <viewports>
                                         <num_viewport>1</num_viewport>
+                                   </viewports>
+                               </analog>
+                                <analog>
+                                    <channel>1</channel>
+                                    <name><![CDATA[Iout]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>1</row>
+                                    <viewports>
+                                        <num_viewport>2</num_viewport>
+                                   </viewports>
+                               </analog>
+                                <analog>
+                                    <channel>2</channel>
+                                    <name><![CDATA[Duty ratio probe]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>2</row>
+                                    <viewports>
+                                        <num_viewport>3</num_viewport>
                                    </viewports>
                                </analog>
                             </analog_signals>
@@ -110,7 +244,7 @@ SETTINGS_DIR = get_settings_dir_path()
                         </scope>
                         </presets>
                     <capture>
-                        <time_interval>8.0</time_interval>
+                        <time_interval>2.0</time_interval>
                         <sample_rate>50000.0</sample_rate>
                         <background_color>white</background_color>
                         <layout>Vertical</layout>
@@ -134,6 +268,30 @@ SETTINGS_DIR = get_settings_dir_path()
                                     <row>0</row>
                                     <viewports>
                                         <num_viewport>1</num_viewport>
+                                   </viewports>
+                               </analog>
+                            <analog>
+                                    <channel>1</channel>
+                                    <name><![CDATA[Iout]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>1</row>
+                                    <viewports>
+                                        <num_viewport>2</num_viewport>
+                                   </viewports>
+                               </analog>
+                            <analog>
+                                    <channel>2</channel>
+                                    <name><![CDATA[Duty ratio probe]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>2</row>
+                                    <viewports>
+                                        <num_viewport>3</num_viewport>
                                    </viewports>
                                </analog>
                         </analog_signals>
@@ -165,116 +323,6 @@ SETTINGS_DIR = get_settings_dir_path()
                     </plotting_options>
                 </widget_settings>
 
-            </component_data>
-        <component_data>
-                <id>9765fb2015e411efa87e870ea07a573f</id>
-                <name><![CDATA[Vout]]></name>
-                <type>Gauge</type>
-                <description><![CDATA[]]></description>
-                <data_type>Analog signal</data_type>
-                <code><![CDATA[# HIL API is imported as 'hil'
-# NOTE: Only read functions are available from the HIL API
-
-# SCADA API is imported as 'panel'
-# SCADA API constants are imported as 'api_const'
-# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
-# This object can be used as an argument in SCADA API functions.
-
-# mandatory variable used for storing value that will be displayed
-displayValue = 0.0
-
-]]></code>
-                <signal_name><![CDATA[Vout]]></signal_name>
-                <unit><![CDATA[V]]></unit>
-                <automatic_unit>True</automatic_unit>
-                <updateRate>250</updateRate>
-                <decimals>4</decimals>
-                <scaling_factor>1.0</scaling_factor>
-                <widget_settings>
-                    <x>656</x>
-                    <y>72</y>
-                    <width>248</width>
-                    <height>144</height>
-                    <appearance><![CDATA[Flat]]></appearance>
-                    <hierarchy_position><![CDATA[1]]></hierarchy_position>
-                    <is_background><![CDATA[False]]></is_background>
-                    <label><![CDATA[]]></label>
-                    <use_label>False</use_label>
-                </widget_settings>
-                <advance_widget_settings>
-                    <color_range>False</color_range>
-                    <min>0.0</min>
-                    <max>100.0</max>
-                    <warning_range>(0, 0, 0, 0)</warning_range>
-                    <critical_range>(0, 0, 0, 0)</critical_range>
-                </advance_widget_settings>
-            </component_data>
-        <component_data>
-                <id>f1ef7bcd16d011efa78cdf7c6f4a86d9</id>
-                <name><![CDATA[Output resistance]]></name>
-                <type>TextBoxMacro</type>
-                <description><![CDATA[]]></description>
-                <on_use_code active="True"><![CDATA[# HIL API is imported as 'hil'
-# SCADA API is imported as 'panel'
-# SCADA API constants are imported as 'api_const'
-# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
-# This object can be used as an argument in SCADA API functions.
-# NOTE: entered value is available through variable 'inputValue'
-
-hil.model_write('Output resistance', inputValue)]]></on_use_code>
-                <on_start_code active="True"><![CDATA[# NOTE: The code specified in this handler will be executed on simulation start.
-# NOTE: Variables specified here will be available in other handlers.
-# HIL API is imported as 'hil'
-# SCADA API is imported as 'panel'
-# SCADA API constants are imported as 'api_const'
-# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
-# This object can be used as an argument in SCADA API functions.
-
-# Change widget value by setting this variable.
-# NOTE: If you not specify 'widgetValue' variable or assign 'None' to it,
-# widget value won't be changed.
-widgetValue = None
-]]></on_start_code>
-                <on_stop_code active="False"><![CDATA[# NOTE: The code specified in this handler will be executed after simulation is stopped.
-# HIL API is imported as 'hil'
-# SCADA API is imported as 'panel'
-# SCADA API constants are imported as 'api_const'
-# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
-# This object can be used as an argument in SCADA API functions.
-
-# Change widget value by setting this variable.
-# NOTE: If you not specify 'widgetValue' variable or assign 'None' to it,
-# widget value won't be changed.
-widgetValue = None
-]]></on_stop_code>
-                <on_timer_code active="True"><![CDATA[# NOTE: The code specified in this handler will be executed periodically each 1000ms.
-# HIL API is imported as 'hil'
-# NOTE: Only read functions are available from the HIL API
-# SCADA API is imported as 'panel'
-# SCADA API constants are imported as 'api_const'
-# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
-# This object can be used as an argument in SCADA API functions.
-
-# Change the widget value by setting this variable.
-# NOTE: If you do not specify a 'widgetValue' variable or assign 'None' to it,
-# the widget value will not be changed.
-widgetValue = hil.model_read('Output resistance')
-]]></on_timer_code>
-                <on_start_code_source><![CDATA[Macro code]]></on_start_code_source>
-                <inputValue><![CDATA[0.25]]></inputValue>
-                <inputValueType>float</inputValueType>
-                <unit><![CDATA[]]></unit>
-                <widget_settings>
-                    <x>1024</x>
-                    <y>368</y>
-                    <width>144</width>
-                    <height>32</height>
-                    <inputWidgetWidth>80</inputWidgetWidth>
-                    <appearance><![CDATA[Flat]]></appearance>
-                    <hierarchy_position>1</hierarchy_position>
-                    <label><![CDATA[]]></label>
-                    <use_label>False</use_label>
-                </widget_settings>
             </component_data>
         </components>
 </ui_settings>
