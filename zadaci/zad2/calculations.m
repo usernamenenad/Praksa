@@ -48,13 +48,13 @@ for i = 1:2
     b = 2 * k * fs * Vout;
     CfList(i) = a / b * 1e3;
 end
-Cf = 100e-3;
+Cf = 5e-3;
 
 clear D0 Rl a b
 
 %% Funkcija prenosa
-D0 = D0List(1);
-Iout = IoutList(1);
+D0 = D0List(2);
+Iout = IoutList(2);
 
 A11 = - (n^2 * D0 * Rp + (1 - D0) * Rs) / (n^2 * Lm);
 A12 = -(1 - D0) / (n * Lm);
@@ -84,35 +84,13 @@ G = tf(sys);
 GDV = G(3);
 s = tf("s");
 
-%% 
-
-fc = fs / 50;
-wc = 2 * pi * fc;
-wl = wc / 10;
-
-k = 1 / abs(evalfr(GDV, 1j*wc));
-phicor = 86;
-p = sqrt((1 + sind(phicor)) / (1 - sind(phicor)));
-Glead = (p*s + wc) / (s + p*wc);
-Glag = (s + wl) / s;
-
-REG = k * Glead * Glag;
-N = p * wc;
-I = k * wl / p;
-P = k/p + k * (1 - 1/p^2) * wl/wc;
-D = k/N * (p - 1/p + (1/p^2 -1) * wl/wc);
-PID = P + I/s + D * N * s / (s + N);
-
-margin(k * Glead * GDV)
-X = feedback(PID * GDV, 1);
 %%
-ILMList = zeros(1, 2);
-ReqList = zeros(1, 2);
-Losses = zeros(1, 2);
-for i = 1:2
-    D0 = D0List(i);
-    Rl = RlList(i);
-    ILMList(i) = n^2 * D0 * Vin / ((1 - D0)^2 * Rl + (1 - D0)*Rs + n^2 * D0 * Rp);
-    ReqList(i) = D0 * Rp + (1 - D0) / n^2 * Rs;
-    Losses(i) = ILMList(i)^2 * ReqList(i);
-end
+wc = 2 * pi * fs/5;
+k = 1 / abs(evalfr(GDV, 1j * wc));
+theta = -89;
+p = sqrt((1 + sind(theta)) / (1 - sind(theta)));
+Glag1 = p * (1 + s/(p*wc)) / (1 + p * s / wc);
+Glag2 = 1 + wc/20 / s;
+%%
+X = feedback(Glag2 * Glag1 * k * GDV, 1);
+step(X, RespConfig("Amplitude", 5))

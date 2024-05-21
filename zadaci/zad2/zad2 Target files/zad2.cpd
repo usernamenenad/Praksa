@@ -33,6 +33,13 @@
     </pesb>
     <analog_variables>
         <cell>
+            <name>Flyback1.L2</name>
+            <address>2</address>
+            <type>current</type>
+            <initial_condition>0.0</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
             <name>Flyback1.L1</name>
             <address>1</address>
             <type>current</type>
@@ -47,16 +54,16 @@
             <visible>True</visible>
         </cell>
         <cell>
-            <name>Flyback1.L2</name>
-            <address>2</address>
-            <type>current</type>
+            <name>Cf</name>
+            <address>0</address>
+            <type>voltage</type>
             <initial_condition>0.0</initial_condition>
             <visible>True</visible>
         </cell>
         <cell>
-            <name>Cf</name>
-            <address>0</address>
-            <type>voltage</type>
+            <name>RL1.L</name>
+            <address>4</address>
+            <type>current</type>
             <initial_condition>0.0</initial_condition>
             <visible>True</visible>
         </cell>
@@ -66,13 +73,6 @@
             <type>current</type>
             <initial_condition>None</initial_condition>
             <visible>False</visible>
-        </cell>
-        <cell>
-            <name>Vout</name>
-            <address>4</address>
-            <type>voltage</type>
-            <initial_condition>None</initial_condition>
-            <visible>True</visible>
         </cell>
         <cell>
             <name>Flyback1.v1</name>
@@ -87,6 +87,20 @@
             <type>voltage</type>
             <initial_condition>None</initial_condition>
             <visible>False</visible>
+        </cell>
+        <cell>
+            <name>RL1.I</name>
+            <address>6</address>
+            <type>current</type>
+            <initial_condition>None</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
+            <name>Vout</name>
+            <address>5</address>
+            <type>voltage</type>
+            <initial_condition>None</initial_condition>
+            <visible>True</visible>
         </cell>
         <cell>
             <name>Vin</name>
@@ -677,11 +691,11 @@
 
     <tunable_params>
         <tunable_param>
-            <name>Output current</name>
+            <name>Output resistance</name>
             <addr>[1426063616]</addr>
-            <min>1.5</min>
-            <max>20.0</max>
-            <def_value>1.5</def_value>
+            <min>0.25</min>
+            <max>3.33</max>
+            <def_value>0.25</def_value>
             <unit></unit>
             <widget_type>float</widget_type>
             <format>real</format>

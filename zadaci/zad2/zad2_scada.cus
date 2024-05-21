@@ -32,8 +32,8 @@ SETTINGS_DIR = get_settings_dir_path()
                 <description><![CDATA[]]></description>
                 <working_mode>windowed</working_mode>
                 <widget_settings>
-                    <x>416</x>
-                    <y>256</y>
+                    <x>408</x>
+                    <y>264</y>
                     <width>120</width>
                     <height>120</height>
                     <hierarchy_position>1</hierarchy_position>
@@ -48,7 +48,7 @@ SETTINGS_DIR = get_settings_dir_path()
                         <active_capture_preset><![CDATA[Default]]></active_capture_preset>
                         <active_scope_preset><![CDATA[Default]]></active_scope_preset>
                         <capture name="Default">
-                            <time_interval>2.0</time_interval>
+                            <time_interval>8.0</time_interval>
                             <sample_rate>50000.0</sample_rate>
                             <background_color>white</background_color>
                             <layout>Vertical</layout>
@@ -110,7 +110,7 @@ SETTINGS_DIR = get_settings_dir_path()
                         </scope>
                         </presets>
                     <capture>
-                        <time_interval>2.0</time_interval>
+                        <time_interval>8.0</time_interval>
                         <sample_rate>50000.0</sample_rate>
                         <background_color>white</background_color>
                         <layout>Vertical</layout>
@@ -210,8 +210,8 @@ displayValue = 0.0
                 </advance_widget_settings>
             </component_data>
         <component_data>
-                <id>da52dae5168a11ef9d93f3447f08d04b</id>
-                <name><![CDATA[Output current]]></name>
+                <id>f1ef7bcd16d011efa78cdf7c6f4a86d9</id>
+                <name><![CDATA[Output resistance]]></name>
                 <type>TextBoxMacro</type>
                 <description><![CDATA[]]></description>
                 <on_use_code active="True"><![CDATA[# HIL API is imported as 'hil'
@@ -221,7 +221,7 @@ displayValue = 0.0
 # This object can be used as an argument in SCADA API functions.
 # NOTE: entered value is available through variable 'inputValue'
 
-hil.model_write('Output current', inputValue)]]></on_use_code>
+hil.model_write('Output resistance', inputValue)]]></on_use_code>
                 <on_start_code active="True"><![CDATA[# NOTE: The code specified in this handler will be executed on simulation start.
 # NOTE: Variables specified here will be available in other handlers.
 # HIL API is imported as 'hil'
@@ -258,14 +258,14 @@ widgetValue = None
 # Change the widget value by setting this variable.
 # NOTE: If you do not specify a 'widgetValue' variable or assign 'None' to it,
 # the widget value will not be changed.
-widgetValue = hil.model_read('Output current')
+widgetValue = hil.model_read('Output resistance')
 ]]></on_timer_code>
                 <on_start_code_source><![CDATA[Macro code]]></on_start_code_source>
-                <inputValue><![CDATA[1.5]]></inputValue>
+                <inputValue><![CDATA[0.25]]></inputValue>
                 <inputValueType>float</inputValueType>
                 <unit><![CDATA[]]></unit>
                 <widget_settings>
-                    <x>1032</x>
+                    <x>1024</x>
                     <y>368</y>
                     <width>144</width>
                     <height>32</height>
