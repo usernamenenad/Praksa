@@ -83,6 +83,15 @@ typedef double real;
 
 
 
+
+
+
+
+
+
+
+
+
 //@cmp.def.end
 
 
@@ -96,13 +105,19 @@ typedef double real;
 
 //@cmp.var.start
 // variables
+double _enable_disturbance__out;
 double _enable_flyback__out = 1.0;
 double _output_power__out;
-double _referent_voltage__out = 5.0;
+double _referent_input_voltage__out = 325.2691193458119;
+double _referent_output_voltage__out = 5.0;
+double _va1_va1__out;
 double _vout_va1__out;
+double _not__out;
 double _product2__out;
+double _sum3__out;
 double _sum1__out;
 double _product1__out;
+double _kvincomp__out;
 double _gain1__out;
 double _rate_limiter__out;
 
@@ -122,6 +137,7 @@ double _glag2__a_coeff[2] = {1.0, -1.0};
 double _glag2__a_sum;
 double _glag2__b_sum;
 double _glag2__delay_line_in;
+double _sum2__out;
 double _limit1__out;
 X_UnInt32 _flyback1_pwm_modulator__channels[1] = {0};
 double _flyback1_pwm_modulator__limited_in[1];
@@ -246,21 +262,46 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     // Set tunable parameters
     //////////////////////////////////////////////////////////////////////////
     // Generated from the component: Enable flyback
-    // Generated from the component: Referent voltage
+    // Generated from the component: Referent input voltage
+    // Generated from the component: Referent output voltage
 //////////////////////////////////////////////////////////////////////////
     // Output block
     //////////////////////////////////////////////////////////////////////////
     //@cmp.out.block.start
+    // Generated from the component: Enable disturbance
+    _enable_disturbance__out = XIo_InFloat(0x55000100);
     // Generated from the component: Output power
-    _output_power__out = XIo_InFloat(0x55000100);
+    _output_power__out = XIo_InFloat(0x55000104);
+    // Generated from the component: Va1.Va1
+    _va1_va1__out = (HIL_InFloat(0xc80000 + 0x5));
     // Generated from the component: Vout.Va1
-    _vout_va1__out = (HIL_InFloat(0xc80000 + 0x5));
+    _vout_va1__out = (HIL_InFloat(0xc80000 + 0x6));
+    // Generated from the component: NOT
+    _not__out = !_enable_disturbance__out;
+    // Generated from the component: S2.CTC_Wrapper
+    if (_enable_disturbance__out == 0x0) {
+        HIL_OutInt32(0x8240481, 0x0);
+    }
+    else {
+        HIL_OutInt32(0x8240481, 0x1);
+    }
     // Generated from the component: Product2
-    _product2__out = (_referent_voltage__out * _referent_voltage__out);
+    _product2__out = (_referent_output_voltage__out * _referent_output_voltage__out);
+    // Generated from the component: Sum3
+    _sum3__out = _referent_input_voltage__out - _va1_va1__out;
     // Generated from the component: Sum1
-    _sum1__out = _referent_voltage__out - _vout_va1__out;
+    _sum1__out = _referent_output_voltage__out - _vout_va1__out;
+    // Generated from the component: S1.CTC_Wrapper
+    if (_not__out == 0x0) {
+        HIL_OutInt32(0x8240480, 0x0);
+    }
+    else {
+        HIL_OutInt32(0x8240480, 0x1);
+    }
     // Generated from the component: Product1
     _product1__out = (_product2__out) * 1.0 / (_output_power__out);
+    // Generated from the component: KVincomp
+    _kvincomp__out = 0.0002034 * _sum3__out;
     // Generated from the component: Gain1
     _gain1__out = tunable_params._gain1__gain * _sum1__out;
     // Generated from the component: Rate limiter
@@ -304,8 +345,10 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     _glag2__delay_line_in = _glag1__out - _glag2__a_sum;
     _glag2__b_sum += _glag2__b_coeff[0] * _glag2__delay_line_in;
     _glag2__out = _glag2__b_sum;
+    // Generated from the component: Sum2
+    _sum2__out = _glag2__out + _kvincomp__out;
     // Generated from the component: Limit1
-    _limit1__out = MIN(MAX(_glag2__out, 0.0), 1.0);
+    _limit1__out = MIN(MAX(_sum2__out, 0.0), 1.0);
     // Generated from the component: Duty ratio probe
     HIL_OutAO(0x4000, (float)_limit1__out);
     // Generated from the component: Flyback1.PWM_Modulator

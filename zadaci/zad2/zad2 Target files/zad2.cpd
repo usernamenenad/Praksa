@@ -40,6 +40,20 @@
             <visible>True</visible>
         </cell>
         <cell>
+            <name>Cf</name>
+            <address>0</address>
+            <type>voltage</type>
+            <initial_condition>0.0</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
+            <name>Flyback1.L2</name>
+            <address>2</address>
+            <type>current</type>
+            <initial_condition>0.0</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
             <name>Flyback1.Lm</name>
             <address>3</address>
             <type>current</type>
@@ -54,46 +68,18 @@
             <visible>True</visible>
         </cell>
         <cell>
-            <name>Flyback1.L2</name>
-            <address>2</address>
+            <name>S1.i</name>
+            <address>9</address>
             <type>current</type>
-            <initial_condition>0.0</initial_condition>
-            <visible>True</visible>
-        </cell>
-        <cell>
-            <name>Cf</name>
-            <address>0</address>
-            <type>voltage</type>
-            <initial_condition>0.0</initial_condition>
+            <initial_condition>None</initial_condition>
             <visible>True</visible>
         </cell>
         <cell>
             <name>Iout</name>
-            <address>6</address>
-            <type>current</type>
-            <initial_condition>None</initial_condition>
-            <visible>True</visible>
-        </cell>
-        <cell>
-            <name>RL1.I</name>
             <address>7</address>
             <type>current</type>
             <initial_condition>None</initial_condition>
             <visible>True</visible>
-        </cell>
-        <cell>
-            <name>Vout</name>
-            <address>5</address>
-            <type>voltage</type>
-            <initial_condition>None</initial_condition>
-            <visible>True</visible>
-        </cell>
-        <cell>
-            <name>Flyback1.il</name>
-            <address>384</address>
-            <type>current</type>
-            <initial_condition>None</initial_condition>
-            <visible>False</visible>
         </cell>
         <cell>
             <name>Flyback1.v2</name>
@@ -103,6 +89,41 @@
             <visible>False</visible>
         </cell>
         <cell>
+            <name>Flyback1.il</name>
+            <address>384</address>
+            <type>current</type>
+            <initial_condition>None</initial_condition>
+            <visible>False</visible>
+        </cell>
+        <cell>
+            <name>S2.i</name>
+            <address>10</address>
+            <type>current</type>
+            <initial_condition>None</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
+            <name>Vout</name>
+            <address>6</address>
+            <type>voltage</type>
+            <initial_condition>None</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
+            <name>RL1.I</name>
+            <address>8</address>
+            <type>current</type>
+            <initial_condition>None</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
+            <name>Va1</name>
+            <address>5</address>
+            <type>voltage</type>
+            <initial_condition>None</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
             <name>Flyback1.v1</name>
             <address>385</address>
             <type>voltage</type>
@@ -110,14 +131,14 @@
             <visible>False</visible>
         </cell>
         <cell>
-            <name>Vin</name>
+            <name>5Hz</name>
             <address>33280</address>
             <type>voltage</type>
             <initial_condition>None</initial_condition>
             <visible>True</visible>
         </cell>
         <cell>
-            <name>Vs1</name>
+            <name>Vin</name>
             <address>33281</address>
             <type>voltage</type>
             <initial_condition>None</initial_condition>
@@ -633,6 +654,14 @@
             <address>768</address>
         </cell>
         <cell>
+            <name>S1.Sa</name>
+            <address>512</address>
+        </cell>
+        <cell>
+            <name>S2.Sa</name>
+            <address>512</address>
+        </cell>
+        <cell>
             <name>Flyback1.PWM_Modulator.TOP_1</name>
             <address>768</address>
         </cell>
@@ -648,21 +677,37 @@
             <name>Flyback1.PWM_Modulator_BOT_1</name>
             <address>769</address>
         </cell>
+        <cell>
+            <name>S1.feedback</name>
+            <address>1024</address>
+        </cell>
+        <cell>
+            <name>S1_fb</name>
+            <address>1024</address>
+        </cell>
+        <cell>
+            <name>S2.feedback</name>
+            <address>1025</address>
+        </cell>
+        <cell>
+            <name>S2_fb</name>
+            <address>1025</address>
+        </cell>
     </digital_variables>
     <sources>
         <cell>
-            <name>Vin</name>
+            <name>5Hz</name>
             <type>1phase</type>
             <address>[0]</address>
             <unit>V</unit>
-            <init_settings>['Constant', 325.2691193458119]</init_settings>
+            <init_settings>['Sine', 46.0, 5.0, 0.0]</init_settings>
         </cell>
         <cell>
-            <name>Vs1</name>
+            <name>Vin</name>
             <type>1phase</type>
             <address>[1]</address>
             <unit>V</unit>
-            <init_settings>['Sine', 65.05382386916237, 5.0, 0.0]</init_settings>
+            <init_settings>['Constant', 325.2691193458119]</init_settings>
         </cell>
     </sources>
     <machines>
@@ -672,6 +717,18 @@
     <batteries>
     </batteries>
     <contactors>
+    <cell>
+        <name>S1</name>
+        <type>one_phase_breaker</type>
+        <weight>0</weight>
+        <site>0</site>
+   </cell>
+    <cell>
+        <name>S2</name>
+        <type>one_phase_breaker</type>
+        <weight>1</weight>
+        <site>0</site>
+   </cell>
     </contactors>
     <analog_output_settings>
     </analog_output_settings>
@@ -728,8 +785,24 @@
             <visible>True</visible>
         </tunable_param>
         <tunable_param>
-            <name>Output power</name>
+            <name>Enable disturbance</name>
             <addr>[1426063616]</addr>
+            <min>0.0</min>
+            <max>1.0</max>
+            <def_value>0.0</def_value>
+            <unit></unit>
+            <widget_type>float</widget_type>
+            <format>real</format>
+            <size>1</size>
+            <param_type>scada input</param_type>
+            <cpu_type>user_sp_cpu</cpu_type>
+            <cpu_idx>0</cpu_idx>
+            <execution_rate>0.0001</execution_rate>
+            <visible>True</visible>
+        </tunable_param>
+        <tunable_param>
+            <name>Output power</name>
+            <addr>[1426063620]</addr>
             <min>7.5</min>
             <max>100.0</max>
             <def_value>7.5</def_value>

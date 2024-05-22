@@ -9,18 +9,18 @@ Rs = 0.0001;
 fs = 2500;
 
 %% Load
-IoutList = zeros(1, 2);
+RlList = zeros(1, 2);
 for i = 1:2
-    IoutList(i) = PoutList(i) / Vout;
+    RlList(i) = Vout^2 / PoutList(i);
 end
 
 %% Duty ratio
 D0List = zeros(1, 2);
 for i = 1:2
-    Iout = IoutList(i);
-    a = n * Vin + Vout;
-    b = (n^2 * Rp - Rs) * Iout - n * Vin - 2 * Vout;
-    c = Vout + Rs * Iout;
+    Rl = RlList(i);
+    a = Rl * (n * Vin + Vout);
+    b = (n^2 * Rp - Rs) * Vout - (n * Vin + 2 * Vout) * Rl;
+    c = (Rl + Rs) * Vout;
     d = roots([a, b, c]);
     D0List(i) = d(2);
 end
@@ -30,9 +30,9 @@ clear a b c d Rl
 LmList = zeros(1, 2);
 for i = 1:2
     D0 = D0List(i);
-    Iout = IoutList(i);
-    a = D0 * ((1 - D0)*Vin - n * Rp * Iout);
-    b = 2 * n * fs * Iout;
+    Rl = RlList(i);
+    a = (1 - D0) * ((1 - D0) * Rl + Rs);
+    b = 2 * n^2 * fs;
     LmList(i) = a / b * 1e3;
 end
 Lm = 20e-3;
@@ -43,9 +43,9 @@ clear D0 Rl a b
 CfList = zeros(1, 2);
 for i = 1:2
     D0 = D0List(i);
-    Iout = IoutList(i); 
-    a = D0 * Iout;
-    b = 2 * k * fs * Vout;
+    Rl = RlList(i); 
+    a = (1 - D0) * n * D0^2 * 1.2 * Vin;
+    b = 2 * k * fs * Vout * ((1 - D0)^2 * Rl + (1 - D0) * Rs + n^2 * D0 * Rp);
     CfList(i) = a / b * 1e3;
 end
 Cf = 5e-3;
@@ -54,43 +54,40 @@ clear D0 Rl a b
 
 %% Funkcija prenosa
 D0 = D0List(2);
-Iout = IoutList(2);
+Rl = RlList(2);
 
 A11 = - (n^2 * D0 * Rp + (1 - D0) * Rs) / (n^2 * Lm);
 A12 = -(1 - D0) / (n * Lm);
 A21 = (1 - D0) / (n * Cf);
-A22 = 0;
+A22 = -1/(Rl * Cf);
 
 A = [A11, A12; A21, A22];
 
 clear A11 A12 A21 A22
 
-B11 = 0;
-B12 = D0 / Lm;
-B13 = ((1 - D0) * Vin - n * Rp * Iout) / (Lm * (1 - D0)^2);
-B21 = -1/Cf;
-B22 = 0;
-B23 = -Iout / (Cf * (1 - D0));
+B11 = D0 / Lm;
+B12 = Vin * ((1 - D0) * Rl + Rs) / (Lm * ((1 - D0)^2 * Rl + (1 - D0) * Rs + n^2 * D0 * Rp));
+B21 = 0;
+B22 = -(n * D0 * Vin) / (Cf * ((1 - D0)^2 * Rl + (1 - D0) * Rs + n^2 * D0 * Rp));
 
-B = [B11, B12, B13; B21, B22, B23];
+B = [B11, B12; B21, B22];
 
 clear B11 B12 B21 B22
 
 C = [0, 1];
-D = [0, 0, 0];
+D = [0, 0];
 
 sys = ss(A, B, C, D);
 G = tf(sys);
-GDV = G(3);
+GVV = G(1);
+GDV = G(2);
 s = tf("s");
 
 %%
-wc = 2 * pi * fs/5;
+wc = 2 * pi * fs/10;
 k = 1 / abs(evalfr(GDV, 1j * wc));
 theta = -89;
 p = sqrt((1 + sind(theta)) / (1 - sind(theta)));
 Glag1 = p * (1 + s/(p*wc)) / (1 + p * s / wc);
 Glag2 = 1 + wc/20 / s;
-%%
-X = feedback(Glag2 * Glag1 * k * GDV, 1);
-step(X, RespConfig("Amplitude", 5))
+Reg = k * Glag1 * Glag2;
