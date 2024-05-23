@@ -143,24 +143,24 @@ model "zad2" {
             position = 8392, 7840
         ]
 
-        component "core/Gain" Gain1 {
+        component "core/Gain" KReg {
             _tunable = "True"
-            gain = "k"
+            gain = "KReg"
         }
         [
             position = 8496, 7544
         ]
 
-        component "core/Gain" Gain2 {
-            gain = "p"
+        component "core/Gain" 1_p {
+            gain = "1/p"
         }
         [
-            position = 8592, 7544
+            position = 8584, 7544
         ]
 
-        component "core/Discrete Transfer Function" Glag1 {
-            a_coeff = "[1,p/wc]"
-            b_coeff = "[1,1/(p*wc)]"
+        component "core/Discrete Transfer Function" GLead {
+            a_coeff = "GLeadDen"
+            b_coeff = "GLeadNum"
             domain = "S-domain"
         }
         [
@@ -189,9 +189,9 @@ model "zad2" {
             position = 8944, 7544
         ]
 
-        component "core/Discrete Transfer Function" Glag2 {
-            a_coeff = "[1,0]"
-            b_coeff = "[1,wc/10]"
+        component "core/Discrete Transfer Function" GLag {
+            a_coeff = "GLag2Den"
+            b_coeff = "GLag2Num"
             domain = "S-domain"
         }
         [
@@ -199,6 +199,7 @@ model "zad2" {
         ]
 
         component "core/Variable Resistor" RL1 {
+            inductance = "1e-4"
         }
         [
             position = 8784, 8128
@@ -250,14 +251,14 @@ model "zad2" {
             position = 8856, 7552
         ]
 
-        component "core/Gain" KVincomp {
-            gain = "2.034e-4"
+        component "core/Gain" KVinComp {
+            gain = "KVinComp"
         }
         [
             position = 8680, 7648
         ]
 
-        component "core/Voltage Measurement" Va1 {
+        component "core/Voltage Measurement" IVM {
             sig_output = "True"
             signal_access = "Inherit"
         }
@@ -450,9 +451,9 @@ model "zad2" {
             breakpoints = 8656, 8176; 8656, 8176
         ]
         connect Cf.n_node Junction12 as Connection128
-        connect Gain1.out Gain2.in as Connection158
-        connect Gain2.out Glag1.in as Connection159
-        connect Glag1.out Glag2.in as Connection171
+        connect KReg.out 1_p.in as Connection158
+        connect 1_p.out GLead.in as Connection159
+        connect GLead.out GLag.in as Connection171
         connect Vout.n_node Junction15 as Connection186
         [
             breakpoints = 8808, 8176; 8792, 8176
@@ -487,21 +488,21 @@ model "zad2" {
         ]
         connect Control Junction26 as Connection321
         connect "Duty ratio" Flyback1.In as Connection322
-        connect Glag2.out Sum2.in as Connection335
+        connect GLag.out Sum2.in as Connection335
         connect Sum2.out Limit1.in as Connection336
-        connect Gain1.in Sum1.out as Connection338
+        connect KReg.in Sum1.out as Connection338
         [
             breakpoints = 8448, 7544
         ]
-        connect KVincomp.out Sum2.in1 as Connection339
+        connect KVinComp.out Sum2.in1 as Connection339
         connect Vin.n_node Junction30 as Connection343
         connect Junction30 Flyback1.b_in as Connection344
-        connect Va1.n_node Junction30 as Connection345
-        connect Va1.out Goto1 as Connection346
+        connect IVM.n_node Junction30 as Connection345
+        connect IVM.out Goto1 as Connection346
         [
             breakpoints = 8248, 8176
         ]
-        connect Sum3.out KVincomp.in as Connection347
+        connect Sum3.out KVinComp.in as Connection347
         connect From1 Sum3.in1 as Connection348
         connect "Referent input voltage.out" Sum3.in as Connection349
         connect "Referent output voltage.out" Junction31 as Connection352
@@ -520,7 +521,7 @@ model "zad2" {
         connect 5Hz.n_node Junction34 as Connection387
         connect S2.a_in 5Hz.p_node as Connection389
         connect Flyback1.a_in Junction35 as Connection390
-        connect Junction35 Va1.p_node as Connection391
+        connect Junction35 IVM.p_node as Connection391
         [
             breakpoints = 8200, 8080; 8200, 8080; 8200, 8080
         ]
@@ -750,6 +751,8 @@ model "zad2" {
         # To get the model file path, use 'mdl.get_model_file_path()'
         # To print information to the console, use info()
         
+        import control as ct
+        
         Vin = 230 * np.sqrt(2)
         Vout = 5
         PoutList = [7.5, 100]
@@ -810,7 +813,52 @@ model "zad2" {
         Cf = 5e-3
         
         wc = 2 * np.pi * fs/10
-        k = 0.127841775727543
-        p = 0.008726867790758
+        
+        
+        # SYSTEM CALCULATION
+        D0 = D0List[1]  # no matter what you choose, load will only differ and
+        Rl = RlList[1]  # the task of regulation is to compensate that difference
+        
+        A11 = -(n**2 * D0 * Rp + (1 - D0) * Rs) / (n**2 * Lm)
+        A12 = -(1 - D0) / (n * Lm)
+        A21 = (1 - D0) / (n * Cf)
+        A22 = -1 / (Rl * Cf)
+        A = [[A11, A12], [A21, A22]]
+        
+        B11 = D0 / Lm
+        B12 = Vin * ((1 - D0) * Rl + Rs) / (Lm * ((1 - D0) ** 2 * Rl + (1 - D0) * Rs + n**2 * D0 * Rp))
+        B21 = 0
+        B22 = -(n * D0 * Vin) / (Cf * ((1 - D0) ** 2 * Rl + (1 - D0) * Rs + n**2 * D0 * Rp))
+        B = [[B11, B12], [B21, B22]]
+        
+        B1 = [[B11], [B21]]
+        B2 = [[B12], [B22]]
+        D1 = [[0]]
+        D2 = [[0]]
+        
+        C = [0, 1]
+        D = [0, 0]
+        
+        sys1 = ct.ss(A, B1, C, D1)
+        GVV = ct.ss2tf(sys1)
+        
+        sys2 = ct.ss(A, B2, C, D2)
+        GDV = ct.ss2tf(sys2)
+        
+        wc = 2 * np.pi * fs/10
+        
+        mag, _, _ = GDV.freqresp(wc)
+        KReg = 1 / mag
+        
+        theta = np.deg2rad(89)
+        p = np.sqrt((1 + np.sin(theta)) / (1 - np.sin(theta)))
+        
+        GLeadNum = [1, p/wc]
+        GLeadDen = [1, 1/(p * wc)]
+        
+        GLag2Num = [1, wc/10]
+        GLag2Den = [1, 0]
+        
+        KVinComp = ct.dcgain(GVV / GDV)
     ENDCODE
 }

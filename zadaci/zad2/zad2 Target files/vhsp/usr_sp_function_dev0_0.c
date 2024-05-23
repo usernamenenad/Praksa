@@ -118,13 +118,13 @@ double _sum3__out;
 double _sum1__out;
 double _product1__out;
 double _kvincomp__out;
-double _gain1__out;
+double _kreg__out;
 double _rate_limiter__out;
 
 double _rate_limiter__rising_rate_lim[1];
 double _rate_limiter__falling_rate_lim[1];
 
-double _gain2__out;
+double _1_p__out;
 double _glag1__out;
 double _glag1__b_coeff[2] = {1.0, -0.999992705059966};
 double _glag1__a_coeff[2] = {1.0, -0.9999999994444304};
@@ -157,7 +157,7 @@ double _glag2__states[1];
 // Tunable parameters
 //
 static struct Tunable_params {
-    double _gain1__gain;
+    double _kreg__gain;
 } __attribute__((__packed__)) tunable_params;
 
 void *tunable_params_dev0_cpu0_ptr = &tunable_params;
@@ -300,10 +300,10 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     }
     // Generated from the component: Product1
     _product1__out = (_product2__out) * 1.0 / (_output_power__out);
-    // Generated from the component: KVincomp
-    _kvincomp__out = 0.0002034 * _sum3__out;
-    // Generated from the component: Gain1
-    _gain1__out = tunable_params._gain1__gain * _sum1__out;
+    // Generated from the component: KVinComp
+    _kvincomp__out = 0.00020385486642690505 * _sum3__out;
+    // Generated from the component: KReg
+    _kreg__out = tunable_params._kreg__gain * _sum1__out;
     // Generated from the component: Rate limiter
     _rate_limiter__rising_rate_lim[0] = 2.0 * 0.0001;
     _rate_limiter__falling_rate_lim[0] = -2.0 * 0.0001;
@@ -317,11 +317,11 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
         if (_product1__out - _rate_limiter__state < _rate_limiter__falling_rate_lim[0])
             _rate_limiter__out = _rate_limiter__state + (_rate_limiter__falling_rate_lim[0]);
     }
-    // Generated from the component: Gain2
-    _gain2__out = 0.008726867790758 * _gain1__out;
+    // Generated from the component: 1_p
+    _1_p__out = 0.008726867790757918 * _kreg__out;
     // Generated from the component: RL1.Vs
     HIL_OutFloat(137363456, (float) _rate_limiter__out);
-    // Generated from the component: Glag1
+    // Generated from the component: GLag1
     X_UnInt32 _glag1__i;
     _glag1__a_sum = 0.0f;
     _glag1__b_sum = 0.0f;
@@ -330,10 +330,10 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
         _glag1__b_sum += _glag1__b_coeff[_glag1__i + 1] * _glag1__states[_glag1__i];
     }
     _glag1__a_sum += _glag1__states[0] * _glag1__a_coeff[1];
-    _glag1__delay_line_in = _gain2__out - _glag1__a_sum;
+    _glag1__delay_line_in = _1_p__out - _glag1__a_sum;
     _glag1__b_sum += _glag1__b_coeff[0] * _glag1__delay_line_in;
     _glag1__out = _glag1__b_sum;
-    // Generated from the component: Glag2
+    // Generated from the component: GLag2
     X_UnInt32 _glag2__i;
     _glag2__a_sum = 0.0f;
     _glag2__b_sum = 0.0f;
@@ -378,9 +378,9 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     else
         _rate_limiter__state = _product1__out;
     _rate_limiter__first_step = 0;
-    // Generated from the component: Glag1
+    // Generated from the component: GLag1
     _glag1__states[0] = _glag1__delay_line_in;
-    // Generated from the component: Glag2
+    // Generated from the component: GLag2
     _glag2__states[0] = _glag2__delay_line_in;
     //@cmp.update.block.end
 }

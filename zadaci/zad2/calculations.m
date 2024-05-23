@@ -86,8 +86,13 @@ s = tf("s");
 %%
 wc = 2 * pi * fs/10;
 k = 1 / abs(evalfr(GDV, 1j * wc));
-theta = -89;
+margin(k * GDV)
+%%
+theta = 89;
 p = sqrt((1 + sind(theta)) / (1 - sind(theta)));
 Glag1 = p * (1 + s/(p*wc)) / (1 + p * s / wc);
-Glag2 = 1 + wc/20 / s;
-Reg = k * Glag1 * Glag2;
+Glag2 = 1 + wc/10 / s;
+Reg = k * 1 / Glag1 * Glag2;
+%%
+X = feedback(Reg * GDV, 1);
+step(X, 10, RespConfig("Amplitude", 5))
