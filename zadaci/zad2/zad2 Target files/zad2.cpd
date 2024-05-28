@@ -33,6 +33,27 @@
     </pesb>
     <analog_variables>
         <cell>
+            <name>Flyback1.L1</name>
+            <address>1</address>
+            <type>current</type>
+            <initial_condition>0.0</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
+            <name>Cf</name>
+            <address>0</address>
+            <type>voltage</type>
+            <initial_condition>0.0</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
+            <name>Flyback1.Lm</name>
+            <address>3</address>
+            <type>current</type>
+            <initial_condition>0.0</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
             <name>Flyback1.L2</name>
             <address>2</address>
             <type>current</type>
@@ -47,24 +68,24 @@
             <visible>True</visible>
         </cell>
         <cell>
-            <name>Cf</name>
-            <address>0</address>
+            <name>S1.i</name>
+            <address>9</address>
+            <type>current</type>
+            <initial_condition>None</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
+            <name>Flyback1.il</name>
+            <address>384</address>
+            <type>current</type>
+            <initial_condition>None</initial_condition>
+            <visible>False</visible>
+        </cell>
+        <cell>
+            <name>IVM</name>
+            <address>5</address>
             <type>voltage</type>
-            <initial_condition>0.0</initial_condition>
-            <visible>True</visible>
-        </cell>
-        <cell>
-            <name>Flyback1.L1</name>
-            <address>1</address>
-            <type>current</type>
-            <initial_condition>0.0</initial_condition>
-            <visible>True</visible>
-        </cell>
-        <cell>
-            <name>Flyback1.Lm</name>
-            <address>3</address>
-            <type>current</type>
-            <initial_condition>0.0</initial_condition>
+            <initial_condition>None</initial_condition>
             <visible>True</visible>
         </cell>
         <cell>
@@ -82,20 +103,6 @@
             <visible>False</visible>
         </cell>
         <cell>
-            <name>Flyback1.v2</name>
-            <address>386</address>
-            <type>voltage</type>
-            <initial_condition>None</initial_condition>
-            <visible>False</visible>
-        </cell>
-        <cell>
-            <name>Flyback1.il</name>
-            <address>384</address>
-            <type>current</type>
-            <initial_condition>None</initial_condition>
-            <visible>False</visible>
-        </cell>
-        <cell>
             <name>RL1.I</name>
             <address>8</address>
             <type>current</type>
@@ -103,18 +110,11 @@
             <visible>True</visible>
         </cell>
         <cell>
-            <name>Vout</name>
-            <address>6</address>
+            <name>Flyback1.v2</name>
+            <address>386</address>
             <type>voltage</type>
             <initial_condition>None</initial_condition>
-            <visible>True</visible>
-        </cell>
-        <cell>
-            <name>Va1</name>
-            <address>5</address>
-            <type>voltage</type>
-            <initial_condition>None</initial_condition>
-            <visible>True</visible>
+            <visible>False</visible>
         </cell>
         <cell>
             <name>S2.i</name>
@@ -124,9 +124,9 @@
             <visible>True</visible>
         </cell>
         <cell>
-            <name>S1.i</name>
-            <address>9</address>
-            <type>current</type>
+            <name>Vout</name>
+            <address>6</address>
+            <type>voltage</type>
             <initial_condition>None</initial_condition>
             <visible>True</visible>
         </cell>
@@ -654,20 +654,20 @@
             <address>768</address>
         </cell>
         <cell>
-            <name>Flyback1.PWM_Modulator.TOP_1</name>
-            <address>768</address>
-        </cell>
-        <cell>
-            <name>Flyback1.PWM_Modulator_TOP_1</name>
-            <address>768</address>
-        </cell>
-        <cell>
             <name>Flyback1.PWM_Modulator.BOT_1</name>
             <address>769</address>
         </cell>
         <cell>
             <name>Flyback1.PWM_Modulator_BOT_1</name>
             <address>769</address>
+        </cell>
+        <cell>
+            <name>Flyback1.PWM_Modulator.TOP_1</name>
+            <address>768</address>
+        </cell>
+        <cell>
+            <name>Flyback1.PWM_Modulator_TOP_1</name>
+            <address>768</address>
         </cell>
         <cell>
             <name>S1.feedback</name>
@@ -760,22 +760,6 @@
     </digital_variables>
 
     <tunable_params>
-        <tunable_param>
-            <name>KReg.gain</name>
-            <addr>[0]</addr>
-            <min></min>
-            <max></max>
-            <def_value>0.14640144817914733</def_value>
-            <unit></unit>
-            <widget_type>float</widget_type>
-            <format>real</format>
-            <size>1</size>
-            <param_type>tunable property</param_type>
-            <cpu_type>user_sp_cpu</cpu_type>
-            <cpu_idx>0</cpu_idx>
-            <execution_rate>0.0001</execution_rate>
-            <visible>True</visible>
-        </tunable_param>
         <tunable_param>
             <name>Enable disturbance</name>
             <addr>[1426063616]</addr>

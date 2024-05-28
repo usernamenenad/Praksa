@@ -200,18 +200,6 @@ widgetValue = hil.model_read('Output power')
                                         <num_viewport>3</num_viewport>
                                    </viewports>
                                </analog>
-                                <analog>
-                                    <channel>3</channel>
-                                    <name><![CDATA[Va1]]></name>
-                                    <is_locked>False</is_locked>
-                                    <vertical_scale>Auto</vertical_scale>
-                                    <vertical_offset>0.0</vertical_offset>
-                                    <coupling>False</coupling>
-                                    <row>3</row>
-                                    <viewports>
-                                        <num_viewport>4</num_viewport>
-                                   </viewports>
-                               </analog>
                             </analog_signals>
                             <digital_signals>
                             </digital_signals>
@@ -304,18 +292,6 @@ widgetValue = hil.model_read('Output power')
                                     <row>2</row>
                                     <viewports>
                                         <num_viewport>3</num_viewport>
-                                   </viewports>
-                               </analog>
-                            <analog>
-                                    <channel>3</channel>
-                                    <name><![CDATA[Va1]]></name>
-                                    <is_locked>False</is_locked>
-                                    <vertical_scale>Auto</vertical_scale>
-                                    <vertical_offset>0.0</vertical_offset>
-                                    <coupling>False</coupling>
-                                    <row>3</row>
-                                    <viewports>
-                                        <num_viewport>4</num_viewport>
                                    </viewports>
                                </analog>
                         </analog_signals>

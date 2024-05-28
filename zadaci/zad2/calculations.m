@@ -48,13 +48,13 @@ for i = 1:2
     b = 2 * k * fs * Vout * ((1 - D0)^2 * Rl + (1 - D0) * Rs + n^2 * D0 * Rp);
     CfList(i) = a / b * 1e3;
 end
-Cf = 5e-3;
+Cf = 10e-3;
 
 clear D0 Rl a b
 
 %% Funkcija prenosa
-D0 = D0List(2);
-Rl = RlList(2);
+D0 = D0List(1);
+Rl = RlList(1);
 
 A11 = - (n^2 * D0 * Rp + (1 - D0) * Rs) / (n^2 * Lm);
 A12 = -(1 - D0) / (n * Lm);
@@ -77,22 +77,13 @@ clear B11 B12 B21 B22
 C = [0, 1];
 D = [0, 0];
 
-sys = ss(A, B, C, D);
-G = tf(sys);
-GVV = G(1);
-GDV = G(2);
+Ts = 1e-6;
+sysC = ss(A, B, C, D);
+sysD = c2d(sysC, Ts, 'zoh');
+GC = tf(sysC);
+GD = tf(sysD);
+GVVC = GC(1);
+GDVC = GC(2);
+GVVD = GD(1);
+GDVD = GD(2);
 s = tf("s");
-
-%%
-wc = 2 * pi * fs/10;
-k = 1 / abs(evalfr(GDV, 1j * wc));
-margin(k * GDV)
-%%
-theta = 89;
-p = sqrt((1 + sind(theta)) / (1 - sind(theta)));
-Glag1 = p * (1 + s/(p*wc)) / (1 + p * s / wc);
-Glag2 = 1 + wc/10 / s;
-Reg = k * 1 / Glag1 * Glag2;
-%%
-X = feedback(Reg * GDV, 1);
-step(X, 10, RespConfig("Amplitude", 5))

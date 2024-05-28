@@ -89,9 +89,6 @@ typedef double real;
 
 
 
-
-
-
 //@cmp.def.end
 
 
@@ -107,36 +104,24 @@ typedef double real;
 // variables
 double _enable_disturbance__out;
 double _enable_flyback__out = 1.0;
+double _ivm_va1__out;
 double _output_power__out;
 double _referent_input_voltage__out = 325.2691193458119;
 double _referent_output_voltage__out = 5.0;
-double _va1_va1__out;
 double _vout_va1__out;
 double _not__out;
-double _product2__out;
 double _sum3__out;
+double _product2__out;
 double _sum1__out;
-double _product1__out;
 double _kvincomp__out;
-double _kreg__out;
+double _product1__out;
+double _pid_controller1__out;
+double _pid_controller1__pi_reg_out_int;
 double _rate_limiter__out;
 
 double _rate_limiter__rising_rate_lim[1];
 double _rate_limiter__falling_rate_lim[1];
 
-double _1_p__out;
-double _glag1__out;
-double _glag1__b_coeff[2] = {1.0, -0.999992705059966};
-double _glag1__a_coeff[2] = {1.0, -0.9999999994444304};
-double _glag1__a_sum;
-double _glag1__b_sum;
-double _glag1__delay_line_in;
-double _glag2__out;
-double _glag2__b_coeff[2] = {1.0, -0.984292036732051};
-double _glag2__a_coeff[2] = {1.0, -1.0};
-double _glag2__a_sum;
-double _glag2__b_sum;
-double _glag2__delay_line_in;
 double _sum2__out;
 double _limit1__out;
 X_UnInt32 _flyback1_pwm_modulator__channels[1] = {0};
@@ -147,17 +132,17 @@ X_UnInt32 _flyback1_pwm_modulator__update_mask;
 
 //@cmp.svar.start
 // state variables
+double _pid_controller1__integrator_state;
+X_Int32 _pid_controller1__av_active;
+double _pid_controller1__filter_state;
 double _rate_limiter__state;
 X_Int32 _rate_limiter__first_step;
-double _glag1__states[1];
-double _glag2__states[1];
 //@cmp.svar.end
 
 //
 // Tunable parameters
 //
 static struct Tunable_params {
-    double _kreg__gain;
 } __attribute__((__packed__)) tunable_params;
 
 void *tunable_params_dev0_cpu0_ptr = &tunable_params;
@@ -181,17 +166,11 @@ void ReInit_user_sp_cpu0_dev0() {
     printf("\n\rReInitTimer");
 #endif
     //@cmp.init.block.start
+    _pid_controller1__integrator_state =  0.0;
+    _pid_controller1__filter_state =  0.0;
     _rate_limiter__state = 0;
     _rate_limiter__first_step = 1;
     HIL_OutFloat(137363456, 0.0);
-    X_UnInt32 _glag1__i;
-    for (_glag1__i = 0; _glag1__i < 1; _glag1__i++) {
-        _glag1__states[_glag1__i] = 0;
-    }
-    X_UnInt32 _glag2__i;
-    for (_glag2__i = 0; _glag2__i < 1; _glag2__i++) {
-        _glag2__states[_glag2__i] = 0;
-    }
     HIL_OutAO(0x4000, 0.0f);
     _flyback1_pwm_modulator__update_mask = 1;
     HIL_OutInt32(0x2000080 + _flyback1_pwm_modulator__channels[0], 80000); // divide by 2 is already implemented in hw
@@ -270,10 +249,10 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     //@cmp.out.block.start
     // Generated from the component: Enable disturbance
     _enable_disturbance__out = XIo_InFloat(0x55000100);
+    // Generated from the component: IVM.Va1
+    _ivm_va1__out = (HIL_InFloat(0xc80000 + 0x5));
     // Generated from the component: Output power
     _output_power__out = XIo_InFloat(0x55000104);
-    // Generated from the component: Va1.Va1
-    _va1_va1__out = (HIL_InFloat(0xc80000 + 0x5));
     // Generated from the component: Vout.Va1
     _vout_va1__out = (HIL_InFloat(0xc80000 + 0x6));
     // Generated from the component: NOT
@@ -285,10 +264,10 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     else {
         HIL_OutInt32(0x8240481, 0x1);
     }
+    // Generated from the component: Sum3
+    _sum3__out = _referent_input_voltage__out - _ivm_va1__out;
     // Generated from the component: Product2
     _product2__out = (_referent_output_voltage__out * _referent_output_voltage__out);
-    // Generated from the component: Sum3
-    _sum3__out = _referent_input_voltage__out - _va1_va1__out;
     // Generated from the component: Sum1
     _sum1__out = _referent_output_voltage__out - _vout_va1__out;
     // Generated from the component: S1.CTC_Wrapper
@@ -298,12 +277,19 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     else {
         HIL_OutInt32(0x8240480, 0x1);
     }
+    // Generated from the component: KVinComp
+    _kvincomp__out = 0.0002037746462544858 * _sum3__out;
     // Generated from the component: Product1
     _product1__out = (_product2__out) * 1.0 / (_output_power__out);
-    // Generated from the component: KVinComp
-    _kvincomp__out = 0.00020385486642690505 * _sum3__out;
-    // Generated from the component: KReg
-    _kreg__out = tunable_params._kreg__gain * _sum1__out;
+    // Generated from the component: PID controller1
+    _pid_controller1__pi_reg_out_int = _pid_controller1__integrator_state + 9.92677897714473e-08 * _sum1__out;
+    if (_pid_controller1__pi_reg_out_int < 0.0)
+        _pid_controller1__av_active = -1;
+    else if (_pid_controller1__pi_reg_out_int > 1.0)
+        _pid_controller1__av_active = 1;
+    else
+        _pid_controller1__av_active = 0;
+    _pid_controller1__out = MIN(MAX(_pid_controller1__pi_reg_out_int, 0.0), 1.0);
     // Generated from the component: Rate limiter
     _rate_limiter__rising_rate_lim[0] = 2.0 * 0.0001;
     _rate_limiter__falling_rate_lim[0] = -2.0 * 0.0001;
@@ -317,36 +303,10 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
         if (_product1__out - _rate_limiter__state < _rate_limiter__falling_rate_lim[0])
             _rate_limiter__out = _rate_limiter__state + (_rate_limiter__falling_rate_lim[0]);
     }
-    // Generated from the component: 1_p
-    _1_p__out = 0.008726867790757918 * _kreg__out;
+    // Generated from the component: Sum2
+    _sum2__out = _pid_controller1__out + _kvincomp__out;
     // Generated from the component: RL1.Vs
     HIL_OutFloat(137363456, (float) _rate_limiter__out);
-    // Generated from the component: GLag1
-    X_UnInt32 _glag1__i;
-    _glag1__a_sum = 0.0f;
-    _glag1__b_sum = 0.0f;
-    _glag1__delay_line_in = 0.0f;
-    for (_glag1__i = 0; _glag1__i < 1; _glag1__i++) {
-        _glag1__b_sum += _glag1__b_coeff[_glag1__i + 1] * _glag1__states[_glag1__i];
-    }
-    _glag1__a_sum += _glag1__states[0] * _glag1__a_coeff[1];
-    _glag1__delay_line_in = _1_p__out - _glag1__a_sum;
-    _glag1__b_sum += _glag1__b_coeff[0] * _glag1__delay_line_in;
-    _glag1__out = _glag1__b_sum;
-    // Generated from the component: GLag2
-    X_UnInt32 _glag2__i;
-    _glag2__a_sum = 0.0f;
-    _glag2__b_sum = 0.0f;
-    _glag2__delay_line_in = 0.0f;
-    for (_glag2__i = 0; _glag2__i < 1; _glag2__i++) {
-        _glag2__b_sum += _glag2__b_coeff[_glag2__i + 1] * _glag2__states[_glag2__i];
-    }
-    _glag2__a_sum += _glag2__states[0] * _glag2__a_coeff[1];
-    _glag2__delay_line_in = _glag1__out - _glag2__a_sum;
-    _glag2__b_sum += _glag2__b_coeff[0] * _glag2__delay_line_in;
-    _glag2__out = _glag2__b_sum;
-    // Generated from the component: Sum2
-    _sum2__out = _glag2__out + _kvincomp__out;
     // Generated from the component: Limit1
     _limit1__out = MIN(MAX(_sum2__out, 0.0), 1.0);
     // Generated from the component: Duty ratio probe
@@ -368,6 +328,8 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     // Update block
     //////////////////////////////////////////////////////////////////////////
     //@cmp.update.block.start
+    // Generated from the component: PID controller1
+    _pid_controller1__integrator_state += 0.198535579542895 * _sum1__out * 0.0001;
     // Generated from the component: Rate limiter
     _rate_limiter__rising_rate_lim[0] = 2.0 * 0.0001;
     _rate_limiter__falling_rate_lim[0] = -2.0 * 0.0001;
@@ -378,10 +340,6 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     else
         _rate_limiter__state = _product1__out;
     _rate_limiter__first_step = 0;
-    // Generated from the component: GLag1
-    _glag1__states[0] = _glag1__delay_line_in;
-    // Generated from the component: GLag2
-    _glag2__states[0] = _glag2__delay_line_in;
     //@cmp.update.block.end
 }
 // ----------------------------------------------------------------------------------------
