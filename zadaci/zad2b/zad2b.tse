@@ -93,14 +93,6 @@ model "zad2b" {
             size = 144, 256
         ]
 
-        component "core/Voltage Source" Vin {
-            init_const_value = "Vin"
-        }
-        [
-            position = 8272, 8312
-            rotation = right
-        ]
-
         component "core/Capacitor" Cout {
             capacitance = "Cout"
             signal_access = "Inherit"
@@ -170,9 +162,8 @@ model "zad2b" {
             hide_name = True
         ]
 
-        component "core/PID controller" "PID controller1" {
+        component "core/PID controller" PI {
             controller_type = "PI"
-            enb_output_limit_out = "True"
             filt_coef = "68"
             kd = "-4.89275e-5"
             ki = "0.1005"
@@ -181,7 +172,6 @@ model "zad2b" {
         }
         [
             position = 8688, 8648
-            hide_name = True
         ]
 
         component "core/Product" Product2 {
@@ -189,6 +179,71 @@ model "zad2b" {
         [
             position = 8640, 7904
             hide_name = True
+        ]
+
+        component "core/Signal Controlled Voltage Source" Vin {
+        }
+        [
+            position = 8312, 8312
+            rotation = left
+            size = 64, 32
+        ]
+
+        component "core/SCADA Input" "Enable disturbance" {
+            unit = ""
+        }
+        [
+            position = 7976, 8216
+        ]
+
+        component "core/Limit" Limit1 {
+        }
+        [
+            position = 8944, 8656
+            hide_name = True
+        ]
+
+        component "core/Sum" Sum2 {
+        }
+        [
+            position = 8832, 8656
+            hide_name = True
+        ]
+
+        component "core/Gain" "Disturbance Compensator" {
+            gain = "dist_comp_gain"
+        }
+        [
+            position = 8632, 8752
+        ]
+
+        component "core/Sum" Sum3 {
+            signs = "+-"
+        }
+        [
+            position = 8456, 8752
+            hide_name = True
+        ]
+
+        component "core/Constant" "Referent input voltage2" {
+            value = "Vin"
+        }
+        [
+            position = 8336, 8744
+        ]
+
+        component "core/Sinusoidal Source" Disturbance {
+            _tunable = "True"
+        }
+        [
+            position = 7976, 8416
+        ]
+
+        component "core/Constant" "Referent input voltage1" {
+            value = "Vin"
+        }
+        [
+            position = 7976, 8312
         ]
 
         tag "Calculate output load (Goto)" {
@@ -211,7 +266,6 @@ model "zad2b" {
         }
         [
             position = 8488, 7896
-            hide_name = True
             size = 60, 20
         ]
 
@@ -222,8 +276,7 @@ model "zad2b" {
             direction = in
         }
         [
-            position = 9104, 8264
-            hide_name = True
+            position = 9112, 8264
             size = 60, 20
         ]
 
@@ -245,8 +298,7 @@ model "zad2b" {
             direction = in
         }
         [
-            position = 8848, 8648
-            hide_name = True
+            position = 9088, 8656
             size = 60, 20
         ]
 
@@ -258,7 +310,28 @@ model "zad2b" {
         }
         [
             position = 8416, 8048
-            hide_name = True
+            size = 60, 20
+        ]
+
+        tag "Input Voltage (From)" {
+            value = "InputVoltage"
+            scope = local
+            kind = sp
+            direction = out
+        }
+        [
+            position = 8336, 8808
+            size = 60, 20
+        ]
+
+        tag "Input Voltage (Goto)" {
+            value = "InputVoltage"
+            scope = local
+            kind = sp
+            direction = in
+        }
+        [
+            position = 8336, 8440
             size = 60, 20
         ]
 
@@ -292,8 +365,6 @@ model "zad2b" {
             position = 8584, 7896
         ]
 
-        connect Vin.p_node Flyback1.a_in as Connection1
-        connect Vin.n_node Flyback1.b_in as Connection2
         connect Flyback1.a_out Junction1 as Connection5
         connect Junction1 Cout.p_node as Connection6
         connect Flyback1.b_out Junction2 as Connection8
@@ -324,16 +395,25 @@ model "zad2b" {
         connect "Referent output voltage.out" Junction5 as Connection42
         connect Junction5 "Calculate output load (Goto)" as Connection43
         connect Sum1.in Junction5 as Connection44
-        connect Sum1.out "PID controller1.in" as Connection45
-        connect "PID controller1.out" "Duty ratio (Goto)" as Connection46
-        [
-            breakpoints = 8808, 8648
-        ]
+        connect Sum1.out PI.in as Connection45
         connect "Duty ratio (From)" Flyback1.In as Connection47
         connect Product2.out Product1.in as Connection48
         connect "Calculate output load (From)" Junction6 as Connection50
         connect Junction6 Product2.in as Connection51
         connect Product2.in1 Junction6 as Connection52
+        connect PI.out Sum2.in as Connection57
+        connect Sum2.out Limit1.in as Connection58
+        connect Limit1.out "Duty ratio (Goto)" as Connection59
+        connect "Disturbance Compensator.out" Sum2.in1 as Connection60
+        connect Vin.n_node Flyback1.a_in as Connection61
+        connect Vin.p_node Flyback1.b_in as Connection62
+        connect Sum3.out "Disturbance Compensator.in" as Connection66
+        connect "Input Voltage (From)" Sum3.in1 as Connection67
+        connect "Referent input voltage2.out" Sum3.in as Connection68
+        connect Vin.in "Input Voltage (Goto)" as Connection77
+        [
+            breakpoints = 8240, 8312
+        ]
     }
 
     default {
@@ -350,6 +430,19 @@ model "zad2b" {
             signal_type = "real"
             execution_rate = "100e-6"
             _tunable = "False"
+        }
+
+        "core/Gain" {
+            gain = "1"
+            multiplication = "Element-wise(K.*u)"
+            _tunable = "False"
+            execution_rate = "inherit"
+        }
+
+        "core/Limit" {
+            upper_limit = "[\'inf\']"
+            lower_limit = "[\'-inf\']"
+            execution_rate = "inherit"
         }
 
         "core/PID controller" {
@@ -394,31 +487,18 @@ model "zad2b" {
             execution_rate = "100e-6"
         }
 
+        "core/Sinusoidal Source" {
+            amplitude = "1"
+            dc_offset = "0"
+            frequency = "50"
+            phase = "0"
+            execution_rate = "100e-6"
+            _tunable = "False"
+        }
+
         "core/Sum" {
             signs = "2"
             execution_rate = "inherit"
-        }
-
-        "core/Voltage Source" {
-            sig_input = "False"
-            type = "signal generator"
-            param_set = "1phase"
-            parent_label = ""
-            addr = "0"
-            spc_nb = "0"
-            execution_rate = "100e-6"
-            cpd_visible = "True"
-            enable_snb = "False"
-            snb_type = "R2"
-            R2 = "0.0"
-            L1 = "0.1"
-            override_signal_name = "False"
-            signal_name = ""
-            init_source_nature = "Constant"
-            init_const_value = "0.0"
-            init_rms_value = "0.0"
-            init_frequency = "50.0"
-            init_phase = "0.0"
         }
 
         "core/Flyback" {
@@ -447,6 +527,10 @@ model "zad2b" {
             pwm_enabling = "False"
             pwm_enable_di = "13"
             pwm_enable_inv = "active high"
+        }
+
+        "core/Signal Controlled Voltage Source" {
+            execution_rate = "inherit"
         }
 
         "core/Variable Resistor" {
@@ -607,5 +691,7 @@ model "zad2b" {
         
         Cout = max(Cout_list) + 1e-2
         info(Cout)
+        
+        dist_comp_gain = 2.0392e-4
     ENDCODE
 }
