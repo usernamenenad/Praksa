@@ -80,7 +80,7 @@ model "zad2b" {
             Lm = "Lm"
             R1 = "Rp"
             R2 = "Rs"
-            Rm = "1e6"
+            Rm = "1e7"
             carrier_freq = "fs"
             ctrl_src = "Internal modulator"
             d_time = "0"
@@ -97,7 +97,7 @@ model "zad2b" {
             init_const_value = "Vin"
         }
         [
-            position = 8224, 8312
+            position = 8272, 8312
             rotation = right
         ]
 
@@ -118,6 +118,8 @@ model "zad2b" {
         ]
 
         component "core/Voltage Measurement" Vout {
+            sig_output = "True"
+            signal_access = "Inherit"
         }
         [
             position = 9000, 8264
@@ -125,19 +127,139 @@ model "zad2b" {
             size = 64, 32
         ]
 
-        component "core/Constant" Constant1 {
-            value = "D_list[1]"
-        }
-        [
-            position = 8400, 8072
-        ]
-
-        component "core/Resistor" R1 {
-            resistance = "0.25"
+        component "core/Variable Resistor" Rload {
+            inductance = "1e-4"
         }
         [
             position = 8856, 8264
             rotation = right
+            size = 64, 48
+        ]
+
+        component "core/SCADA Input" "Output power" {
+            def_value = "7.5"
+            max = "100"
+            min = "7.5"
+            signal_access = "Inherit"
+            unit = ""
+        }
+        [
+            position = 8640, 7992
+        ]
+
+        component "core/Product" Product1 {
+            signs = "*/"
+        }
+        [
+            position = 8760, 7984
+            hide_name = True
+        ]
+
+        component "core/Constant" "Referent output voltage" {
+            value = "Vout"
+        }
+        [
+            position = 8232, 8552
+        ]
+
+        component "core/Sum" Sum1 {
+            signs = "+-"
+        }
+        [
+            position = 8560, 8648
+            hide_name = True
+        ]
+
+        component "core/PID controller" "PID controller1" {
+            controller_type = "PI"
+            enb_output_limit_out = "True"
+            filt_coef = "68"
+            kd = "-4.89275e-5"
+            ki = "0.1005"
+            kp = "3.86e-5"
+            lower_sat_lim = "0"
+        }
+        [
+            position = 8688, 8648
+            hide_name = True
+        ]
+
+        component "core/Product" Product2 {
+        }
+        [
+            position = 8640, 7904
+            hide_name = True
+        ]
+
+        tag "Calculate output load (Goto)" {
+            value = "CalculateRload"
+            scope = local
+            kind = sp
+            direction = in
+        }
+        [
+            position = 8432, 8552
+            hide_name = True
+            size = 60, 20
+        ]
+
+        tag "Calculate output load (From)" {
+            value = "CalculateRload"
+            scope = local
+            kind = sp
+            direction = out
+        }
+        [
+            position = 8488, 7896
+            hide_name = True
+            size = 60, 20
+        ]
+
+        tag "Output Voltage Measure (Goto)" {
+            value = "OutputVoltageMeasure"
+            scope = local
+            kind = sp
+            direction = in
+        }
+        [
+            position = 9104, 8264
+            hide_name = True
+            size = 60, 20
+        ]
+
+        tag "Output Voltage Measure (From)" {
+            value = "OutputVoltageMeasure"
+            scope = local
+            kind = sp
+            direction = out
+        }
+        [
+            position = 8328, 8656
+            size = 60, 20
+        ]
+
+        tag "Duty ratio (Goto)" {
+            value = "ControlSignal"
+            scope = local
+            kind = sp
+            direction = in
+        }
+        [
+            position = 8848, 8648
+            hide_name = True
+            size = 60, 20
+        ]
+
+        tag "Duty ratio (From)" {
+            value = "ControlSignal"
+            scope = local
+            kind = sp
+            direction = out
+        }
+        [
+            position = 8416, 8048
+            hide_name = True
+            size = 60, 20
         ]
 
         junction Junction1 pe
@@ -160,6 +282,16 @@ model "zad2b" {
             position = 8856, 8312
         ]
 
+        junction Junction5 sp
+        [
+            position = 8360, 8552
+        ]
+
+        junction Junction6 sp
+        [
+            position = 8584, 7896
+        ]
+
         connect Vin.p_node Flyback1.a_in as Connection1
         connect Vin.n_node Flyback1.b_in as Connection2
         connect Flyback1.a_out Junction1 as Connection5
@@ -167,22 +299,41 @@ model "zad2b" {
         connect Flyback1.b_out Junction2 as Connection8
         connect Junction2 Cout.n_node as Connection9
         connect "Enable flyback.out" Flyback1.En as Connection17
-        connect Constant1.out Flyback1.In as Connection18
-        connect Vout.p_node Junction3 as Connection21
+        connect Vout.p_node Junction3 as Connection30
         [
             breakpoints = 8864, 8216
         ]
-        connect Junction3 Junction1 as Connection22
-        connect R1.p_node Junction3 as Connection23
-        connect Junction2 Junction4 as Connection24
+        connect Junction3 Junction1 as Connection31
         [
-            breakpoints = 8760, 8312
+            breakpoints = 8856, 8216
         ]
-        connect Junction4 Vout.n_node as Connection25
+        connect Rload.p_node Junction3 as Connection32
+        connect Junction2 Junction4 as Connection33
         [
-            breakpoints = 8864, 8312
+            breakpoints = 8760, 8312; 8760, 8312
         ]
-        connect R1.n_node Junction4 as Connection26
+        connect Junction4 Vout.n_node as Connection34
+        [
+            breakpoints = 8856, 8312; 8864, 8312
+        ]
+        connect Rload.n_node Junction4 as Connection35
+        connect Product1.out Rload.In as Connection37
+        connect "Output power.out" Product1.in1 as Connection38
+        connect Vout.out "Output Voltage Measure (Goto)" as Connection40
+        connect "Output Voltage Measure (From)" Sum1.in1 as Connection41
+        connect "Referent output voltage.out" Junction5 as Connection42
+        connect Junction5 "Calculate output load (Goto)" as Connection43
+        connect Sum1.in Junction5 as Connection44
+        connect Sum1.out "PID controller1.in" as Connection45
+        connect "PID controller1.out" "Duty ratio (Goto)" as Connection46
+        [
+            breakpoints = 8808, 8648
+        ]
+        connect "Duty ratio (From)" Flyback1.In as Connection47
+        connect Product2.out Product1.in as Connection48
+        connect "Calculate output load (From)" Junction6 as Connection50
+        connect Junction6 Product2.in as Connection51
+        connect Product2.in1 Junction6 as Connection52
     }
 
     default {
@@ -201,9 +352,32 @@ model "zad2b" {
             _tunable = "False"
         }
 
-        "core/Resistor" {
-            resistance = "1"
-            param_set = ""
+        "core/PID controller" {
+            controller_type = "PID"
+            kp = "1"
+            kp_source = "internal"
+            ki = "1"
+            ki_source = "internal"
+            kd = "0"
+            kd_source = "internal"
+            filt_coef = "100"
+            int_init_value = "0"
+            filt_init_value = "0"
+            enb_output_limit_out = "False"
+            show_reset = "none"
+            upper_sat_lim = "1"
+            upper_sat_lim_source = "internal"
+            lower_sat_lim = "-1"
+            lower_sat_lim_source = "internal"
+            enb_anti_windup_out = "False"
+            signal_out_type = "inherit"
+            _tunable = "False"
+            execution_rate = "inherit"
+        }
+
+        "core/Product" {
+            signs = "2"
+            execution_rate = "inherit"
         }
 
         "core/SCADA Input" {
@@ -218,6 +392,11 @@ model "zad2b" {
             def_value = "0"
             unit = " "
             execution_rate = "100e-6"
+        }
+
+        "core/Sum" {
+            signs = "2"
+            execution_rate = "inherit"
         }
 
         "core/Voltage Source" {
@@ -270,6 +449,12 @@ model "zad2b" {
             pwm_enable_inv = "active high"
         }
 
+        "core/Variable Resistor" {
+            inductance = "1e-3"
+            initial_current = "0.0"
+            hide_int_meas = "False"
+        }
+
         "core/Voltage Measurement" {
             signal_access = "inherit"
             bw_limit = "False"
@@ -309,23 +494,11 @@ model "zad2b" {
         Pout_min = 7.5
         Pout_max = 100
         Pout_list = [Pout_min, Pout_max]
-        PlossT = 0.5
+        PlossT_max = 0.5
         fs = 2500
         output_ripple = 0.03
         
         # Calculations of parameters
-        
-        # Duty Ratio
-        """
-        This is a list where the duty ratio's for two marginal output powers will be.
-        They will not differ that much - that's because we want to have constant
-        output power, and the output current will actually change.
-        """
-        D_list = []
-        for Pout in Pout_list:
-            a = Vout * (1 + PlossT / Pout);
-            b = n * Vin + a;
-            D_list.append(a / b);
         
         # Equivallent transformer resistance
         """
@@ -339,11 +512,40 @@ model "zad2b" {
         Req_list = []
         for i in range(len(Pout_list)):
             Pout = Pout_list[i]
-            D = D_list[i]
-            a = (1 - D) * Vout
-            b = n * Pout;
-            Req_list.append(PlossT * (a / b)**2)
+            a = Vin * Vout
+            b = n * Vin * Pout + Vout * (Pout + PlossT_max);
+            Req_list.append((a / b)**2 * PlossT_max)
         
+        Req = min(Req_list)
+        
+        # Actual power losses on transformer
+        """
+        We've calculated the worst case scenarios for both output powers and chose
+        the equivallent resistance based on the worst of the worst. Now, we have to
+        calculate what are actual power losses, since the power loss will not now
+        be "PlossT_max" for all cases.
+        """
+        PlossT_list = []
+        for Pout in Pout_list:
+            a = Req * Vout**2;
+            b = 2 * Pout * Req * Vout * (n * Vin + Vout) - Vin**2 * Vout**2
+            c = Pout**2 * Req * (n**2 * Vin**2 + n * Vin * Vout + Vout**2)
+            d = np.roots([a, b, c])
+            PlossT_list.append(min(d))
+        
+        # Duty ratio
+        """
+        Having calculated power losses for all cases, we now calculate duty ratio.
+        """
+        D_list = []
+        for i in range(len(Pout_list)):
+            Pout = Pout_list[i]
+            PlossT = PlossT_list[i]
+            a = Vout * (1 + PlossT / Pout);
+            b = n * Vin + a;
+            D_list.append(a / b);
+            
+        # Choosing the windings' resistances
         """
         We can now choose an arbitrary primary or secondary winding's resistance,
         and choosing one of them will yield another. Equation for Req is given by
@@ -354,10 +556,10 @@ model "zad2b" {
         The user of the model is allowed to modify the resistances below, 
         as long as its' choices satisfy the equation above.
         """
-        Req = min(Req_list)
-        iReq = Req_list.index(Req)
-        Rp = Req / D_list[i]
-        Rs = 1e-9 # Equivallent to saying Rs = 0 in Typhoon Hil software.
+        index_min_Req = Req_list.index(Req)
+        Rp = Req / D_list[index_min_Req]
+        info(Rp)
+        Rs = 1e-9
         
         # Steady state values of magnetizing current
         ILm_list = []
@@ -367,7 +569,7 @@ model "zad2b" {
             a = n * Pout
             b = (1 - D) * Vout
             ILm_list.append(a / b)
-            
+        
         # Choosing the magnetizing inductance
         """
         For this model, it is chosen for flyback to work in continuous conduction mode.
@@ -389,8 +591,8 @@ model "zad2b" {
             a = (1 - D)**2 * D * Rload * Vin
             b = 2 * fs * ILm * ((1 - D)**2 * Rload + n**2 * Req)
             Lm_list.append(a / b)
-            
-        Lm = max(Lm_list) + 5e-3
+        
+        Lm = max(Lm_list) + 1e-2
         info(Lm)
         
         # Choosing the output capacitance
@@ -398,11 +600,12 @@ model "zad2b" {
         for i in range(len(Pout_list)):
             Pout = Pout_list[i]
             D = D_list[i]
+            Rload = Vout ** 2 / Pout
             a = n * D**2 * (1 - D) * Vin
             b = 2 * output_ripple * fs * Vout * ((1 - D)**2 * Rload + n**2 * Req)
             Cout_list.append(a / b)
         
-        Cout = max(Cout_list) + 5e-3
+        Cout = max(Cout_list) + 1e-2
         info(Cout)
     ENDCODE
 }
