@@ -33,8 +33,8 @@
     </pesb>
     <analog_variables>
         <cell>
-            <name>Flyback1.L1</name>
-            <address>1</address>
+            <name>Flyback1.Lm</name>
+            <address>3</address>
             <type>current</type>
             <initial_condition>0.0</initial_condition>
             <visible>True</visible>
@@ -54,13 +54,6 @@
             <visible>True</visible>
         </cell>
         <cell>
-            <name>Flyback1.Lm</name>
-            <address>3</address>
-            <type>current</type>
-            <initial_condition>0.0</initial_condition>
-            <visible>True</visible>
-        </cell>
-        <cell>
             <name>Flyback1.L2</name>
             <address>2</address>
             <type>current</type>
@@ -68,11 +61,18 @@
             <visible>True</visible>
         </cell>
         <cell>
-            <name>Flyback1.v1</name>
-            <address>385</address>
-            <type>voltage</type>
+            <name>Flyback1.L1</name>
+            <address>1</address>
+            <type>current</type>
+            <initial_condition>0.0</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
+            <name>Rload.I</name>
+            <address>6</address>
+            <type>current</type>
             <initial_condition>None</initial_condition>
-            <visible>False</visible>
+            <visible>True</visible>
         </cell>
         <cell>
             <name>Vout</name>
@@ -89,18 +89,18 @@
             <visible>False</visible>
         </cell>
         <cell>
-            <name>Flyback1.v2</name>
-            <address>386</address>
+            <name>Flyback1.v1</name>
+            <address>385</address>
             <type>voltage</type>
             <initial_condition>None</initial_condition>
             <visible>False</visible>
         </cell>
         <cell>
-            <name>Rload.I</name>
-            <address>6</address>
-            <type>current</type>
+            <name>Flyback1.v2</name>
+            <address>386</address>
+            <type>voltage</type>
             <initial_condition>None</initial_condition>
-            <visible>True</visible>
+            <visible>False</visible>
         </cell>
         <cell>
             <name>const_0V</name>
@@ -662,6 +662,15 @@
         <sig_stim>off</sig_stim>
     </model_properties>
 
+    <analog_variables>
+        <cell>
+            <name>Input voltage measurement</name>
+            <type>generic</type>
+            <address>16384</address>
+            <initial_condition>None</initial_condition>
+            <visible>True</visible>
+        </cell>
+    </analog_variables>
 
 <digital_variables>
     </digital_variables>
@@ -688,7 +697,23 @@
             <addr>[8]</addr>
             <min>1e-15</min>
             <max></max>
-            <def_value>50.0</def_value>
+            <def_value>5.0</def_value>
+            <unit></unit>
+            <widget_type>float</widget_type>
+            <format>real</format>
+            <size>1</size>
+            <param_type>tunable property</param_type>
+            <cpu_type>user_sp_cpu</cpu_type>
+            <cpu_idx>0</cpu_idx>
+            <execution_rate>0.0001</execution_rate>
+            <visible>True</visible>
+        </tunable_param>
+        <tunable_param>
+            <name>Disturbance.amplitude</name>
+            <addr>[16]</addr>
+            <min>0</min>
+            <max></max>
+            <def_value>46.0</def_value>
             <unit></unit>
             <widget_type>float</widget_type>
             <format>real</format>
@@ -701,7 +726,7 @@
         </tunable_param>
         <tunable_param>
             <name>Disturbance.dc_offset</name>
-            <addr>[16]</addr>
+            <addr>[24]</addr>
             <min></min>
             <max></max>
             <def_value>0.0</def_value>
@@ -716,30 +741,14 @@
             <visible>True</visible>
         </tunable_param>
         <tunable_param>
-            <name>Disturbance.amplitude</name>
-            <addr>[24]</addr>
-            <min>0</min>
-            <max></max>
-            <def_value>1.0</def_value>
-            <unit></unit>
-            <widget_type>float</widget_type>
-            <format>real</format>
-            <size>1</size>
-            <param_type>tunable property</param_type>
-            <cpu_type>user_sp_cpu</cpu_type>
-            <cpu_idx>0</cpu_idx>
-            <execution_rate>0.0001</execution_rate>
-            <visible>True</visible>
-        </tunable_param>
-        <tunable_param>
             <name>Enable disturbance</name>
             <addr>[1426063616]</addr>
-            <min>-1000000.0</min>
-            <max>1000000.0</max>
+            <min>0.0</min>
+            <max>1.0</max>
             <def_value>0.0</def_value>
             <unit></unit>
-            <widget_type>float</widget_type>
-            <format>real</format>
+            <widget_type>int</widget_type>
+            <format>integer</format>
             <size>1</size>
             <param_type>scada input</param_type>
             <cpu_type>user_sp_cpu</cpu_type>
@@ -796,6 +805,11 @@
 
     <sp_compiler_type>gcc</sp_compiler_type>
 
+    <streaming>
+
+
+
+     </streaming>
 
 
 </model_description>

@@ -87,6 +87,10 @@ typedef double real;
 
 
 
+
+
+
+
 //@cmp.def.end
 
 
@@ -100,21 +104,28 @@ typedef double real;
 
 //@cmp.var.start
 // variables
+double _constant1__out = 0.0;
 double _disturbance__out;
-double _enable_disturbance__out;
+X_Int32 _enable_disturbance__out;
 double _enable_flyback__out;
 double _output_power__out;
 double _referent_input_voltage1__out = 325.2691193458119;
 double _referent_input_voltage2__out = 325.2691193458119;
 double _referent_output_voltage__out = 5.0;
 double _vout_va1__out;
-double _multiport_signal_switch1__out;
+double _signal_switch1__out;
 double _product2__out;
 double _sum1__out;
-double _sum3__out;
+double _sum4__out;
 double _product1__out;
 double _pi__out;
 double _pi__pi_reg_out_int;
+double _sum3__out;
+double _rate_limiter1__out;
+
+double _rate_limiter1__rising_rate_lim[1];
+double _rate_limiter1__falling_rate_lim[1];
+
 double _disturbance_compensator__out;
 double _sum2__out;
 double _limit1__out;
@@ -128,7 +139,10 @@ X_UnInt32 _flyback1_pwm_modulator__update_mask;
 // state variables
 double _disturbance__current_phase;
 double _pi__integrator_state;
-double _pi__filter_state;//@cmp.svar.end
+double _pi__filter_state;
+double _rate_limiter1__state;
+X_Int32 _rate_limiter1__first_step;
+//@cmp.svar.end
 
 //
 // Tunable parameters
@@ -136,8 +150,8 @@ double _pi__filter_state;//@cmp.svar.end
 static struct Tunable_params {
     double _disturbance__phase;
     double _disturbance__frequency;
-    double _disturbance__dc_offset;
     double _disturbance__amplitude;
+    double _disturbance__dc_offset;
 } __attribute__((__packed__)) tunable_params;
 
 void *tunable_params_dev0_cpu0_ptr = &tunable_params;
@@ -162,9 +176,12 @@ void ReInit_user_sp_cpu0_dev0() {
 #endif
     //@cmp.init.block.start
     _disturbance__current_phase = tunable_params._disturbance__phase / 360.0f;
-    HIL_OutFloat(137101312, 0.0);
     _pi__integrator_state =  0.0;
     _pi__filter_state =  0.0;
+    HIL_OutAO(0x4000, 0.0f);
+    HIL_OutFloat(137101312, 0.0);
+    _rate_limiter1__state = 0;
+    _rate_limiter1__first_step = 1;
     HIL_OutFloat(137363456, 0.0);
     _flyback1_pwm_modulator__update_mask = 1;
     HIL_OutInt32(0x2000080 + _flyback1_pwm_modulator__channels[0], 80000); // divide by 2 is already implemented in hw
@@ -234,6 +251,7 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     //////////////////////////////////////////////////////////////////////////
     // Set tunable parameters
     //////////////////////////////////////////////////////////////////////////
+    // Generated from the component: Constant1
     // Generated from the component: Referent input voltage1
     // Generated from the component: Referent input voltage2
     // Generated from the component: Referent output voltage
@@ -244,41 +262,49 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     // Generated from the component: Disturbance
     _disturbance__out = (tunable_params._disturbance__amplitude * sin(2.0f * M_PI * _disturbance__current_phase) + tunable_params._disturbance__dc_offset);
     // Generated from the component: Enable disturbance
-    _enable_disturbance__out = XIo_InFloat(0x55000100);
+    _enable_disturbance__out = XIo_InInt32(0x55000100);
     // Generated from the component: Enable flyback
     _enable_flyback__out = XIo_InFloat(0x55000104);
     // Generated from the component: Output power
     _output_power__out = XIo_InFloat(0x55000108);
     // Generated from the component: Vout.Va1
     _vout_va1__out = (HIL_InFloat(0xc80000 + 0x5));
-    // Generated from the component: Multiport signal switch1
-    switch((X_UnInt32) _enable_disturbance__out) {
-    case 1:
-        _multiport_signal_switch1__out = _referent_input_voltage1__out;
-        break;
-    case 2:
-        _multiport_signal_switch1__out = _disturbance__out;
-        break;
-    default:
-        _multiport_signal_switch1__out = 0x0;
-    }
+    // Generated from the component: Signal switch1
+    _signal_switch1__out = (_enable_disturbance__out != 0.0) ? _disturbance__out : _constant1__out;
     // Generated from the component: Product2
     _product2__out = (_referent_output_voltage__out * _referent_output_voltage__out);
     // Generated from the component: Sum1
     _sum1__out = _referent_output_voltage__out - _vout_va1__out;
-    // Generated from the component: Sum3
-    _sum3__out = _referent_input_voltage2__out - _multiport_signal_switch1__out;
-    // Generated from the component: Vin.Vs1
-    HIL_OutFloat(137101312, (float) _multiport_signal_switch1__out);
+    // Generated from the component: Sum4
+    _sum4__out = _referent_input_voltage1__out + _signal_switch1__out;
     // Generated from the component: Product1
     _product1__out = (_product2__out) * 1.0 / (_output_power__out);
     // Generated from the component: PI
     _pi__pi_reg_out_int = _pi__integrator_state + 3.86e-05 * _sum1__out;
     _pi__out = _pi__pi_reg_out_int;
+    // Generated from the component: Input voltage measurement
+    HIL_OutAO(0x4000, (float)_sum4__out);
+    // Generated from the component: Sum3
+    _sum3__out = _referent_input_voltage2__out - _sum4__out;
+    // Generated from the component: Vin.Vs1
+    HIL_OutFloat(137101312, (float) _sum4__out);
+    // Generated from the component: Rate Limiter1
+    _rate_limiter1__rising_rate_lim[0] = 10.0 * 0.0001;
+    _rate_limiter1__falling_rate_lim[0] = -10.0 * 0.0001;
+    if (_rate_limiter1__first_step) {
+        _rate_limiter1__out = _product1__out;
+        _rate_limiter1__state = _product1__out;
+    } else {
+        _rate_limiter1__out = _product1__out;
+        if (_product1__out - _rate_limiter1__state > _rate_limiter1__rising_rate_lim[0])
+            _rate_limiter1__out = _rate_limiter1__state + (_rate_limiter1__rising_rate_lim[0]);
+        if (_product1__out - _rate_limiter1__state < _rate_limiter1__falling_rate_lim[0])
+            _rate_limiter1__out = _rate_limiter1__state + (_rate_limiter1__falling_rate_lim[0]);
+    }
     // Generated from the component: Disturbance Compensator
     _disturbance_compensator__out = 0.00020392 * _sum3__out;
     // Generated from the component: Rload.Vs
-    HIL_OutFloat(137363456, (float) _product1__out);
+    HIL_OutFloat(137363456, (float) _rate_limiter1__out);
     // Generated from the component: Sum2
     _sum2__out = _pi__out + _disturbance_compensator__out;
     // Generated from the component: Limit1
@@ -307,6 +333,16 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     }
     // Generated from the component: PI
     _pi__integrator_state += 0.1005 * _sum1__out * 0.0001;
+    // Generated from the component: Rate Limiter1
+    _rate_limiter1__rising_rate_lim[0] = 10.0 * 0.0001;
+    _rate_limiter1__falling_rate_lim[0] = -10.0 * 0.0001;
+    if (_product1__out - _rate_limiter1__state > _rate_limiter1__rising_rate_lim[0])
+        _rate_limiter1__state += _rate_limiter1__rising_rate_lim[0];
+    else  if (_product1__out - _rate_limiter1__state < _rate_limiter1__falling_rate_lim[0])
+        _rate_limiter1__state += (_rate_limiter1__falling_rate_lim[0]);
+    else
+        _rate_limiter1__state = _product1__out;
+    _rate_limiter1__first_step = 0;
     //@cmp.update.block.end
 }
 // ----------------------------------------------------------------------------------------

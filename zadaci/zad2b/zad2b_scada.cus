@@ -118,7 +118,7 @@ widgetValue = None
                         <active_capture_preset><![CDATA[Default]]></active_capture_preset>
                         <active_scope_preset><![CDATA[Default]]></active_scope_preset>
                         <capture name="Default">
-                            <time_interval>2.0</time_interval>
+                            <time_interval>4.0</time_interval>
                             <sample_rate>1000000.0</sample_rate>
                             <background_color>white</background_color>
                             <layout>Vertical</layout>
@@ -134,6 +134,18 @@ widgetValue = None
                                     <row>0</row>
                                     <viewports>
                                         <num_viewport>1</num_viewport>
+                                   </viewports>
+                               </analog>
+                                <analog>
+                                    <channel>1</channel>
+                                    <name><![CDATA[Input voltage measurement]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>1</row>
+                                    <viewports>
+                                        <num_viewport>2</num_viewport>
                                    </viewports>
                                </analog>
                             </analog_signals>
@@ -180,7 +192,7 @@ widgetValue = None
                         </scope>
                         </presets>
                     <capture>
-                        <time_interval>2.0</time_interval>
+                        <time_interval>4.0</time_interval>
                         <sample_rate>1000000.0</sample_rate>
                         <background_color>white</background_color>
                         <layout>Vertical</layout>
@@ -204,6 +216,18 @@ widgetValue = None
                                     <row>0</row>
                                     <viewports>
                                         <num_viewport>1</num_viewport>
+                                   </viewports>
+                               </analog>
+                            <analog>
+                                    <channel>1</channel>
+                                    <name><![CDATA[Input voltage measurement]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>1</row>
+                                    <viewports>
+                                        <num_viewport>2</num_viewport>
                                    </viewports>
                                </analog>
                         </analog_signals>
@@ -331,7 +355,7 @@ widgetValue = None
 widgetValue = hil.model_read('Output power')
 ]]></on_timer_code>
                 <on_start_code_source><![CDATA[Macro code]]></on_start_code_source>
-                <inputValue><![CDATA[100.0]]></inputValue>
+                <inputValue><![CDATA[7.5]]></inputValue>
                 <inputValueType>float</inputValueType>
                 <unit><![CDATA[]]></unit>
                 <widget_settings>
@@ -359,11 +383,13 @@ widgetValue = hil.model_read('Output power')
 # NOTE: entered value is available through variable 'inputValue'
 
 if inputValue == 'No disturbance':
-    hil.set_scada_input_value('Enable disturbance', 1)
+    hil.set_scada_input_value('Enable disturbance', 0)
 elif inputValue == '5Hz disturbance':
-    hil.set_scada_input_value('Enable disturbance', 2)
+    hil.set_scada_input_value('Enable disturbance', 1)
+    hil.model_write('Disturbance.frequency', 5)
 else:
-    hil.set_scada_input_value('Enable disturbance', 2)
+    hil.set_scada_input_value('Enable disturbance', 1)
+    hil.model_write('Disturbance.frequency', 500)
 
 ]]></on_use_code>
                 <on_start_code active="False"><![CDATA[# NOTE: The code specified in this handler will be executed on simulation start.

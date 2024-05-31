@@ -136,14 +136,14 @@ model "zad2b" {
             unit = ""
         }
         [
-            position = 8640, 7992
+            position = 8568, 7960
         ]
 
         component "core/Product" Product1 {
             signs = "*/"
         }
         [
-            position = 8760, 7984
+            position = 8688, 7952
             hide_name = True
         ]
 
@@ -151,14 +151,14 @@ model "zad2b" {
             value = "Vout"
         }
         [
-            position = 8232, 8552
+            position = 8232, 8592
         ]
 
         component "core/Sum" Sum1 {
             signs = "+-"
         }
         [
-            position = 8560, 8648
+            position = 8560, 8688
             hide_name = True
         ]
 
@@ -171,13 +171,13 @@ model "zad2b" {
             lower_sat_lim = "0"
         }
         [
-            position = 8688, 8648
+            position = 8688, 8688
         ]
 
         component "core/Product" Product2 {
         }
         [
-            position = 8640, 7904
+            position = 8568, 7872
             hide_name = True
         ]
 
@@ -185,28 +185,33 @@ model "zad2b" {
         }
         [
             position = 8312, 8312
-            rotation = left
+            rotation = right
             size = 64, 32
         ]
 
         component "core/SCADA Input" "Enable disturbance" {
+            format = "int"
+            max = "1"
+            min = "0"
+            signal_access = "Inherit"
+            signal_type = "int"
             unit = ""
         }
         [
-            position = 7976, 8216
+            position = 7888, 8224
         ]
 
         component "core/Limit" Limit1 {
         }
         [
-            position = 8944, 8656
+            position = 8936, 8696
             hide_name = True
         ]
 
         component "core/Sum" Sum2 {
         }
         [
-            position = 8832, 8656
+            position = 8832, 8696
             hide_name = True
         ]
 
@@ -214,14 +219,14 @@ model "zad2b" {
             gain = "dist_comp_gain"
         }
         [
-            position = 8632, 8752
+            position = 8632, 8792
         ]
 
         component "core/Sum" Sum3 {
             signs = "+-"
         }
         [
-            position = 8456, 8752
+            position = 8456, 8792
             hide_name = True
         ]
 
@@ -229,21 +234,61 @@ model "zad2b" {
             value = "Vin"
         }
         [
-            position = 8336, 8744
+            position = 8336, 8784
         ]
 
         component "core/Sinusoidal Source" Disturbance {
             _tunable = "True"
+            amplitude = "0.2 * Vin / np.sqrt(2)"
+            frequency = "5"
         }
         [
-            position = 7976, 8416
+            position = 7888, 8304
         ]
 
         component "core/Constant" "Referent input voltage1" {
             value = "Vin"
         }
         [
-            position = 7976, 8312
+            position = 8096, 8224
+        ]
+
+        component "core/Sum" Sum4 {
+        }
+        [
+            position = 8208, 8312
+            hide_name = True
+        ]
+
+        component "core/Signal switch" "Signal switch1" {
+            criterion = "ctrl != threshold"
+            threshold = "0"
+        }
+        [
+            position = 8000, 8320
+            hide_name = True
+        ]
+
+        component "core/Constant" Constant1 {
+            value = "0"
+        }
+        [
+            position = 7888, 8384
+        ]
+
+        component "core/Probe" "Input voltage measurement" {
+        }
+        [
+            position = 8336, 8496
+        ]
+
+        component "core/Rate Limiter" "Rate Limiter1" {
+            falling_limit = "-10"
+            rising_limit = "10"
+        }
+        [
+            position = 8776, 7952
+            hide_name = True
         ]
 
         tag "Calculate output load (Goto)" {
@@ -253,7 +298,7 @@ model "zad2b" {
             direction = in
         }
         [
-            position = 8432, 8552
+            position = 8432, 8592
             hide_name = True
             size = 60, 20
         ]
@@ -265,7 +310,7 @@ model "zad2b" {
             direction = out
         }
         [
-            position = 8488, 7896
+            position = 8416, 7864
             size = 60, 20
         ]
 
@@ -287,7 +332,7 @@ model "zad2b" {
             direction = out
         }
         [
-            position = 8328, 8656
+            position = 8328, 8696
             size = 60, 20
         ]
 
@@ -298,7 +343,7 @@ model "zad2b" {
             direction = in
         }
         [
-            position = 9088, 8656
+            position = 9032, 8696
             size = 60, 20
         ]
 
@@ -320,7 +365,7 @@ model "zad2b" {
             direction = out
         }
         [
-            position = 8336, 8808
+            position = 8336, 8848
             size = 60, 20
         ]
 
@@ -335,19 +380,9 @@ model "zad2b" {
             size = 60, 20
         ]
 
-        junction Junction1 pe
-        [
-            position = 8760, 8216
-        ]
-
         junction Junction2 pe
         [
             position = 8760, 8312
-        ]
-
-        junction Junction3 pe
-        [
-            position = 8856, 8216
         ]
 
         junction Junction4 pe
@@ -357,28 +392,37 @@ model "zad2b" {
 
         junction Junction5 sp
         [
-            position = 8360, 8552
+            position = 8360, 8592
         ]
 
         junction Junction6 sp
         [
-            position = 8584, 7896
+            position = 8512, 7864
         ]
 
-        connect Flyback1.a_out Junction1 as Connection5
-        connect Junction1 Cout.p_node as Connection6
+        junction Junction7 sp
+        [
+            position = 8256, 8312
+        ]
+
+        junction Junction8 sp
+        [
+            position = 8256, 8440
+        ]
+
+        junction Junction9 pe
+        [
+            position = 8760, 8216
+        ]
+
+        junction Junction10 pe
+        [
+            position = 8856, 8216
+        ]
+
         connect Flyback1.b_out Junction2 as Connection8
         connect Junction2 Cout.n_node as Connection9
         connect "Enable flyback.out" Flyback1.En as Connection17
-        connect Vout.p_node Junction3 as Connection30
-        [
-            breakpoints = 8864, 8216
-        ]
-        connect Junction3 Junction1 as Connection31
-        [
-            breakpoints = 8856, 8216
-        ]
-        connect Rload.p_node Junction3 as Connection32
         connect Junction2 Junction4 as Connection33
         [
             breakpoints = 8760, 8312; 8760, 8312
@@ -388,11 +432,9 @@ model "zad2b" {
             breakpoints = 8856, 8312; 8864, 8312
         ]
         connect Rload.n_node Junction4 as Connection35
-        connect Product1.out Rload.In as Connection37
         connect "Output power.out" Product1.in1 as Connection38
         connect Vout.out "Output Voltage Measure (Goto)" as Connection40
         connect "Output Voltage Measure (From)" Sum1.in1 as Connection41
-        connect "Referent output voltage.out" Junction5 as Connection42
         connect Junction5 "Calculate output load (Goto)" as Connection43
         connect Sum1.in Junction5 as Connection44
         connect Sum1.out PI.in as Connection45
@@ -404,16 +446,45 @@ model "zad2b" {
         connect PI.out Sum2.in as Connection57
         connect Sum2.out Limit1.in as Connection58
         connect Limit1.out "Duty ratio (Goto)" as Connection59
-        connect "Disturbance Compensator.out" Sum2.in1 as Connection60
-        connect Vin.n_node Flyback1.a_in as Connection61
-        connect Vin.p_node Flyback1.b_in as Connection62
         connect Sum3.out "Disturbance Compensator.in" as Connection66
         connect "Input Voltage (From)" Sum3.in1 as Connection67
         connect "Referent input voltage2.out" Sum3.in as Connection68
-        connect Vin.in "Input Voltage (Goto)" as Connection77
+        connect "Referent input voltage1.out" Sum4.in as Connection69
+        connect "Signal switch1.out" Sum4.in1 as Connection74
+        connect "Enable disturbance.out" "Signal switch1.in2" as Connection75
+        connect Disturbance.out "Signal switch1.in" as Connection76
+        connect Constant1.out "Signal switch1.in1" as Connection77
+        connect Vin.p_node Flyback1.a_in as Connection79
+        connect Vin.n_node Flyback1.b_in as Connection80
+        connect Junction7 Sum4.out as Connection82
         [
-            breakpoints = 8240, 8312
+            breakpoints = 8256, 8312
         ]
+        connect Vin.in Junction7 as Connection83
+        connect "Input Voltage (Goto)" Junction8 as Connection84
+        connect Junction8 Junction7 as Connection85
+        connect "Input voltage measurement.in" Junction8 as Connection86
+        connect Rload.In "Rate Limiter1.out" as Connection88
+        [
+            breakpoints = 8800, 7952
+        ]
+        connect "Referent output voltage.out" Junction5 as Connection109
+        [
+            breakpoints = 8296, 8592
+        ]
+        connect "Disturbance Compensator.out" Sum2.in1 as Connection110
+        connect "Rate Limiter1.in" Product1.out as Connection113
+        [
+            breakpoints = 8752, 7952; 8736, 7952
+        ]
+        connect Flyback1.a_out Junction9 as Connection114
+        connect Junction9 Cout.p_node as Connection115
+        [
+            breakpoints = 8760, 8216; 8760, 8216
+        ]
+        connect Rload.p_node Junction10 as Connection117
+        connect Junction10 Junction9 as Connection118
+        connect Vout.p_node Junction10 as Connection119
     }
 
     default {
@@ -468,8 +539,27 @@ model "zad2b" {
             execution_rate = "inherit"
         }
 
+        "core/Probe" {
+            signal_access = "inherit"
+            addr = "0"
+            override_signal_name = "False"
+            signal_name = ""
+            signal_type = "generic"
+            streaming_en = "False"
+            streaming_er_idx = "0"
+            execution_rate = "inherit"
+        }
+
         "core/Product" {
             signs = "2"
+            execution_rate = "inherit"
+        }
+
+        "core/Rate Limiter" {
+            rising_limit = "1"
+            rising_limit_source = "internal"
+            falling_limit = "-1"
+            falling_limit_source = "internal"
             execution_rate = "inherit"
         }
 
@@ -485,6 +575,12 @@ model "zad2b" {
             def_value = "0"
             unit = " "
             execution_rate = "100e-6"
+        }
+
+        "core/Signal switch" {
+            criterion = "ctrl > threshold"
+            threshold = "0.5"
+            execution_rate = "inherit"
         }
 
         "core/Sinusoidal Source" {
