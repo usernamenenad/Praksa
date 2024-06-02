@@ -118,7 +118,7 @@ widgetValue = None
                         <active_capture_preset><![CDATA[Default]]></active_capture_preset>
                         <active_scope_preset><![CDATA[Default]]></active_scope_preset>
                         <capture name="Default">
-                            <time_interval>4.0</time_interval>
+                            <time_interval>2.0</time_interval>
                             <sample_rate>1000000.0</sample_rate>
                             <background_color>white</background_color>
                             <layout>Vertical</layout>
@@ -192,7 +192,7 @@ widgetValue = None
                         </scope>
                         </presets>
                     <capture>
-                        <time_interval>4.0</time_interval>
+                        <time_interval>2.0</time_interval>
                         <sample_rate>1000000.0</sample_rate>
                         <background_color>white</background_color>
                         <layout>Vertical</layout>

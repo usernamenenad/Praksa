@@ -148,8 +148,8 @@ X_Int32 _rate_limiter1__first_step;
 // Tunable parameters
 //
 static struct Tunable_params {
-    double _disturbance__phase;
     double _disturbance__frequency;
+    double _disturbance__phase;
     double _disturbance__amplitude;
     double _disturbance__dc_offset;
 } __attribute__((__packed__)) tunable_params;
@@ -289,8 +289,8 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     // Generated from the component: Vin.Vs1
     HIL_OutFloat(137101312, (float) _sum4__out);
     // Generated from the component: Rate Limiter1
-    _rate_limiter1__rising_rate_lim[0] = 10.0 * 0.0001;
-    _rate_limiter1__falling_rate_lim[0] = -10.0 * 0.0001;
+    _rate_limiter1__rising_rate_lim[0] = 10.0 * 1e-05;
+    _rate_limiter1__falling_rate_lim[0] = -10.0 * 1e-05;
     if (_rate_limiter1__first_step) {
         _rate_limiter1__out = _product1__out;
         _rate_limiter1__state = _product1__out;
@@ -308,7 +308,7 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     // Generated from the component: Sum2
     _sum2__out = _pi__out + _disturbance_compensator__out;
     // Generated from the component: Limit1
-    _limit1__out = _sum2__out;
+    _limit1__out = MIN(MAX(_sum2__out, 0.0), 1.0);
     // Generated from the component: Flyback1.PWM_Modulator
     _flyback1_pwm_modulator__limited_in[0] = MIN(MAX(_limit1__out, 0.0), 1.0);
     HIL_OutInt32(0x2000040 + _flyback1_pwm_modulator__channels[0], ((X_UnInt32)((_flyback1_pwm_modulator__limited_in[0] - (0.0)) * 80000.0)));
@@ -327,15 +327,15 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     //////////////////////////////////////////////////////////////////////////
     //@cmp.update.block.start
     // Generated from the component: Disturbance
-    _disturbance__current_phase += tunable_params._disturbance__frequency * 0.0001;
+    _disturbance__current_phase += tunable_params._disturbance__frequency * 1e-05;
     if (_disturbance__current_phase >= 1.0f) {
         _disturbance__current_phase -= 1.0f;
     }
     // Generated from the component: PI
-    _pi__integrator_state += 0.1005 * _sum1__out * 0.0001;
+    _pi__integrator_state += 0.1005 * _sum1__out * 1e-05;
     // Generated from the component: Rate Limiter1
-    _rate_limiter1__rising_rate_lim[0] = 10.0 * 0.0001;
-    _rate_limiter1__falling_rate_lim[0] = -10.0 * 0.0001;
+    _rate_limiter1__rising_rate_lim[0] = 10.0 * 1e-05;
+    _rate_limiter1__falling_rate_lim[0] = -10.0 * 1e-05;
     if (_product1__out - _rate_limiter1__state > _rate_limiter1__rising_rate_lim[0])
         _rate_limiter1__state += _rate_limiter1__rising_rate_lim[0];
     else  if (_product1__out - _rate_limiter1__state < _rate_limiter1__falling_rate_lim[0])
