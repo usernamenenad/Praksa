@@ -126,26 +126,14 @@ widgetValue = None
                             <analog_signals>
                                 <analog>
                                     <channel>0</channel>
-                                    <name><![CDATA[Vout]]></name>
+                                    <name><![CDATA[C]]></name>
                                     <is_locked>False</is_locked>
                                     <vertical_scale>Auto</vertical_scale>
-                                    <vertical_offset>0.0</vertical_offset>
+                                    <vertical_offset>0</vertical_offset>
                                     <coupling>False</coupling>
                                     <row>0</row>
                                     <viewports>
                                         <num_viewport>1</num_viewport>
-                                   </viewports>
-                               </analog>
-                                <analog>
-                                    <channel>1</channel>
-                                    <name><![CDATA[Input voltage measurement]]></name>
-                                    <is_locked>False</is_locked>
-                                    <vertical_scale>Auto</vertical_scale>
-                                    <vertical_offset>0.0</vertical_offset>
-                                    <coupling>False</coupling>
-                                    <row>1</row>
-                                    <viewports>
-                                        <num_viewport>2</num_viewport>
                                    </viewports>
                                </analog>
                             </analog_signals>
@@ -155,9 +143,9 @@ widgetValue = None
                             </virtual_signals>
                             <trigger>
                                 <device>0</device>
-                                <is_force>True</is_force>
+                                <is_force>False</is_force>
                                 <type>Analog</type>
-                                <source><![CDATA[Vout]]></source>
+                                <source><![CDATA[C]]></source>
                                 <edge>Rising edge</edge>
                                 <treshold>0.0</treshold>
                                 <offset>0.0</offset>
@@ -199,7 +187,7 @@ widgetValue = None
                         <legend>True</legend>
                         <trigger>
                             <type>Analog</type>
-                            <source>Vout</source>
+                            <source>C</source>
                             <edge>Rising edge</edge>
                             <treshold>0.0</treshold>
                             <offset>0.0</offset>
@@ -208,26 +196,14 @@ widgetValue = None
                         <analog_signals>
                             <analog>
                                     <channel>0</channel>
-                                    <name><![CDATA[Vout]]></name>
+                                    <name><![CDATA[C]]></name>
                                     <is_locked>False</is_locked>
                                     <vertical_scale>Auto</vertical_scale>
-                                    <vertical_offset>0.0</vertical_offset>
+                                    <vertical_offset>0</vertical_offset>
                                     <coupling>False</coupling>
                                     <row>0</row>
                                     <viewports>
                                         <num_viewport>1</num_viewport>
-                                   </viewports>
-                               </analog>
-                            <analog>
-                                    <channel>1</channel>
-                                    <name><![CDATA[Input voltage measurement]]></name>
-                                    <is_locked>False</is_locked>
-                                    <vertical_scale>Auto</vertical_scale>
-                                    <vertical_offset>0.0</vertical_offset>
-                                    <coupling>False</coupling>
-                                    <row>1</row>
-                                    <viewports>
-                                        <num_viewport>2</num_viewport>
                                    </viewports>
                                </analog>
                         </analog_signals>
