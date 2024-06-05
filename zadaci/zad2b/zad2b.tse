@@ -119,7 +119,7 @@ model "zad2b" {
             signal_access = "Inherit"
         }
         [
-            position = 9000, 8264
+            position = 9088, 8264
             rotation = right
             size = 64, 32
         ]
@@ -128,7 +128,7 @@ model "zad2b" {
             inductance = "1e-4"
         }
         [
-            position = 8856, 8264
+            position = 8944, 8264
             rotation = right
             size = 64, 48
         ]
@@ -305,6 +305,25 @@ model "zad2b" {
             hide_name = True
         ]
 
+        component "core/Sum" Sum5 {
+            signs = "+-"
+        }
+        [
+            position = 9016, 7856
+        ]
+
+        component "core/Gain" Gain1 {
+        }
+        [
+            position = 9144, 7856
+        ]
+
+        component "core/Low-Pass Filter" "Low-Pass Filter1" {
+        }
+        [
+            position = 8920, 7880
+        ]
+
         tag "Calculate output load (Goto)" {
             value = "CalculateRload"
             scope = local
@@ -335,7 +354,7 @@ model "zad2b" {
             direction = in
         }
         [
-            position = 9112, 8264
+            position = 9200, 8264
             size = 60, 20
         ]
 
@@ -401,7 +420,7 @@ model "zad2b" {
 
         junction Junction4 pe
         [
-            position = 8856, 8312
+            position = 8944, 8312
         ]
 
         junction Junction5 sp
@@ -424,14 +443,24 @@ model "zad2b" {
             position = 8256, 8440
         ]
 
-        junction Junction9 pe
+        junction Junction11 sp
+        [
+            position = 8736, 7952
+        ]
+
+        junction Junction12 pe
         [
             position = 8760, 8216
         ]
 
-        junction Junction10 pe
+        junction Junction13 pe
         [
-            position = 8856, 8216
+            position = 8944, 8216
+        ]
+
+        junction Junction14 sp
+        [
+            position = 8736, 7888
         ]
 
         connect Flyback1.b_out Junction2 as Connection8
@@ -443,7 +472,7 @@ model "zad2b" {
         ]
         connect Junction4 Vout.n_node as Connection34
         [
-            breakpoints = 8856, 8312; 8864, 8312
+            breakpoints = 8944, 8312; 8952, 8312
         ]
         connect Rload.n_node Junction4 as Connection35
         connect "Output power.out" Product1.in1 as Connection38
@@ -478,27 +507,39 @@ model "zad2b" {
         connect "Input Voltage (Goto)" Junction8 as Connection84
         connect Junction8 Junction7 as Connection85
         connect "Input voltage measurement.in" Junction8 as Connection86
-        connect Rload.In "Rate Limiter1.out" as Connection88
-        [
-            breakpoints = 8800, 7952
-        ]
         connect "Referent output voltage.out" Junction5 as Connection109
         [
             breakpoints = 8296, 8592
         ]
         connect "Disturbance Compensator.out" Sum2.in1 as Connection110
-        connect "Rate Limiter1.in" Product1.out as Connection113
+        connect "Rate Limiter1.in" Junction11 as Connection123
         [
-            breakpoints = 8752, 7952; 8736, 7952
+            breakpoints = 8752, 7952
         ]
-        connect Flyback1.a_out Junction9 as Connection114
-        connect Junction9 Cout.p_node as Connection115
+        connect Junction11 Product1.out as Connection124
         [
-            breakpoints = 8760, 8216; 8760, 8216
+            breakpoints = 8736, 7952
         ]
-        connect Rload.p_node Junction10 as Connection117
-        connect Junction10 Junction9 as Connection118
-        connect Vout.p_node Junction10 as Connection119
+        connect Gain1.in Sum5.out as Connection126
+        connect Flyback1.a_out Junction12 as Connection129
+        connect Junction12 Cout.p_node as Connection130
+        [
+            breakpoints = 8760, 8216; 8760, 8216; 8760, 8216
+        ]
+        connect Vout.p_node Junction13 as Connection131
+        connect Junction13 Rload.p_node as Connection132
+        [
+            breakpoints = 8944, 8216
+        ]
+        connect Junction12 Junction13 as Connection133
+        connect "Low-Pass Filter1.out" Sum5.in1 as Connection137
+        connect Rload.In "Rate Limiter1.out" as Connection138
+        [
+            breakpoints = 8840, 7952; 8800, 7952
+        ]
+        connect Sum5.in Junction14 as Connection139
+        connect Junction14 Junction11 as Connection140
+        connect "Low-Pass Filter1.in" Junction14 as Connection141
     }
 
     default {
@@ -528,6 +569,14 @@ model "zad2b" {
             upper_limit = "[\'inf\']"
             lower_limit = "[\'-inf\']"
             execution_rate = "inherit"
+        }
+
+        "core/Low-Pass Filter" {
+            frequency = "500"
+            init_out = "0"
+            unit = "Hz"
+            execution_rate = "inherit"
+            _tunable = "False"
         }
 
         "core/PID controller" {

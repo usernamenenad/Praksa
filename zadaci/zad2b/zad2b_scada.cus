@@ -126,7 +126,7 @@ widgetValue = None
                             <analog_signals>
                                 <analog>
                                     <channel>0</channel>
-                                    <name><![CDATA[C]]></name>
+                                    <name><![CDATA[Cout]]></name>
                                     <is_locked>False</is_locked>
                                     <vertical_scale>Auto</vertical_scale>
                                     <vertical_offset>0</vertical_offset>
@@ -145,7 +145,7 @@ widgetValue = None
                                 <device>0</device>
                                 <is_force>False</is_force>
                                 <type>Analog</type>
-                                <source><![CDATA[C]]></source>
+                                <source><![CDATA[Cout]]></source>
                                 <edge>Rising edge</edge>
                                 <treshold>0.0</treshold>
                                 <offset>0.0</offset>
@@ -187,7 +187,7 @@ widgetValue = None
                         <legend>True</legend>
                         <trigger>
                             <type>Analog</type>
-                            <source>C</source>
+                            <source>Cout</source>
                             <edge>Rising edge</edge>
                             <treshold>0.0</treshold>
                             <offset>0.0</offset>
@@ -196,7 +196,7 @@ widgetValue = None
                         <analog_signals>
                             <analog>
                                     <channel>0</channel>
-                                    <name><![CDATA[C]]></name>
+                                    <name><![CDATA[Cout]]></name>
                                     <is_locked>False</is_locked>
                                     <vertical_scale>Auto</vertical_scale>
                                     <vertical_offset>0</vertical_offset>

@@ -47,6 +47,13 @@
             <visible>True</visible>
         </cell>
         <cell>
+            <name>Buck-Boost.v2</name>
+            <address>386</address>
+            <type>voltage</type>
+            <initial_condition>None</initial_condition>
+            <visible>False</visible>
+        </cell>
+        <cell>
             <name>Buck-Boost.il</name>
             <address>384</address>
             <type>current</type>
@@ -54,11 +61,11 @@
             <visible>False</visible>
         </cell>
         <cell>
-            <name>Buck-Boost.v2</name>
-            <address>386</address>
+            <name>Vout</name>
+            <address>2</address>
             <type>voltage</type>
             <initial_condition>None</initial_condition>
-            <visible>False</visible>
+            <visible>True</visible>
         </cell>
         <cell>
             <name>Buck-Boost.v1</name>
@@ -71,13 +78,6 @@
             <name>Vin</name>
             <address>33280</address>
             <type>voltage</type>
-            <initial_condition>None</initial_condition>
-            <visible>True</visible>
-        </cell>
-        <cell>
-            <name>Is1</name>
-            <address>33281</address>
-            <type>current</type>
             <initial_condition>None</initial_condition>
             <visible>True</visible>
         </cell>
@@ -586,26 +586,6 @@
             <name>HIL0 digital input 64</name>
             <address>575</address>
         </cell>
-        <cell>
-            <name>Buck-Boost.S1</name>
-            <address>769</address>
-        </cell>
-        <cell>
-            <name>Buck-Boost.PWM_Modulator.TOP_1</name>
-            <address>768</address>
-        </cell>
-        <cell>
-            <name>Buck-Boost.PWM_Modulator_TOP_1</name>
-            <address>768</address>
-        </cell>
-        <cell>
-            <name>Buck-Boost.PWM_Modulator.BOT_1</name>
-            <address>769</address>
-        </cell>
-        <cell>
-            <name>Buck-Boost.PWM_Modulator_BOT_1</name>
-            <address>769</address>
-        </cell>
     </digital_variables>
     <sources>
         <cell>
@@ -614,13 +594,6 @@
             <address>[0]</address>
             <unit>V</unit>
             <init_settings>['Constant', 12.0]</init_settings>
-        </cell>
-        <cell>
-            <name>Is1</name>
-            <type>1phase</type>
-            <address>[1]</address>
-            <unit>A</unit>
-            <init_settings>['Constant', 10.0]</init_settings>
         </cell>
     </sources>
     <machines>
@@ -649,25 +622,75 @@
 <!-- ******* SP DATA ******** -->
 
     <model_properties>
-        <execution_rates>[[[0.0001]]]</execution_rates>
+        <execution_rates>[[[1e-06]]]</execution_rates>
         <sys_real_type_precision>double</sys_real_type_precision>
         <user_real_type_precision>double</user_real_type_precision>
         <sig_stim>off</sig_stim>
     </model_properties>
 
+    <analog_variables>
+        <cell>
+            <name>Latch</name>
+            <type>generic</type>
+            <address>16384</address>
+            <initial_condition>None</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
+            <name>switching</name>
+            <type>generic</type>
+            <address>16385</address>
+            <initial_condition>None</initial_condition>
+            <visible>True</visible>
+        </cell>
+    </analog_variables>
 
 <digital_variables>
     </digital_variables>
 
+    <tunable_params>
+        <tunable_param>
+            <name>Inv</name>
+            <addr>[1426063616]</addr>
+            <min>0.0</min>
+            <max>1.0</max>
+            <def_value>1.0</def_value>
+            <unit></unit>
+            <widget_type>float</widget_type>
+            <format>real</format>
+            <size>1</size>
+            <param_type>scada input</param_type>
+            <cpu_type>user_sp_cpu</cpu_type>
+            <cpu_idx>0</cpu_idx>
+            <execution_rate>1e-06</execution_rate>
+            <visible>True</visible>
+        </tunable_param>
+        <tunable_param>
+            <name>NonInv</name>
+            <addr>[1426063620]</addr>
+            <min>0.0</min>
+            <max>1.0</max>
+            <def_value>0.0</def_value>
+            <unit></unit>
+            <widget_type>float</widget_type>
+            <format>real</format>
+            <size>1</size>
+            <param_type>scada input</param_type>
+            <cpu_type>user_sp_cpu</cpu_type>
+            <cpu_idx>0</cpu_idx>
+            <execution_rate>1e-06</execution_rate>
+            <visible>True</visible>
+        </tunable_param>
+    </tunable_params>
 
 
     <dsp_monitors>
         <monitor>
             <type>user</type>
             <cpu_idx>0</cpu_idx>
-            <execution_rates>[0.0001]</execution_rates>
-            <execution_rate_labels>['ER0 (0.0001)']</execution_rate_labels>
-            <timer_counters>[13999]</timer_counters>
+            <execution_rates>[1e-06]</execution_rates>
+            <execution_rate_labels>['ER0 (1e-06)']</execution_rate_labels>
+            <timer_counters>[139]</timer_counters>
 
             
         </monitor>
@@ -675,6 +698,11 @@
 
     <sp_compiler_type>gcc</sp_compiler_type>
 
+    <streaming>
+
+
+
+     </streaming>
 
 
 </model_description>

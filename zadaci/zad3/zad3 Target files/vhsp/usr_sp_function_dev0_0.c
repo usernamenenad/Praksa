@@ -70,6 +70,13 @@ typedef double real;
 
 
 
+
+
+
+
+
+
+
 //@cmp.def.end
 
 
@@ -83,17 +90,21 @@ typedef double real;
 
 //@cmp.var.start
 // variables
-double _constant1__out = 1.0;
-double _constant2__out = 0.6369;
-X_UnInt32 _buck_boost_pwm_modulator__channels[1] = {0};
-double _buck_boost_pwm_modulator__limited_in[1];
-X_UnInt32 _buck_boost_pwm_modulator__update_mask;
-
+double _buck_boost_constant1__out = 0.0;
+double _inv__out;
+double _noninv__out;
+double _sr_flip_flop1__out;
+double _sr_flip_flop1__out_n;
+double _fsw__out;
+double _comparator1__out;
+double _buck_boost_bus_join1__out[2];
 //@cmp.var.end
 
 //@cmp.svar.start
 // state variables
-//@cmp.svar.end
+double _sr_flip_flop1__state;
+double _fsw__current_phase;
+double _comparator1__state;//@cmp.svar.end
 
 //
 // Tunable parameters
@@ -122,15 +133,12 @@ void ReInit_user_sp_cpu0_dev0() {
     printf("\n\rReInitTimer");
 #endif
     //@cmp.init.block.start
-    _buck_boost_pwm_modulator__update_mask = 1;
-    HIL_OutInt32(0x2000080 + _buck_boost_pwm_modulator__channels[0], 20000); // divide by 2 is already implemented in hw
-    HIL_OutInt32(0x20000c0 + _buck_boost_pwm_modulator__channels[0], 0);
-    HIL_OutInt32(0x20001c0 + _buck_boost_pwm_modulator__channels[0], 0);
-    HIL_OutInt32(0x2000200 + _buck_boost_pwm_modulator__channels[0], 0);
-    HIL_OutInt32(0x2000240 + _buck_boost_pwm_modulator__channels[0], 0);
-    HIL_OutInt32(0x2000300 + _buck_boost_pwm_modulator__channels[0], 1);
-    HIL_OutInt32(0x2000340 + _buck_boost_pwm_modulator__channels[0], 0);
-    HIL_OutInt32(0x2000140, _buck_boost_pwm_modulator__update_mask);
+    _sr_flip_flop1__state =  0;
+    _fsw__current_phase = 0.0;
+    _comparator1__state = 0.0f;
+    HIL_OutAO(0x4000, 0.0f);
+    HIL_OutAO(0x4001, 0.0f);
+    HIL_OutInt32(0x810002e, 0x3);
     //@cmp.init.block.end
 }
 
@@ -190,29 +198,66 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     //////////////////////////////////////////////////////////////////////////
     // Set tunable parameters
     //////////////////////////////////////////////////////////////////////////
-    // Generated from the component: Constant1
-    // Generated from the component: Constant2
+    // Generated from the component: Buck-Boost.Constant1
 //////////////////////////////////////////////////////////////////////////
     // Output block
     //////////////////////////////////////////////////////////////////////////
     //@cmp.out.block.start
-    // Generated from the component: Buck-Boost.PWM_Modulator
-    _buck_boost_pwm_modulator__limited_in[0] = MIN(MAX(_constant2__out, 0.0), 1.0);
-    HIL_OutInt32(0x2000040 + _buck_boost_pwm_modulator__channels[0], ((X_UnInt32)((_buck_boost_pwm_modulator__limited_in[0] - (0.0)) * 20000.0)));
-    if (_constant1__out == 0x0) {
-        // pwm_modulator_en
-        HIL_OutInt32(0x2000000 + _buck_boost_pwm_modulator__channels[0], 0x0);
+    // Generated from the component: Inv
+    _inv__out = XIo_InFloat(0x55000100);
+    // Generated from the component: NonInv
+    _noninv__out = XIo_InFloat(0x55000104);
+    // Generated from the component: SR Flip Flop1
+    _sr_flip_flop1__out = _sr_flip_flop1__state;
+    _sr_flip_flop1__out_n = _sr_flip_flop1__state != -1 ? !_sr_flip_flop1__state : -1;
+    // Generated from the component: fsw
+    if (_fsw__current_phase < 0.01) {
+        _fsw__out = 1.0;
+    } else {
+        _fsw__out = 0.0;
     }
-    else {
-        // pwm_modulator_en
-        HIL_OutInt32(0x2000000 + _buck_boost_pwm_modulator__channels[0], 0x1);
+    // Generated from the component: Comparator1
+    if (_noninv__out < _inv__out) {
+        _comparator1__out = 0;
+    } else if (_noninv__out > _inv__out) {
+        _comparator1__out = 1;
+    } else {
+        _comparator1__out = _comparator1__state;
     }
-    HIL_OutInt32(0x2000140, _buck_boost_pwm_modulator__update_mask);
+    // Generated from the component: Buck-Boost.Bus_Join1
+    _buck_boost_bus_join1__out[0] = _sr_flip_flop1__out;
+    _buck_boost_bus_join1__out[1] = _buck_boost_constant1__out;
+    // Generated from the component: Latch
+    HIL_OutAO(0x4000, (float)_sr_flip_flop1__out);
+    // Generated from the component: switching
+    HIL_OutAO(0x4001, (float)_fsw__out);
+    // Generated from the component: Buck-Boost.FSM_Wrapper1
+    _buck_boost_bus_join1__out[0] = (_buck_boost_bus_join1__out[0]) ? 1 : 0;
+    _buck_boost_bus_join1__out[1] = (_buck_boost_bus_join1__out[1]) ? 1 : 0;
+    HIL_OutInt32(0x810002f, 2 * _buck_boost_bus_join1__out[0] + 1 * _buck_boost_bus_join1__out[1]);
 //@cmp.out.block.end
     //////////////////////////////////////////////////////////////////////////
     // Update block
     //////////////////////////////////////////////////////////////////////////
     //@cmp.update.block.start
+    // Generated from the component: SR Flip Flop1
+    if ((_fsw__out != 0x0) && (_comparator1__out == 0x0))
+        _sr_flip_flop1__state = 1;
+    else if ((_fsw__out == 0x0) && (_comparator1__out != 0x0))
+        _sr_flip_flop1__state = 0;
+    else if ((_fsw__out != 0x0) && (_comparator1__out != 0x0))
+        _sr_flip_flop1__state = -1;
+    // Generated from the component: fsw
+    _fsw__current_phase += 10000.0 * 1e-06;
+    if (_fsw__current_phase >= 1.0f) {
+        _fsw__current_phase -= 1.0f;
+    }
+    // Generated from the component: Comparator1
+    if (_noninv__out < _inv__out) {
+        _comparator1__state = 0;
+    } else if (_noninv__out > _inv__out) {
+        _comparator1__state = 1;
+    }
     //@cmp.update.block.end
 }
 // ----------------------------------------------------------------------------------------

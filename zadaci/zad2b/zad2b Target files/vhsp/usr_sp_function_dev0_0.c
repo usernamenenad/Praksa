@@ -149,9 +149,9 @@ X_Int32 _rate_limiter1__first_step;
 //
 static struct Tunable_params {
     double _disturbance__frequency;
-    double _disturbance__phase;
-    double _disturbance__amplitude;
     double _disturbance__dc_offset;
+    double _disturbance__amplitude;
+    double _disturbance__phase;
 } __attribute__((__packed__)) tunable_params;
 
 void *tunable_params_dev0_cpu0_ptr = &tunable_params;
