@@ -90,7 +90,7 @@ model "zad3" {
             init_const_value = "Vin"
         }
         [
-            position = 8224, 8368
+            position = 8216, 8408
             rotation = right
         ]
 
@@ -99,7 +99,7 @@ model "zad3" {
             signal_access = "Inherit"
         }
         [
-            position = 8504, 8368
+            position = 8504, 8440
             rotation = right
         ]
 
@@ -108,7 +108,7 @@ model "zad3" {
             signal_access = "Inherit"
         }
         [
-            position = 8752, 8368
+            position = 8752, 8408
             rotation = right
         ]
 
@@ -116,7 +116,7 @@ model "zad3" {
             resistance = "0.0127"
         }
         [
-            position = 8504, 8448
+            position = 8504, 8536
             rotation = right
         ]
 
@@ -126,41 +126,25 @@ model "zad3" {
             signal_access = "Inherit"
         }
         [
-            position = 9024, 8368
+            position = 9024, 8408
             rotation = left
             size = 64, 32
         ]
 
-        component "core/Resistor" R1 {
+        component "core/Resistor" RLoad {
             resistance = "0.5"
         }
         [
-            position = 8888, 8368
+            position = 8888, 8456
             rotation = right
-        ]
-
-        component "core/Current Measurement" Isw {
-            execution_rate = "Ts"
-            sig_output = "True"
-            signal_access = "Inherit"
-        }
-        [
-            position = 8288, 8224
-            size = 64, 32
         ]
 
         component Subsystem Subsystem1 {
             layout = dynamic
-            component "core/PID controller" PID {
-            }
-            [
-                position = 7696, 8088
-            ]
-
             component "core/SR Flip Flop" "SR Flip Flop1" {
             }
             [
-                position = 8112, 8064
+                position = 8232, 8056
             ]
 
             component "core/Square Wave Source" fsw {
@@ -169,16 +153,59 @@ model "zad3" {
                 frequency = "fsw"
             }
             [
-                position = 7936, 7968
+                position = 8056, 7960
             ]
 
             component "core/Comparator" Comparator1 {
             }
             [
-                position = 7920, 8080
+                position = 8040, 8072
+                hide_name = True
             ]
 
-            port Isw {
+            component "core/Probe" Imax {
+            }
+            [
+                position = 8064, 8152
+            ]
+
+            component "core/Probe" Duty {
+            }
+            [
+                position = 8416, 7960
+            ]
+
+            component "core/Sum" Sum1 {
+                signs = "+-"
+            }
+            [
+                position = 7720, 8080
+            ]
+
+            component "core/Constant" Constant1 {
+                execution_rate = "Ts"
+                value = "Vout_min"
+            }
+            [
+                position = 7624, 8024
+            ]
+
+            component "core/Probe" error {
+            }
+            [
+                position = 7856, 8016
+            ]
+
+            component "core/PID controller" "PID controller1" {
+                controller_type = "PI"
+                ki = "8.5895228388425"
+                kp = "0.0371006381036056"
+            }
+            [
+                position = 7872, 8080
+            ]
+
+            port IL {
                 position = left:1
                 kind = sp
                 direction =  out
@@ -201,7 +228,7 @@ model "zad3" {
                 }
             }
             [
-                position = 8296, 8048
+                position = 8416, 8040
             ]
 
             port Vout {
@@ -214,22 +241,70 @@ model "zad3" {
                 }
             }
             [
-                position = 7600, 8088
+                position = 7624, 8168
+            ]
+
+            junction Junction2 sp
+            [
+                position = 8336, 8040
+            ]
+
+            junction Junction3 sp
+            [
+                position = 7808, 8080
+            ]
+
+            junction Junction4 sp
+            [
+                position = 7976, 8080
             ]
 
             connect fsw.out "SR Flip Flop1.s_in" as Connection61
             [
-                breakpoints = 8072, 7968
+                breakpoints = 8192, 7960
             ]
-            connect "SR Flip Flop1.out" Control as Connection62
-            connect PID.in Vout as Connection63
-            connect Isw Comparator1.in1 as Connection64
-            connect PID.out Comparator1.in2 as Connection65
+            connect IL Comparator1.in1 as Connection64
+            [
+                breakpoints = 8008, 7960; 8008, 8064
+            ]
             connect Comparator1.out "SR Flip Flop1.r_in" as Connection42
+            connect "SR Flip Flop1.out" Junction2 as Connection69
+            connect Junction2 Control as Connection70
+            connect Duty.in Junction2 as Connection71
+            connect Vout Sum1.in1 as Connection78
+            connect Constant1.out Sum1.in as Connection79
+            connect error.in Junction3 as Connection110
+            connect Junction3 Sum1.out as Connection111
+            [
+                breakpoints = 7808, 8080; 7808, 8080; 7768, 8080
+            ]
+            connect "PID controller1.in" Junction3 as Connection112
+            connect "PID controller1.out" Junction4 as Connection114
+            connect Junction4 Comparator1.in2 as Connection115
+            connect Imax.in Junction4 as Connection116
         }
         [
             position = 9096, 8048
             size = 88, 64
+        ]
+
+        component "core/Current Measurement" IL {
+            execution_rate = "Ts"
+            sig_output = "True"
+            signal_access = "Inherit"
+        }
+        [
+            position = 8504, 8352
+            rotation = right
+            size = 64, 32
+        ]
+
+        component "core/Current Measurement" Iout {
+        }
+        [
+            position = 8888, 8336
+            rotation = left
+            size = 64, 32
         ]
 
         tag Goto1 {
@@ -259,61 +334,56 @@ model "zad3" {
             position = 8752, 8224
         ]
 
-        junction Junction3 pe
-        [
-            position = 8752, 8504
-        ]
-
-        junction Junction4 pe
-        [
-            position = 8888, 8224
-        ]
-
         junction Junction5 pe
         [
-            position = 8888, 8504
+            position = 8504, 8576
+        ]
+
+        junction Junction6 pe
+        [
+            position = 8752, 8576
+        ]
+
+        junction Junction7 pe
+        [
+            position = 8888, 8576
         ]
 
         junction Junction8 pe
         [
-            position = 8504, 8504
+            position = 8888, 8224
         ]
 
-        connect L.p_node Buck-Boost.a_in as Connection2
         connect L.n_node RL.p_node as Connection4
         connect Buck-Boost.neg_out Junction2 as Connection19
         connect Junction2 C.p_node as Connection20
         [
             breakpoints = 8752, 8224
         ]
-        connect C.n_node Junction3 as Connection22
-        connect Vout.n_node Junction4 as Connection34
+        connect Vout.out Subsystem1.Vout as Connection57
+        connect Subsystem1.Control Goto1 as Connection59
+        connect From1 Buck-Boost.s_ctrl as Connection60
+        connect Vin.p_node Buck-Boost.pos_out as Connection61
+        connect IL.p_node Buck-Boost.a_in as Connection62
+        connect L.p_node IL.n_node as Connection63
+        connect Vin.n_node Junction5 as Connection65
+        connect Junction5 RL.n_node as Connection66
+        connect C.n_node Junction6 as Connection68
+        connect Junction6 Junction5 as Connection69
+        connect RLoad.n_node Junction7 as Connection71
+        connect Junction7 Junction6 as Connection72
+        connect Vout.p_node Junction7 as Connection73
+        connect IL.out Subsystem1.IL as Connection74
+        connect Vout.n_node Junction8 as Connection81
         [
             breakpoints = 8904, 8224
         ]
-        connect Junction4 Junction2 as Connection35
-        connect R1.p_node Junction4 as Connection36
-        connect Vout.p_node Junction5 as Connection37
+        connect Junction8 Junction2 as Connection82
         [
-            breakpoints = 8904, 8504
+            breakpoints = 8888, 8224; 8888, 8224; 8752, 8224
         ]
-        connect Junction5 Junction3 as Connection38
-        connect R1.n_node Junction5 as Connection39
-        connect Vin.n_node Junction8 as Connection52
-        [
-            breakpoints = 8496, 8504
-        ]
-        connect Junction8 Junction3 as Connection53
-        [
-            breakpoints = 8752, 8504
-        ]
-        connect RL.n_node Junction8 as Connection54
-        connect Isw.n_node Buck-Boost.pos_out as Connection55
-        connect Isw.p_node Vin.p_node as Connection56
-        connect Vout.out Subsystem1.Vout as Connection57
-        connect Isw.out Subsystem1.Isw as Connection58
-        connect Subsystem1.Control Goto1 as Connection59
-        connect From1 Buck-Boost.s_ctrl as Connection60
+        connect Iout.n_node Junction8 as Connection83
+        connect Iout.p_node RLoad.p_node as Connection84
     }
 
     default {
@@ -327,6 +397,13 @@ model "zad3" {
 
         "core/Comparator" {
             execution_rate = "inherit"
+        }
+
+        "core/Constant" {
+            value = "1"
+            signal_type = "real"
+            execution_rate = "100e-6"
+            _tunable = "False"
         }
 
         "core/Inductor" {
@@ -360,6 +437,17 @@ model "zad3" {
             execution_rate = "inherit"
         }
 
+        "core/Probe" {
+            signal_access = "inherit"
+            addr = "0"
+            override_signal_name = "False"
+            signal_name = ""
+            signal_type = "generic"
+            streaming_en = "False"
+            streaming_er_idx = "0"
+            execution_rate = "inherit"
+        }
+
         "core/Resistor" {
             resistance = "1"
             param_set = ""
@@ -379,6 +467,11 @@ model "zad3" {
             signal_type = "real"
             execution_rate = "100e-6"
             _tunable = "False"
+        }
+
+        "core/Sum" {
+            signs = "2"
+            execution_rate = "inherit"
         }
 
         "core/Voltage Source" {

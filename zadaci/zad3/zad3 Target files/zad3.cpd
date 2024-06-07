@@ -33,6 +33,13 @@
     </pesb>
     <analog_variables>
         <cell>
+            <name>L</name>
+            <address>1</address>
+            <type>current</type>
+            <initial_condition>0.0</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
             <name>C</name>
             <address>0</address>
             <type>voltage</type>
@@ -40,10 +47,10 @@
             <visible>True</visible>
         </cell>
         <cell>
-            <name>L</name>
-            <address>1</address>
-            <type>current</type>
-            <initial_condition>0.0</initial_condition>
+            <name>Vout</name>
+            <address>2</address>
+            <type>voltage</type>
+            <initial_condition>None</initial_condition>
             <visible>True</visible>
         </cell>
         <cell>
@@ -54,23 +61,30 @@
             <visible>False</visible>
         </cell>
         <cell>
-            <name>Buck-Boost.il</name>
-            <address>384</address>
-            <type>current</type>
+            <name>Buck-Boost.v1</name>
+            <address>385</address>
+            <type>voltage</type>
             <initial_condition>None</initial_condition>
             <visible>False</visible>
         </cell>
         <cell>
-            <name>Vout</name>
-            <address>2</address>
-            <type>voltage</type>
+            <name>Iout</name>
+            <address>4</address>
+            <type>current</type>
             <initial_condition>None</initial_condition>
             <visible>True</visible>
         </cell>
         <cell>
-            <name>Buck-Boost.v1</name>
-            <address>385</address>
-            <type>voltage</type>
+            <name>IL</name>
+            <address>3</address>
+            <type>current</type>
+            <initial_condition>None</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
+            <name>Buck-Boost.il</name>
+            <address>384</address>
+            <type>current</type>
             <initial_condition>None</initial_condition>
             <visible>False</visible>
         </cell>
@@ -630,16 +644,23 @@
 
     <analog_variables>
         <cell>
-            <name>Latch</name>
+            <name>Subsystem1.error</name>
             <type>generic</type>
-            <address>16384</address>
+            <address>16386</address>
             <initial_condition>None</initial_condition>
             <visible>True</visible>
         </cell>
         <cell>
-            <name>switching</name>
+            <name>Subsystem1.Imax</name>
             <type>generic</type>
             <address>16385</address>
+            <initial_condition>None</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
+            <name>Subsystem1.Duty</name>
+            <type>generic</type>
+            <address>16384</address>
             <initial_condition>None</initial_condition>
             <visible>True</visible>
         </cell>
@@ -648,40 +669,6 @@
 <digital_variables>
     </digital_variables>
 
-    <tunable_params>
-        <tunable_param>
-            <name>Inv</name>
-            <addr>[1426063616]</addr>
-            <min>0.0</min>
-            <max>1.0</max>
-            <def_value>1.0</def_value>
-            <unit></unit>
-            <widget_type>float</widget_type>
-            <format>real</format>
-            <size>1</size>
-            <param_type>scada input</param_type>
-            <cpu_type>user_sp_cpu</cpu_type>
-            <cpu_idx>0</cpu_idx>
-            <execution_rate>1e-06</execution_rate>
-            <visible>True</visible>
-        </tunable_param>
-        <tunable_param>
-            <name>NonInv</name>
-            <addr>[1426063620]</addr>
-            <min>0.0</min>
-            <max>1.0</max>
-            <def_value>0.0</def_value>
-            <unit></unit>
-            <widget_type>float</widget_type>
-            <format>real</format>
-            <size>1</size>
-            <param_type>scada input</param_type>
-            <cpu_type>user_sp_cpu</cpu_type>
-            <cpu_idx>0</cpu_idx>
-            <execution_rate>1e-06</execution_rate>
-            <visible>True</visible>
-        </tunable_param>
-    </tunable_params>
 
 
     <dsp_monitors>
