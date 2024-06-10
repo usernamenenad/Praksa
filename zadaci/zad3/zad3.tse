@@ -6,10 +6,10 @@ version = 4.2
 
 model "zad3" {
     configuration {
-        hil_device = "VHIL+"
-        hil_configuration_id = 1
+        hil_device = "HIL606"
+        hil_configuration_id = 2
         simulation_method = exact
-        simulation_time_step = 1e-6
+        simulation_time_step = .2e-6
         simulation_discret_scaling = 1.0
         dsp_timer_periods = 100e-6, 50e-3
         ss_calc_method = "systematic elimination"
@@ -139,7 +139,7 @@ model "zad3" {
             rotation = right
         ]
 
-        component Subsystem Subsystem1 {
+        component Subsystem Compensator {
             layout = dynamic
             component "core/SR Flip Flop" "SR Flip Flop1" {
             }
@@ -148,9 +148,11 @@ model "zad3" {
             ]
 
             component "core/Square Wave Source" fsw {
-                duty_cycle = "0.01"
+                _tunable = "True"
+                duty_cycle = "0.001"
                 execution_rate = "Ts"
                 frequency = "fsw"
+                signal_type = "int"
             }
             [
                 position = 8056, 7960
@@ -163,46 +165,37 @@ model "zad3" {
                 hide_name = True
             ]
 
-            component "core/Probe" Imax {
-            }
-            [
-                position = 8064, 8152
-            ]
-
             component "core/Probe" Duty {
             }
             [
                 position = 8416, 7960
             ]
 
-            component "core/Sum" Sum1 {
-                signs = "+-"
-            }
-            [
-                position = 7720, 8080
-            ]
-
-            component "core/Constant" Constant1 {
+            component "core/SCADA Input" IPeak {
                 execution_rate = "Ts"
-                value = "Vout_min"
+                max = "20"
+                min = "0"
+                signal_access = "Inherit"
+                unit = ""
             }
             [
-                position = 7624, 8024
+                position = 7696, 8080
             ]
 
-            component "core/Probe" error {
+            component "core/Probe" Imax {
             }
             [
-                position = 7856, 8016
+                position = 7992, 8176
             ]
 
-            component "core/PID controller" "PID controller1" {
-                controller_type = "PI"
-                ki = "8.5895228388425"
-                kp = "0.0371006381036056"
+            component "core/Square Wave Source" fsw1 {
+                _tunable = "True"
+                duty_cycle = "0.3049"
+                execution_rate = "Ts"
+                frequency = "fsw"
             }
             [
-                position = 7872, 8080
+                position = 8320, 8168
             ]
 
             port IL {
@@ -215,7 +208,7 @@ model "zad3" {
                 }
             }
             [
-                position = 7696, 7960
+                position = 7696, 7952
             ]
 
             port Control {
@@ -231,57 +224,37 @@ model "zad3" {
                 position = 8416, 8040
             ]
 
-            port Vout {
-                position = left:2
-                kind = sp
-                direction =  out
-                sp_type {
-                    default = auto
-                    readonly = True
-                }
-            }
-            [
-                position = 7624, 8168
-            ]
-
-            junction Junction2 sp
-            [
-                position = 8336, 8040
-            ]
-
             junction Junction3 sp
             [
-                position = 7808, 8080
+                position = 7952, 8080
             ]
 
             junction Junction4 sp
             [
-                position = 7976, 8080
+                position = 8384, 8040
             ]
 
-            connect fsw.out "SR Flip Flop1.s_in" as Connection61
+            connect Comparator1.in1 IL as Connection129
+            connect Comparator1.in2 Junction3 as Connection135
             [
-                breakpoints = 8192, 7960
+                breakpoints = 7976, 8080; 7976, 8080; 7976, 8080; 7976, 8080; 7976, 8080
             ]
-            connect IL Comparator1.in1 as Connection64
+            connect Junction3 IPeak.out as Connection136
             [
-                breakpoints = 8008, 7960; 8008, 8064
+                breakpoints = 7888, 8080; 7856, 8080; 7840, 8080
             ]
-            connect Comparator1.out "SR Flip Flop1.r_in" as Connection42
-            connect "SR Flip Flop1.out" Junction2 as Connection69
-            connect Junction2 Control as Connection70
-            connect Duty.in Junction2 as Connection71
-            connect Vout Sum1.in1 as Connection78
-            connect Constant1.out Sum1.in as Connection79
-            connect error.in Junction3 as Connection110
-            connect Junction3 Sum1.out as Connection111
+            connect Imax.in Junction3 as Connection137
+            connect Comparator1.out "SR Flip Flop1.r_in" as Connection156
             [
-                breakpoints = 7808, 8080; 7808, 8080; 7768, 8080
+                breakpoints = 8136, 8072; 8136, 8072
             ]
-            connect "PID controller1.in" Junction3 as Connection112
-            connect "PID controller1.out" Junction4 as Connection114
-            connect Junction4 Comparator1.in2 as Connection115
-            connect Imax.in Junction4 as Connection116
+            connect fsw.out "SR Flip Flop1.s_in" as Connection157
+            [
+                breakpoints = 8112, 7960; 8192, 7960; 8192, 7960
+            ]
+            connect fsw1.out Junction4 as Connection160
+            connect Junction4 Control as Connection161
+            connect Duty.in Junction4 as Connection162
         }
         [
             position = 9096, 8048
@@ -360,8 +333,7 @@ model "zad3" {
         [
             breakpoints = 8752, 8224
         ]
-        connect Vout.out Subsystem1.Vout as Connection57
-        connect Subsystem1.Control Goto1 as Connection59
+        connect Compensator.Control Goto1 as Connection59
         connect From1 Buck-Boost.s_ctrl as Connection60
         connect Vin.p_node Buck-Boost.pos_out as Connection61
         connect IL.p_node Buck-Boost.a_in as Connection62
@@ -373,7 +345,6 @@ model "zad3" {
         connect RLoad.n_node Junction7 as Connection71
         connect Junction7 Junction6 as Connection72
         connect Vout.p_node Junction7 as Connection73
-        connect IL.out Subsystem1.IL as Connection74
         connect Vout.n_node Junction8 as Connection81
         [
             breakpoints = 8904, 8224
@@ -384,6 +355,10 @@ model "zad3" {
         ]
         connect Iout.n_node Junction8 as Connection83
         connect Iout.p_node RLoad.p_node as Connection84
+        connect IL.out Compensator.IL as Connection88
+        [
+            breakpoints = 8856, 8160; 8856, 8160; 8856, 8048
+        ]
     }
 
     default {
@@ -399,42 +374,12 @@ model "zad3" {
             execution_rate = "inherit"
         }
 
-        "core/Constant" {
-            value = "1"
-            signal_type = "real"
-            execution_rate = "100e-6"
-            _tunable = "False"
-        }
-
         "core/Inductor" {
             signal_access = "inherit"
             inductance = "1e-3"
             initial_current = "0.0"
             pole_shift_ignore = "False"
             visible = "True"
-        }
-
-        "core/PID controller" {
-            controller_type = "PID"
-            kp = "1"
-            kp_source = "internal"
-            ki = "1"
-            ki_source = "internal"
-            kd = "0"
-            kd_source = "internal"
-            filt_coef = "100"
-            int_init_value = "0"
-            filt_init_value = "0"
-            enb_output_limit_out = "False"
-            show_reset = "none"
-            upper_sat_lim = "1"
-            upper_sat_lim_source = "internal"
-            lower_sat_lim = "-1"
-            lower_sat_lim_source = "internal"
-            enb_anti_windup_out = "False"
-            signal_out_type = "inherit"
-            _tunable = "False"
-            execution_rate = "inherit"
         }
 
         "core/Probe" {
@@ -453,6 +398,20 @@ model "zad3" {
             param_set = ""
         }
 
+        "core/SCADA Input" {
+            signal_access = "inherit"
+            addr = "0"
+            format = "real"
+            override_signal_name = "False"
+            signal_name = ""
+            signal_type = "real"
+            min = "-1e6"
+            max = "1e6"
+            def_value = "0"
+            unit = " "
+            execution_rate = "100e-6"
+        }
+
         "core/SR Flip Flop" {
             init_value = "0"
             execution_rate = "inherit"
@@ -467,11 +426,6 @@ model "zad3" {
             signal_type = "real"
             execution_rate = "100e-6"
             _tunable = "False"
-        }
-
-        "core/Sum" {
-            signs = "2"
-            execution_rate = "inherit"
         }
 
         "core/Voltage Source" {
@@ -575,6 +529,6 @@ model "zad3" {
         Vout_min = 5
         Vout_max = 20
         fsw = 10e3
-        Ts = 1e-6
+        Ts = 5e-6
     ENDCODE
 }
