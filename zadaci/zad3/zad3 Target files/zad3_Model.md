@@ -11,7 +11,7 @@ REM *****************************************:
 
 
 REM Setting the simulation time step...
-rtds_write 0x00000000 0x00000038
+rtds_write 0x00000000 0x00000118
 
 
 REM External SFP Link
@@ -130,7 +130,7 @@ rtds_write 0x08100001 0x0
 
 REM SPC0 Output voltage compare mode...
 rtds_write 0x08100005 0x00000000
-rtds_write 0x08100006 0x00000019
+rtds_write 0x08100006 0x00000005
 
 
 REM SPC0 Matrix multiplier initialization...
@@ -148,10 +148,10 @@ REM SPC0 Contactors initialization...
 
 REM SPC0 GDS compensation settings...
 rtds_write 0x080C0000 0x00000001
-rtds_write 0x080C0001 0x00000002
-rtds_write 0x080C0004 0x3C924924
-rtds_write 0x080C0005 0x92490000
-rtds_write 0x08100000 0x00000038
+rtds_write 0x080C0001 0x00000003
+rtds_write 0x080C0004 0x3B6A0EA0
+rtds_write 0x080C0005 0xEA0F0000
+rtds_write 0x08100000 0x00000118
 rtds_write 0x08100007 0x00000000
 
 
@@ -172,6 +172,8 @@ REM SPC0 DTSM initialization...
 
 
 REM SPC0 Time Varying Elements initialization...
+rtds_write 0x08300040 0x00000000
+rtds_write 0x08300020 0x00000006
 
 
 REM *****************************************:
@@ -1044,5 +1046,5 @@ app_file_write 0x0 app_init
 
 REM Clear the /mnt/ext_files. directory
 file_write_custom clean_ext_files None
-rtds_write 0x00000027 0x00000038
+rtds_write 0x00000027 0x00000118
 rtds_write 0x00000040 0x00FFFFFF

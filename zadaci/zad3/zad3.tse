@@ -9,7 +9,7 @@ model "zad3" {
         hil_device = "HIL606"
         hil_configuration_id = 2
         simulation_method = exact
-        simulation_time_step = .2e-6
+        simulation_time_step = 1e-6
         simulation_discret_scaling = 1.0
         dsp_timer_periods = 100e-6, 50e-3
         ss_calc_method = "systematic elimination"
@@ -95,16 +95,16 @@ model "zad3" {
         ]
 
         component "core/Inductor" L {
-            inductance = "0.0013"
+            inductance = "L"
             signal_access = "Inherit"
         }
         [
-            position = 8504, 8440
+            position = 8504, 8408
             rotation = right
         ]
 
-        component "core/Capacitor" C {
-            capacitance = "0.0016"
+        component "core/Capacitor" Cout {
+            capacitance = "Cout"
             signal_access = "Inherit"
         }
         [
@@ -113,10 +113,10 @@ model "zad3" {
         ]
 
         component "core/Resistor" RL {
-            resistance = "0.0127"
+            resistance = "RL"
         }
         [
-            position = 8504, 8536
+            position = 8504, 8504
             rotation = right
         ]
 
@@ -129,14 +129,6 @@ model "zad3" {
             position = 9024, 8408
             rotation = left
             size = 64, 32
-        ]
-
-        component "core/Resistor" RLoad {
-            resistance = "0.5"
-        }
-        [
-            position = 8888, 8456
-            rotation = right
         ]
 
         component Subsystem Compensator {
@@ -179,7 +171,7 @@ model "zad3" {
                 unit = ""
             }
             [
-                position = 7696, 8080
+                position = 7696, 8072
             ]
 
             component "core/Probe" Imax {
@@ -188,17 +180,32 @@ model "zad3" {
                 position = 7992, 8176
             ]
 
-            component "core/Square Wave Source" fsw1 {
-                _tunable = "True"
-                duty_cycle = "0.3049"
+            component "core/Triangular Wave Source" "Slope compensation" {
+                duty_cycle = "0.99"
                 execution_rate = "Ts"
                 frequency = "fsw"
+                max_val = "20 / L * (0.99 * 1 / fsw)"
+                min_val = "0"
             }
             [
-                position = 8320, 8168
+                position = 7696, 8160
             ]
 
-            port IL {
+            component "core/Sum" Sum1 {
+                signs = "+-"
+            }
+            [
+                position = 7832, 8080
+                hide_name = True
+            ]
+
+            component "core/Probe" Probe1 {
+            }
+            [
+                position = 7856, 8168
+            ]
+
+            port Isw {
                 position = left:1
                 kind = sp
                 direction =  out
@@ -224,51 +231,56 @@ model "zad3" {
                 position = 8416, 8040
             ]
 
-            junction Junction3 sp
-            [
-                position = 7952, 8080
-            ]
-
             junction Junction4 sp
             [
                 position = 8384, 8040
             ]
 
-            connect Comparator1.in1 IL as Connection129
-            connect Comparator1.in2 Junction3 as Connection135
+            junction Junction5 sp
             [
-                breakpoints = 7976, 8080; 7976, 8080; 7976, 8080; 7976, 8080; 7976, 8080
+                position = 7952, 8080
             ]
-            connect Junction3 IPeak.out as Connection136
+
+            junction Junction6 sp
             [
-                breakpoints = 7888, 8080; 7856, 8080; 7840, 8080
+                position = 7792, 8160
             ]
-            connect Imax.in Junction3 as Connection137
-            connect Comparator1.out "SR Flip Flop1.r_in" as Connection156
+
+            connect Comparator1.in1 Isw as Connection129
             [
-                breakpoints = 8136, 8072; 8136, 8072
+                breakpoints = 8008, 8016; 7728, 8016
             ]
-            connect fsw.out "SR Flip Flop1.s_in" as Connection157
+            connect Duty.in Junction4 as Connection176
+            connect Junction4 Control as Connection177
             [
-                breakpoints = 8112, 7960; 8192, 7960; 8192, 7960
+                breakpoints = 8384, 8040; 8384, 8040; 8384, 8040; 8384, 8040
             ]
-            connect fsw1.out Junction4 as Connection160
-            connect Junction4 Control as Connection161
-            connect Duty.in Junction4 as Connection162
+            connect "SR Flip Flop1.out" Junction4 as Connection178
+            connect fsw.out "SR Flip Flop1.s_in" as Connection181
+            connect Comparator1.out "SR Flip Flop1.r_in" as Connection182
+            connect Imax.in Junction5 as Connection184
+            connect Junction5 Comparator1.in2 as Connection185
+            [
+                breakpoints = 7952, 8080; 7976, 8080; 7976, 8080; 7976, 8080; 7976, 8080; 7976, 8080
+            ]
+            connect Sum1.out Junction5 as Connection186
+            connect IPeak.out Sum1.in as Connection187
+            connect "Slope compensation.out" Junction6 as Connection189
+            connect Junction6 Sum1.in1 as Connection190
+            connect Probe1.in Junction6 as Connection191
         }
         [
             position = 9096, 8048
             size = 88, 64
         ]
 
-        component "core/Current Measurement" IL {
+        component "core/Current Measurement" Isw {
             execution_rate = "Ts"
             sig_output = "True"
             signal_access = "Inherit"
         }
         [
-            position = 8504, 8352
-            rotation = right
+            position = 8296, 8224
             size = 64, 32
         ]
 
@@ -278,6 +290,102 @@ model "zad3" {
             position = 8888, 8336
             rotation = left
             size = 64, 32
+        ]
+
+        component "core/Variable Resistor" RLoad {
+            inductance = "1e-5"
+        }
+        [
+            position = 8888, 8464
+            rotation = left
+            size = 64, 48
+        ]
+
+        component "core/SCADA Input" "Output power" {
+            unit = ""
+        }
+        [
+            position = 8368, 8784
+        ]
+
+        component "core/SCADA Input" "Output voltage" {
+            unit = ""
+        }
+        [
+            position = 8368, 8696
+        ]
+
+        component Subsystem "Resistance calculation" {
+            layout = dynamic
+            component "core/Product" Product1 {
+            }
+            [
+                position = 8112, 8096
+                hide_name = True
+            ]
+
+            component "core/Product" Product2 {
+                signs = "*/"
+            }
+            [
+                position = 8208, 8168
+                hide_name = True
+            ]
+
+            port Power {
+                position = left:2
+                kind = sp
+                direction =  out
+                sp_type {
+                    default = auto
+                    readonly = True
+                }
+            }
+            [
+                position = 8000, 8176
+            ]
+
+            port Resistance {
+                position = right:1
+                kind = sp
+                direction =  in
+                sp_type {
+                    default = inherit
+                    readonly = True
+                }
+            }
+            [
+                position = 8352, 8168
+            ]
+
+            port Voltage {
+                position = left:1
+                kind = sp
+                direction =  out
+                sp_type {
+                    default = auto
+                    readonly = True
+                }
+            }
+            [
+                position = 8000, 8088
+            ]
+
+            junction Junction10 sp
+            [
+                position = 8048, 8088
+            ]
+
+            connect Product2.out Resistance as Connection101
+            connect Product2.in1 Power as Connection100
+            connect Junction10 Voltage as Connection102
+            connect Junction10 Product1.in as Connection96
+            connect Product1.in1 Junction10 as Connection97
+            connect Product1.out Product2.in as Connection99
+        }
+        [
+            position = 8592, 8736
+            size = 160, 56
         ]
 
         tag Goto1 {
@@ -298,7 +406,29 @@ model "zad3" {
             direction = out
         }
         [
-            position = 8368, 8104
+            position = 8368, 8080
+            size = 60, 20
+        ]
+
+        tag Goto2 {
+            value = "tag1"
+            scope = global
+            kind = sp
+            direction = in
+        }
+        [
+            position = 8576, 8648
+            size = 60, 20
+        ]
+
+        tag Goto3 {
+            value = "tag2"
+            scope = global
+            kind = sp
+            direction = in
+        }
+        [
+            position = 8560, 8840
             size = 60, 20
         ]
 
@@ -317,34 +447,38 @@ model "zad3" {
             position = 8752, 8576
         ]
 
-        junction Junction7 pe
-        [
-            position = 8888, 8576
-        ]
-
         junction Junction8 pe
         [
             position = 8888, 8224
         ]
 
+        junction Junction9 pe
+        [
+            position = 8888, 8576
+        ]
+
+        junction Junction10 sp
+        [
+            position = 8456, 8696
+        ]
+
+        junction Junction11 sp
+        [
+            position = 8448, 8784
+        ]
+
         connect L.n_node RL.p_node as Connection4
         connect Buck-Boost.neg_out Junction2 as Connection19
-        connect Junction2 C.p_node as Connection20
+        connect Junction2 Cout.p_node as Connection20
         [
             breakpoints = 8752, 8224
         ]
         connect Compensator.Control Goto1 as Connection59
         connect From1 Buck-Boost.s_ctrl as Connection60
-        connect Vin.p_node Buck-Boost.pos_out as Connection61
-        connect IL.p_node Buck-Boost.a_in as Connection62
-        connect L.p_node IL.n_node as Connection63
         connect Vin.n_node Junction5 as Connection65
         connect Junction5 RL.n_node as Connection66
-        connect C.n_node Junction6 as Connection68
+        connect Cout.n_node Junction6 as Connection68
         connect Junction6 Junction5 as Connection69
-        connect RLoad.n_node Junction7 as Connection71
-        connect Junction7 Junction6 as Connection72
-        connect Vout.p_node Junction7 as Connection73
         connect Vout.n_node Junction8 as Connection81
         [
             breakpoints = 8904, 8224
@@ -354,10 +488,32 @@ model "zad3" {
             breakpoints = 8888, 8224; 8888, 8224; 8752, 8224
         ]
         connect Iout.n_node Junction8 as Connection83
-        connect Iout.p_node RLoad.p_node as Connection84
-        connect IL.out Compensator.IL as Connection88
+        connect RLoad.n_node Iout.p_node as Connection90
+        connect Junction6 Junction9 as Connection91
         [
-            breakpoints = 8856, 8160; 8856, 8160; 8856, 8048
+            breakpoints = 8752, 8576
+        ]
+        connect Junction9 Vout.p_node as Connection92
+        [
+            breakpoints = 8888, 8576
+        ]
+        connect RLoad.p_node Junction9 as Connection93
+        connect RLoad.In "Resistance calculation.Resistance" as Connection95
+        [
+            breakpoints = 8728, 8464; 8728, 8736
+        ]
+        connect "Output voltage.out" Junction10 as Connection97
+        connect Junction10 "Resistance calculation.Voltage" as Connection98
+        connect Goto2 Junction10 as Connection99
+        connect "Output power.out" Junction11 as Connection100
+        connect Junction11 "Resistance calculation.Power" as Connection101
+        connect Goto3 Junction11 as Connection102
+        connect Isw.n_node Buck-Boost.pos_out as Connection103
+        connect Isw.p_node Vin.p_node as Connection104
+        connect Buck-Boost.a_in L.p_node as Connection105
+        connect Isw.out Compensator.Isw as Connection106
+        [
+            breakpoints = 8296, 8128; 9016, 8120; 9016, 8048
         ]
     }
 
@@ -393,6 +549,11 @@ model "zad3" {
             execution_rate = "inherit"
         }
 
+        "core/Product" {
+            signs = "2"
+            execution_rate = "inherit"
+        }
+
         "core/Resistor" {
             resistance = "1"
             param_set = ""
@@ -424,6 +585,21 @@ model "zad3" {
             duty_cycle = "0.5"
             phase = "0"
             signal_type = "real"
+            execution_rate = "100e-6"
+            _tunable = "False"
+        }
+
+        "core/Sum" {
+            signs = "2"
+            execution_rate = "inherit"
+        }
+
+        "core/Triangular Wave Source" {
+            min_val = "-0.5"
+            max_val = "0.5"
+            frequency = "50"
+            duty_cycle = "0.5"
+            phase = "0"
             execution_rate = "100e-6"
             _tunable = "False"
         }
@@ -492,6 +668,12 @@ model "zad3" {
             signal_name = ""
         }
 
+        "core/Variable Resistor" {
+            inductance = "1e-3"
+            initial_current = "0.0"
+            hide_int_meas = "False"
+        }
+
         "core/Voltage Measurement" {
             signal_access = "inherit"
             bw_limit = "False"
@@ -528,7 +710,101 @@ model "zad3" {
         Vin = 12
         Vout_min = 5
         Vout_max = 20
+        Vout_list = [Vout_min, Vout_max]
+        
+        Pout_min = 50
+        Pout_max = 50
+        Pout_list = [Pout_min, Pout_max]
+        
         fsw = 10e3
-        Ts = 5e-6
+        eff = 0.95
+        
+        Vout_ripple_max = 0.05
+        IL_ripple_max = 0.2
+        
+        Ts = 2e-6
+        
+        # Output current
+        """
+        Add comment here
+        """
+        Iout_list = {}
+        for Pout in Pout_list:
+            Iout_list[Pout] = {}
+            for Vout in Vout_list:
+                Iout_list[Pout][Vout] = Pout / Vout
+        
+        # Allowed RL
+        """
+        Add comment here
+        """
+        RL_list = {}
+        for Pout in Pout_list:
+            RL_list[Pout] = {}
+            for Vout in Vout_list:
+                Iout = Iout_list[Pout][Vout]
+                a = eff * (1 - eff) * Vout * Vin**2
+                b = (eff * Vin + Vout) ** 2 * Iout
+                RL_list[Pout][Vout] = a / b
+        
+        RL = min(RL_list[Pout][Vout] for Pout in Pout_list for Vout in Vout_list)
+        
+        # Duty ratio
+        """
+        Add comment here
+        """
+        D0_list = {}
+        for Pout in Pout_list:
+            D0_list[Pout] = {}
+            for Vout in Vout_list:
+                Iout = Iout_list[Pout][Vout]
+                a = Vin + Vout
+                b = -Vin - 2 * Vout
+                c = Iout * RL + Vout
+                D0_list[Pout][Vout] = np.roots([a, b, c])[1]
+        
+        # IL calculation
+        """
+        Add comment here
+        """
+        IL_list = {}
+        for Pout in Pout_list:
+            IL_list[Pout] = {}
+            for Vout in Vout_list:
+                Iout = Iout_list[Pout][Vout]
+                D0 = D0_list[Pout][Vout]
+                IL_list[Pout][Vout] = Iout / (1 - D0)
+        
+        # Inductance calculation
+        """
+        Add comment here
+        """
+        L_list = {}
+        for Pout in Pout_list:
+            L_list[Pout] = {}
+            for Vout in Vout_list:
+                Iout = Iout_list[Pout][Vout]
+                D0 = D0_list[Pout][Vout]
+                a = D0 * ((1 - D0) * Vin - RL * Iout)
+                b = 2 * IL_ripple_max * fsw * Iout
+                L_list[Pout][Vout] = a / b
+        
+        L = min(L_list[Pout][Vout] for Pout in Pout_list for Vout in Vout_list) + 1e-3
+        
+        # Capacitance calculation
+        """
+        Add comment here
+        """
+        Cout_list = {}
+        for Pout in Pout_list:
+            Cout_list[Pout] = {}
+            for Vout in Vout_list:
+                Iout = Iout_list[Pout][Vout]
+                D0 = D0_list[Pout][Vout]
+                a = D0 * Iout
+                b = 2 * Vout_ripple_max * fsw * Vout
+                Cout_list[Pout][Vout] = a / b
+        
+        Cout = min(Cout_list[Pout][Vout] for Pout in Pout_list for Vout in Vout_list) + 1e-3
     ENDCODE
 }

@@ -79,6 +79,13 @@ typedef double real;
 
 
 
+
+
+
+
+
+
+
 //@cmp.def.end
 
 
@@ -96,34 +103,35 @@ double _buck_boost_constant1__out = 0.0;
 double _compensator_ipeak__out;
 double _compensator_sr_flip_flop1__out;
 double _compensator_sr_flip_flop1__out_n;
+double _compensator_slope_compensation__out;
 X_Int32 _compensator_fsw__out;
-double _compensator_fsw1__out;
-double _il_ia1__out;
+double _isw_ia1__out;
+double _output_power__out;
+double _output_voltage__out;
 double _vout_va1__out;
 double _buck_boost_bus_join1__out[2];
-double _compensator_comparator1__out;//@cmp.var.end
+double _compensator_sum1__out;
+double _resistance_calculation_product1__out;
+double _compensator_comparator1__out;
+double _resistance_calculation_product2__out;
+//@cmp.var.end
 
 //@cmp.svar.start
 // state variables
 double _compensator_sr_flip_flop1__state;
+double _compensator_slope_compensation__current_phase;
 double _compensator_fsw__current_phase;
-double _compensator_fsw1__current_phase;
 double _compensator_comparator1__state;//@cmp.svar.end
 
 //
 // Tunable parameters
 //
 static struct Tunable_params {
-    X_Int32 _compensator_fsw__ls_output;
-    X_Int32 _compensator_fsw__hs_output;
-    double _compensator_fsw__duty_cycle;
     double _compensator_fsw__phase;
+    X_Int32 _compensator_fsw__hs_output;
     double _compensator_fsw__frequency;
-    double _compensator_fsw1__hs_output;
-    double _compensator_fsw1__frequency;
-    double _compensator_fsw1__ls_output;
-    double _compensator_fsw1__phase;
-    double _compensator_fsw1__duty_cycle;
+    double _compensator_fsw__duty_cycle;
+    X_Int32 _compensator_fsw__ls_output;
 } __attribute__((__packed__)) tunable_params;
 
 void *tunable_params_dev0_cpu0_ptr = &tunable_params;
@@ -148,12 +156,14 @@ void ReInit_user_sp_cpu0_dev0() {
 #endif
     //@cmp.init.block.start
     _compensator_sr_flip_flop1__state =  0;
+    _compensator_slope_compensation__current_phase = 0.0;
     _compensator_fsw__current_phase = tunable_params._compensator_fsw__phase;
-    _compensator_fsw1__current_phase = tunable_params._compensator_fsw1__phase;
-    HIL_OutAO(0x4001, 0.0f);
     HIL_OutAO(0x4000, 0.0f);
-    _compensator_comparator1__state = 0.0f;
+    HIL_OutAO(0x4002, 0.0f);
     HIL_OutInt32(0x810002e, 0x3);
+    _compensator_comparator1__state = 0.0f;
+    HIL_OutAO(0x4001, 0.0f);
+    HIL_OutFloat(137363456, 0.0);
     //@cmp.init.block.end
 }
 
@@ -223,41 +233,45 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     // Generated from the component: Compensator.SR Flip Flop1
     _compensator_sr_flip_flop1__out = _compensator_sr_flip_flop1__state;
     _compensator_sr_flip_flop1__out_n = _compensator_sr_flip_flop1__state != -1 ? !_compensator_sr_flip_flop1__state : -1;
+    // Generated from the component: Compensator.Slope compensation
+    if (_compensator_slope_compensation__current_phase < 0.99) {
+        _compensator_slope_compensation__out = 0.0 + (((1.8633381728481246) - (0.0)) * (_compensator_slope_compensation__current_phase / 0.99));
+    } else {
+        _compensator_slope_compensation__out = 1.8633381728481246 - (((1.8633381728481246) - (0.0)) * ((_compensator_slope_compensation__current_phase - 0.99) / (1.0f - 0.99)));
+    }
     // Generated from the component: Compensator.fsw
     if (_compensator_fsw__current_phase < tunable_params._compensator_fsw__duty_cycle) {
         _compensator_fsw__out = tunable_params._compensator_fsw__hs_output;
     } else {
         _compensator_fsw__out = tunable_params._compensator_fsw__ls_output;
     }
-    // Generated from the component: Compensator.fsw1
-    if (_compensator_fsw1__current_phase < tunable_params._compensator_fsw1__duty_cycle) {
-        _compensator_fsw1__out = tunable_params._compensator_fsw1__hs_output;
-    } else {
-        _compensator_fsw1__out = tunable_params._compensator_fsw1__ls_output;
-    }
-    // Generated from the component: IL.Ia1
-    _il_ia1__out = (HIL_InFloat(0xc80000 + 0x3));
+    // Generated from the component: Isw.Ia1
+    _isw_ia1__out = (HIL_InFloat(0xc80000 + 0x5));
     // Generated from the component: Vout.Va1
-    _vout_va1__out = (HIL_InFloat(0xc80000 + 0x2));
-    // Generated from the component: Compensator.Imax
-    HIL_OutAO(0x4001, (float)_compensator_ipeak__out);
+    _vout_va1__out = (HIL_InFloat(0xc80000 + 0x3));
     // Generated from the component: Buck-Boost.Bus_Join1
-    _buck_boost_bus_join1__out[0] = _compensator_fsw1__out;
+    _buck_boost_bus_join1__out[0] = _compensator_sr_flip_flop1__out;
     _buck_boost_bus_join1__out[1] = _buck_boost_constant1__out;
     // Generated from the component: Compensator.Duty
-    HIL_OutAO(0x4000, (float)_compensator_fsw1__out);
-    // Generated from the component: Compensator.Comparator1
-    if (_il_ia1__out < _compensator_ipeak__out) {
-        _compensator_comparator1__out = 0;
-    } else if (_il_ia1__out > _compensator_ipeak__out) {
-        _compensator_comparator1__out = 1;
-    } else {
-        _compensator_comparator1__out = _compensator_comparator1__state;
-    }
+    HIL_OutAO(0x4000, (float)_compensator_sr_flip_flop1__out);
+    // Generated from the component: Compensator.Probe1
+    HIL_OutAO(0x4002, (float)_compensator_slope_compensation__out);
+    // Generated from the component: Compensator.Sum1
+    _compensator_sum1__out = _compensator_ipeak__out - _compensator_slope_compensation__out;
     // Generated from the component: Buck-Boost.FSM_Wrapper1
     _buck_boost_bus_join1__out[0] = (_buck_boost_bus_join1__out[0]) ? 1 : 0;
     _buck_boost_bus_join1__out[1] = (_buck_boost_bus_join1__out[1]) ? 1 : 0;
     HIL_OutInt32(0x810002f, 2 * _buck_boost_bus_join1__out[0] + 1 * _buck_boost_bus_join1__out[1]);
+    // Generated from the component: Compensator.Comparator1
+    if (_isw_ia1__out < _compensator_sum1__out) {
+        _compensator_comparator1__out = 0;
+    } else if (_isw_ia1__out > _compensator_sum1__out) {
+        _compensator_comparator1__out = 1;
+    } else {
+        _compensator_comparator1__out = _compensator_comparator1__state;
+    }
+    // Generated from the component: Compensator.Imax
+    HIL_OutAO(0x4001, (float)_compensator_sum1__out);
 //@cmp.out.block.end
     //////////////////////////////////////////////////////////////////////////
     // Update block
@@ -270,22 +284,50 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
         _compensator_sr_flip_flop1__state = 0;
     else if ((_compensator_fsw__out != 0x0) && (_compensator_comparator1__out != 0x0))
         _compensator_sr_flip_flop1__state = -1;
+    // Generated from the component: Compensator.Slope compensation
+    _compensator_slope_compensation__current_phase += 10000.0 * 2e-06;
+    if (_compensator_slope_compensation__current_phase >= 1.0f) {
+        _compensator_slope_compensation__current_phase -= 1.0f;
+    }
     // Generated from the component: Compensator.fsw
-    _compensator_fsw__current_phase += tunable_params._compensator_fsw__frequency * 5e-06;
+    _compensator_fsw__current_phase += tunable_params._compensator_fsw__frequency * 2e-06;
     if (_compensator_fsw__current_phase >= 1.0f) {
         _compensator_fsw__current_phase -= 1.0f;
     }
-    // Generated from the component: Compensator.fsw1
-    _compensator_fsw1__current_phase += tunable_params._compensator_fsw1__frequency * 5e-06;
-    if (_compensator_fsw1__current_phase >= 1.0f) {
-        _compensator_fsw1__current_phase -= 1.0f;
-    }
     // Generated from the component: Compensator.Comparator1
-    if (_il_ia1__out < _compensator_ipeak__out) {
+    if (_isw_ia1__out < _compensator_sum1__out) {
         _compensator_comparator1__state = 0;
-    } else if (_il_ia1__out > _compensator_ipeak__out) {
+    } else if (_isw_ia1__out > _compensator_sum1__out) {
         _compensator_comparator1__state = 1;
     }
+    //@cmp.update.block.end
+}
+void TimerCounterHandler_1_user_sp_cpu0_dev0() {
+#if DEBUG_MODE
+    printf("\n\rTimerCounterHandler_1");
+#endif
+    //////////////////////////////////////////////////////////////////////////
+    // Set tunable parameters
+    //////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+    // Output block
+    //////////////////////////////////////////////////////////////////////////
+    //@cmp.out.block.start
+    // Generated from the component: Output power
+    _output_power__out = XIo_InFloat(0xfffc0004);
+    // Generated from the component: Output voltage
+    _output_voltage__out = XIo_InFloat(0xfffc0008);
+    // Generated from the component: Resistance calculation.Product1
+    _resistance_calculation_product1__out = (_output_voltage__out * _output_voltage__out);
+    // Generated from the component: Resistance calculation.Product2
+    _resistance_calculation_product2__out = (_resistance_calculation_product1__out) * 1.0 / (_output_power__out);
+    // Generated from the component: RLoad.Vs
+    HIL_OutFloat(137363456, (float) _resistance_calculation_product2__out);
+//@cmp.out.block.end
+    //////////////////////////////////////////////////////////////////////////
+    // Update block
+    //////////////////////////////////////////////////////////////////////////
+    //@cmp.update.block.start
     //@cmp.update.block.end
 }
 // ----------------------------------------------------------------------------------------
