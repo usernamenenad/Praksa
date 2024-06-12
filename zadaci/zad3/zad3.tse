@@ -6,8 +6,8 @@ version = 4.2
 
 model "zad3" {
     configuration {
-        hil_device = "HIL606"
-        hil_configuration_id = 2
+        hil_device = "VHIL+"
+        hil_configuration_id = 1
         simulation_method = exact
         simulation_time_step = 1e-6
         simulation_discret_scaling = 1.0
@@ -163,17 +163,6 @@ model "zad3" {
                 position = 8416, 7960
             ]
 
-            component "core/SCADA Input" IPeak {
-                execution_rate = "Ts"
-                max = "20"
-                min = "0"
-                signal_access = "Inherit"
-                unit = ""
-            }
-            [
-                position = 7696, 8072
-            ]
-
             component "core/Probe" Imax {
             }
             [
@@ -181,10 +170,11 @@ model "zad3" {
             ]
 
             component "core/Triangular Wave Source" "Slope compensation" {
+                _tunable = "True"
                 duty_cycle = "0.99"
                 execution_rate = "Ts"
                 frequency = "fsw"
-                max_val = "20 / L * (0.99 * 1 / fsw)"
+                max_val = "0"
                 min_val = "0"
             }
             [
@@ -203,6 +193,26 @@ model "zad3" {
             }
             [
                 position = 7856, 8168
+            ]
+
+            component "core/Sum" Sum2 {
+                signs = "+-"
+            }
+            [
+                position = 7440, 8056
+            ]
+
+            component "core/PID controller" "PID controller1" {
+                controller_type = "PI"
+                enb_anti_windup_out = "True"
+                enb_output_limit_out = "True"
+                ki = "8.5"
+                kp = "0.003"
+                lower_sat_lim = "0"
+                upper_sat_lim = "[\'inf\']"
+            }
+            [
+                position = 7584, 8056
             ]
 
             port Isw {
@@ -229,6 +239,30 @@ model "zad3" {
             }
             [
                 position = 8416, 8040
+            ]
+
+            port Vout {
+                position = left:2
+                kind = sp
+                direction =  out
+                sp_type {
+                    default = auto
+                    readonly = True
+                }
+            }
+            [
+                position = 7328, 8176
+            ]
+
+            tag From1 {
+                value = "tag1"
+                scope = global
+                kind = sp
+                direction = out
+            }
+            [
+                position = 7272, 8032
+                size = 60, 20
             ]
 
             junction Junction4 sp
@@ -264,10 +298,13 @@ model "zad3" {
                 breakpoints = 7952, 8080; 7976, 8080; 7976, 8080; 7976, 8080; 7976, 8080; 7976, 8080
             ]
             connect Sum1.out Junction5 as Connection186
-            connect IPeak.out Sum1.in as Connection187
             connect "Slope compensation.out" Junction6 as Connection189
             connect Junction6 Sum1.in1 as Connection190
             connect Probe1.in Junction6 as Connection191
+            connect From1 Sum2.in as Connection192
+            connect Sum2.in1 Vout as Connection193
+            connect Sum2.out "PID controller1.in" as Connection194
+            connect "PID controller1.out" Sum1.in as Connection195
         }
         [
             position = 9096, 8048
@@ -292,23 +329,9 @@ model "zad3" {
             size = 64, 32
         ]
 
-        component "core/Variable Resistor" RLoad {
-            inductance = "1e-5"
-        }
-        [
-            position = 8888, 8464
-            rotation = left
-            size = 64, 48
-        ]
-
-        component "core/SCADA Input" "Output power" {
-            unit = ""
-        }
-        [
-            position = 8368, 8784
-        ]
-
         component "core/SCADA Input" "Output voltage" {
+            execution_rate = "Ts"
+            signal_access = "Inherit"
             unit = ""
         }
         [
@@ -388,6 +411,23 @@ model "zad3" {
             size = 160, 56
         ]
 
+        component "core/Constant" Constant1 {
+            execution_rate = "Ts"
+            value = "50"
+        }
+        [
+            position = 8368, 8800
+        ]
+
+        component "core/Variable Resistor" RL1 {
+            inductance = "1e-5"
+        }
+        [
+            position = 8888, 8488
+            rotation = right
+            size = 64, 48
+        ]
+
         tag Goto1 {
             value = "Control"
             scope = local
@@ -421,17 +461,6 @@ model "zad3" {
             size = 60, 20
         ]
 
-        tag Goto3 {
-            value = "tag2"
-            scope = global
-            kind = sp
-            direction = in
-        }
-        [
-            position = 8560, 8840
-            size = 60, 20
-        ]
-
         junction Junction2 pe
         [
             position = 8752, 8224
@@ -452,19 +481,14 @@ model "zad3" {
             position = 8888, 8224
         ]
 
-        junction Junction9 pe
-        [
-            position = 8888, 8576
-        ]
-
         junction Junction10 sp
         [
             position = 8456, 8696
         ]
 
-        junction Junction11 sp
+        junction Junction11 pe
         [
-            position = 8448, 8784
+            position = 8888, 8576
         ]
 
         connect L.n_node RL.p_node as Connection4
@@ -488,26 +512,9 @@ model "zad3" {
             breakpoints = 8888, 8224; 8888, 8224; 8752, 8224
         ]
         connect Iout.n_node Junction8 as Connection83
-        connect RLoad.n_node Iout.p_node as Connection90
-        connect Junction6 Junction9 as Connection91
-        [
-            breakpoints = 8752, 8576
-        ]
-        connect Junction9 Vout.p_node as Connection92
-        [
-            breakpoints = 8888, 8576
-        ]
-        connect RLoad.p_node Junction9 as Connection93
-        connect RLoad.In "Resistance calculation.Resistance" as Connection95
-        [
-            breakpoints = 8728, 8464; 8728, 8736
-        ]
         connect "Output voltage.out" Junction10 as Connection97
         connect Junction10 "Resistance calculation.Voltage" as Connection98
         connect Goto2 Junction10 as Connection99
-        connect "Output power.out" Junction11 as Connection100
-        connect Junction11 "Resistance calculation.Power" as Connection101
-        connect Goto3 Junction11 as Connection102
         connect Isw.n_node Buck-Boost.pos_out as Connection103
         connect Isw.p_node Vin.p_node as Connection104
         connect Buck-Boost.a_in L.p_node as Connection105
@@ -515,6 +522,25 @@ model "zad3" {
         [
             breakpoints = 8296, 8128; 9016, 8120; 9016, 8048
         ]
+        connect Vout.out Compensator.Vout as Connection122
+        [
+            breakpoints = 8960, 8408; 8960, 8064
+        ]
+        connect "Resistance calculation.Power" Constant1.out as Connection127
+        [
+            breakpoints = 8448, 8784; 8448, 8800
+        ]
+        connect RL1.p_node Iout.p_node as Connection139
+        [
+            breakpoints = 8888, 8376
+        ]
+        connect Vout.p_node Junction11 as Connection140
+        connect Junction11 Junction6 as Connection141
+        [
+            breakpoints = 8888, 8576; 8888, 8576; 8888, 8576; 8888, 8576; 8896, 8576; 8888, 8576; 8888, 8576; 8752, 8576; 8752, 8576; 8752, 8576; 8752, 8576
+        ]
+        connect RL1.n_node Junction11 as Connection142
+        connect "Resistance calculation.Resistance" RL1.In as Connection143
     }
 
     default {
@@ -530,12 +556,42 @@ model "zad3" {
             execution_rate = "inherit"
         }
 
+        "core/Constant" {
+            value = "1"
+            signal_type = "real"
+            execution_rate = "100e-6"
+            _tunable = "False"
+        }
+
         "core/Inductor" {
             signal_access = "inherit"
             inductance = "1e-3"
             initial_current = "0.0"
             pole_shift_ignore = "False"
             visible = "True"
+        }
+
+        "core/PID controller" {
+            controller_type = "PID"
+            kp = "1"
+            kp_source = "internal"
+            ki = "1"
+            ki_source = "internal"
+            kd = "0"
+            kd_source = "internal"
+            filt_coef = "100"
+            int_init_value = "0"
+            filt_init_value = "0"
+            enb_output_limit_out = "False"
+            show_reset = "none"
+            upper_sat_lim = "1"
+            upper_sat_lim_source = "internal"
+            lower_sat_lim = "-1"
+            lower_sat_lim_source = "internal"
+            enb_anti_windup_out = "False"
+            signal_out_type = "inherit"
+            _tunable = "False"
+            execution_rate = "inherit"
         }
 
         "core/Probe" {
