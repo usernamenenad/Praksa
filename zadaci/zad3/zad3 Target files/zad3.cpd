@@ -33,7 +33,14 @@
     </pesb>
     <analog_variables>
         <cell>
-            <name>RL1.L</name>
+            <name>L</name>
+            <address>1</address>
+            <type>current</type>
+            <initial_condition>0.0</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
+            <name>Rload.L</name>
             <address>2</address>
             <type>current</type>
             <initial_condition>0.0</initial_condition>
@@ -47,13 +54,6 @@
             <visible>True</visible>
         </cell>
         <cell>
-            <name>L</name>
-            <address>1</address>
-            <type>current</type>
-            <initial_condition>0.0</initial_condition>
-            <visible>True</visible>
-        </cell>
-        <cell>
             <name>Buck-Boost.v2</name>
             <address>386</address>
             <type>voltage</type>
@@ -61,8 +61,22 @@
             <visible>False</visible>
         </cell>
         <cell>
-            <name>Iout</name>
-            <address>4</address>
+            <name>Rload.I</name>
+            <address>6</address>
+            <type>current</type>
+            <initial_condition>None</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
+            <name>Buck-Boost.v1</name>
+            <address>385</address>
+            <type>voltage</type>
+            <initial_condition>None</initial_condition>
+            <visible>False</visible>
+        </cell>
+        <cell>
+            <name>Isw</name>
+            <address>5</address>
             <type>current</type>
             <initial_condition>None</initial_condition>
             <visible>True</visible>
@@ -82,22 +96,8 @@
             <visible>False</visible>
         </cell>
         <cell>
-            <name>Buck-Boost.v1</name>
-            <address>385</address>
-            <type>voltage</type>
-            <initial_condition>None</initial_condition>
-            <visible>False</visible>
-        </cell>
-        <cell>
-            <name>Isw</name>
-            <address>5</address>
-            <type>current</type>
-            <initial_condition>None</initial_condition>
-            <visible>True</visible>
-        </cell>
-        <cell>
-            <name>RL1.I</name>
-            <address>6</address>
+            <name>Iout</name>
+            <address>4</address>
             <type>current</type>
             <initial_condition>None</initial_condition>
             <visible>True</visible>
@@ -658,6 +658,13 @@
 
     <analog_variables>
         <cell>
+            <name>Compensator.Duty</name>
+            <type>generic</type>
+            <address>16384</address>
+            <initial_condition>None</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
             <name>Compensator.Imax</name>
             <type>generic</type>
             <address>16385</address>
@@ -671,13 +678,6 @@
             <initial_condition>None</initial_condition>
             <visible>True</visible>
         </cell>
-        <cell>
-            <name>Compensator.Duty</name>
-            <type>generic</type>
-            <address>16384</address>
-            <initial_condition>None</initial_condition>
-            <visible>True</visible>
-        </cell>
     </analog_variables>
 
 <digital_variables>
@@ -685,8 +685,24 @@
 
     <tunable_params>
         <tunable_param>
-            <name>Compensator.Slope compensation.max_val</name>
+            <name>Compensator.PID controller1.upper_sat_lim</name>
             <addr>[0]</addr>
+            <min></min>
+            <max></max>
+            <def_value>inf</def_value>
+            <unit></unit>
+            <widget_type>float</widget_type>
+            <format>real</format>
+            <size>1</size>
+            <param_type>tunable property</param_type>
+            <cpu_type>user_sp_cpu</cpu_type>
+            <cpu_idx>0</cpu_idx>
+            <execution_rate>2e-06</execution_rate>
+            <visible>True</visible>
+        </tunable_param>
+        <tunable_param>
+            <name>Compensator.PID controller1.lower_sat_lim</name>
+            <addr>[8]</addr>
             <min></min>
             <max></max>
             <def_value>0.0</def_value>
@@ -701,11 +717,27 @@
             <visible>True</visible>
         </tunable_param>
         <tunable_param>
-            <name>Compensator.Slope compensation.frequency</name>
-            <addr>[8]</addr>
-            <min>1e-12</min>
+            <name>Compensator.PID controller1.ki</name>
+            <addr>[16]</addr>
+            <min></min>
             <max></max>
-            <def_value>10000.0</def_value>
+            <def_value>8.5</def_value>
+            <unit></unit>
+            <widget_type>float</widget_type>
+            <format>real</format>
+            <size>1</size>
+            <param_type>tunable property</param_type>
+            <cpu_type>user_sp_cpu</cpu_type>
+            <cpu_idx>0</cpu_idx>
+            <execution_rate>2e-06</execution_rate>
+            <visible>True</visible>
+        </tunable_param>
+        <tunable_param>
+            <name>Compensator.PID controller1.kp</name>
+            <addr>[24]</addr>
+            <min></min>
+            <max></max>
+            <def_value>0.003</def_value>
             <unit></unit>
             <widget_type>float</widget_type>
             <format>real</format>
@@ -718,7 +750,7 @@
         </tunable_param>
         <tunable_param>
             <name>Compensator.Slope compensation.min_val</name>
-            <addr>[16]</addr>
+            <addr>[32]</addr>
             <min></min>
             <max></max>
             <def_value>0.0</def_value>
@@ -733,24 +765,8 @@
             <visible>True</visible>
         </tunable_param>
         <tunable_param>
-            <name>Compensator.Slope compensation.duty_cycle</name>
-            <addr>[24]</addr>
-            <min>0.0</min>
-            <max>1</max>
-            <def_value>0.99</def_value>
-            <unit></unit>
-            <widget_type>float</widget_type>
-            <format>real</format>
-            <size>1</size>
-            <param_type>tunable property</param_type>
-            <cpu_type>user_sp_cpu</cpu_type>
-            <cpu_idx>0</cpu_idx>
-            <execution_rate>2e-06</execution_rate>
-            <visible>True</visible>
-        </tunable_param>
-        <tunable_param>
             <name>Compensator.Slope compensation.phase</name>
-            <addr>[32]</addr>
+            <addr>[40]</addr>
             <min>0</min>
             <max>1</max>
             <def_value>0.0</def_value>
@@ -765,41 +781,9 @@
             <visible>True</visible>
         </tunable_param>
         <tunable_param>
-            <name>Compensator.fsw.duty_cycle</name>
-            <addr>[40]</addr>
-            <min>0.0</min>
-            <max>1</max>
-            <def_value>0.001</def_value>
-            <unit></unit>
-            <widget_type>float</widget_type>
-            <format>real</format>
-            <size>1</size>
-            <param_type>tunable property</param_type>
-            <cpu_type>user_sp_cpu</cpu_type>
-            <cpu_idx>0</cpu_idx>
-            <execution_rate>2e-06</execution_rate>
-            <visible>True</visible>
-        </tunable_param>
-        <tunable_param>
-            <name>Compensator.fsw.hs_output</name>
+            <name>Compensator.Slope compensation.frequency</name>
             <addr>[48]</addr>
-            <min></min>
-            <max></max>
-            <def_value>1.0</def_value>
-            <unit></unit>
-            <widget_type>int</widget_type>
-            <format>integer</format>
-            <size>1</size>
-            <param_type>tunable property</param_type>
-            <cpu_type>user_sp_cpu</cpu_type>
-            <cpu_idx>0</cpu_idx>
-            <execution_rate>2e-06</execution_rate>
-            <visible>True</visible>
-        </tunable_param>
-        <tunable_param>
-            <name>Compensator.fsw.frequency</name>
-            <addr>[52]</addr>
-            <min>1e-15</min>
+            <min>1e-12</min>
             <max></max>
             <def_value>10000.0</def_value>
             <unit></unit>
@@ -813,8 +797,40 @@
             <visible>True</visible>
         </tunable_param>
         <tunable_param>
+            <name>Compensator.Slope compensation.duty_cycle</name>
+            <addr>[56]</addr>
+            <min>0.0</min>
+            <max>1</max>
+            <def_value>0.99</def_value>
+            <unit></unit>
+            <widget_type>float</widget_type>
+            <format>real</format>
+            <size>1</size>
+            <param_type>tunable property</param_type>
+            <cpu_type>user_sp_cpu</cpu_type>
+            <cpu_idx>0</cpu_idx>
+            <execution_rate>2e-06</execution_rate>
+            <visible>True</visible>
+        </tunable_param>
+        <tunable_param>
+            <name>Compensator.Slope compensation.max_val</name>
+            <addr>[64]</addr>
+            <min></min>
+            <max></max>
+            <def_value>0.0</def_value>
+            <unit></unit>
+            <widget_type>float</widget_type>
+            <format>real</format>
+            <size>1</size>
+            <param_type>tunable property</param_type>
+            <cpu_type>user_sp_cpu</cpu_type>
+            <cpu_idx>0</cpu_idx>
+            <execution_rate>2e-06</execution_rate>
+            <visible>True</visible>
+        </tunable_param>
+        <tunable_param>
             <name>Compensator.fsw.ls_output</name>
-            <addr>[60]</addr>
+            <addr>[72]</addr>
             <min></min>
             <max></max>
             <def_value>0.0</def_value>
@@ -830,10 +846,58 @@
         </tunable_param>
         <tunable_param>
             <name>Compensator.fsw.phase</name>
-            <addr>[64]</addr>
+            <addr>[76]</addr>
             <min>0</min>
             <max>1</max>
             <def_value>0.0</def_value>
+            <unit></unit>
+            <widget_type>float</widget_type>
+            <format>real</format>
+            <size>1</size>
+            <param_type>tunable property</param_type>
+            <cpu_type>user_sp_cpu</cpu_type>
+            <cpu_idx>0</cpu_idx>
+            <execution_rate>2e-06</execution_rate>
+            <visible>True</visible>
+        </tunable_param>
+        <tunable_param>
+            <name>Compensator.fsw.hs_output</name>
+            <addr>[84]</addr>
+            <min></min>
+            <max></max>
+            <def_value>1.0</def_value>
+            <unit></unit>
+            <widget_type>int</widget_type>
+            <format>integer</format>
+            <size>1</size>
+            <param_type>tunable property</param_type>
+            <cpu_type>user_sp_cpu</cpu_type>
+            <cpu_idx>0</cpu_idx>
+            <execution_rate>2e-06</execution_rate>
+            <visible>True</visible>
+        </tunable_param>
+        <tunable_param>
+            <name>Compensator.fsw.frequency</name>
+            <addr>[88]</addr>
+            <min>1e-15</min>
+            <max></max>
+            <def_value>10000.0</def_value>
+            <unit></unit>
+            <widget_type>float</widget_type>
+            <format>real</format>
+            <size>1</size>
+            <param_type>tunable property</param_type>
+            <cpu_type>user_sp_cpu</cpu_type>
+            <cpu_idx>0</cpu_idx>
+            <execution_rate>2e-06</execution_rate>
+            <visible>True</visible>
+        </tunable_param>
+        <tunable_param>
+            <name>Compensator.fsw.duty_cycle</name>
+            <addr>[96]</addr>
+            <min>0.0</min>
+            <max>1</max>
+            <def_value>0.001</def_value>
             <unit></unit>
             <widget_type>float</widget_type>
             <format>real</format>

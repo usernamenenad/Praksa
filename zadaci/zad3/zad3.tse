@@ -203,6 +203,7 @@ model "zad3" {
             ]
 
             component "core/PID controller" "PID controller1" {
+                _tunable = "True"
                 controller_type = "PI"
                 enb_anti_windup_out = "True"
                 enb_output_limit_out = "True"
@@ -419,11 +420,10 @@ model "zad3" {
             position = 8368, 8800
         ]
 
-        component "core/Variable Resistor" RL1 {
-            inductance = "1e-5"
+        component "core/Variable Resistor" Rload {
         }
         [
-            position = 8888, 8488
+            position = 8888, 8480
             rotation = right
             size = 64, 48
         ]
@@ -530,17 +530,17 @@ model "zad3" {
         [
             breakpoints = 8448, 8784; 8448, 8800
         ]
-        connect RL1.p_node Iout.p_node as Connection139
+        connect Rload.p_node Iout.p_node as Connection160
+        connect Junction6 Junction11 as Connection161
         [
-            breakpoints = 8888, 8376
+            breakpoints = 8752, 8576; 8752, 8576; 8752, 8576; 8752, 8576; 8752, 8576; 8752, 8576; 8752, 8576; 8752, 8576
         ]
-        connect Vout.p_node Junction11 as Connection140
-        connect Junction11 Junction6 as Connection141
+        connect Junction11 Vout.p_node as Connection162
         [
-            breakpoints = 8888, 8576; 8888, 8576; 8888, 8576; 8888, 8576; 8896, 8576; 8888, 8576; 8888, 8576; 8752, 8576; 8752, 8576; 8752, 8576; 8752, 8576
+            breakpoints = 8888, 8576; 8888, 8576; 8888, 8576; 8888, 8576; 8888, 8576; 8896, 8576; 8888, 8576; 8888, 8576; 8888, 8576; 8888, 8576; 8888, 8576
         ]
-        connect RL1.n_node Junction11 as Connection142
-        connect "Resistance calculation.Resistance" RL1.In as Connection143
+        connect Rload.n_node Junction11 as Connection163
+        connect "Resistance calculation.Resistance" Rload.In as Connection164
     }
 
     default {
