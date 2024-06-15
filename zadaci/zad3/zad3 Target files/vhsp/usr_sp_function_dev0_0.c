@@ -86,7 +86,6 @@ typedef double real;
 
 
 
-
 //@cmp.def.end
 
 
@@ -132,8 +131,8 @@ double _compensator_comparator1__state;//@cmp.svar.end
 // Tunable parameters
 //
 static struct Tunable_params {
-    double _compensator_pid_controller1__upper_sat_lim;
     double _compensator_pid_controller1__lower_sat_lim;
+    double _compensator_pid_controller1__upper_sat_lim;
     double _compensator_pid_controller1__ki;
     double _compensator_pid_controller1__kp;
     double _compensator_slope_compensation__min_val;
@@ -141,11 +140,11 @@ static struct Tunable_params {
     double _compensator_slope_compensation__frequency;
     double _compensator_slope_compensation__duty_cycle;
     double _compensator_slope_compensation__max_val;
-    X_Int32 _compensator_fsw__ls_output;
     double _compensator_fsw__phase;
-    X_Int32 _compensator_fsw__hs_output;
     double _compensator_fsw__frequency;
+    X_Int32 _compensator_fsw__ls_output;
     double _compensator_fsw__duty_cycle;
+    X_Int32 _compensator_fsw__hs_output;
 } __attribute__((__packed__)) tunable_params;
 
 void *tunable_params_dev0_cpu0_ptr = &tunable_params;
@@ -177,7 +176,6 @@ void ReInit_user_sp_cpu0_dev0() {
     HIL_OutInt32(0x810002e, 0x3);
     _compensator_pid_controller1__integrator_state =  0.0;
     _compensator_pid_controller1__filter_state =  0.0;
-    HIL_OutFloat(137363456, 0.0);
     _compensator_comparator1__state = 0.0f;
     HIL_OutAO(0x4001, 0.0f);
     //@cmp.init.block.end
@@ -261,11 +259,11 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
         _compensator_fsw__out = tunable_params._compensator_fsw__ls_output;
     }
     // Generated from the component: Isw.Ia1
-    _isw_ia1__out = (HIL_InFloat(0xc80000 + 0x5));
+    _isw_ia1__out = (HIL_InFloat(0xc80000 + 0x4));
     // Generated from the component: Output voltage
     _output_voltage__out = XIo_InFloat(0x55000100);
     // Generated from the component: Vout.Va1
-    _vout_va1__out = (HIL_InFloat(0xc80000 + 0x3));
+    _vout_va1__out = (HIL_InFloat(0xc80000 + 0x2));
     // Generated from the component: Buck-Boost.Bus_Join1
     _buck_boost_bus_join1__out[0] = _compensator_sr_flip_flop1__out;
     _buck_boost_bus_join1__out[1] = _buck_boost_constant1__out;
@@ -292,8 +290,6 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     else
         _compensator_pid_controller1__av_active = 0;
     _compensator_pid_controller1__out = MIN(MAX(_compensator_pid_controller1__pi_reg_out_int, tunable_params._compensator_pid_controller1__lower_sat_lim), tunable_params._compensator_pid_controller1__upper_sat_lim);
-    // Generated from the component: Rload.Vs
-    HIL_OutFloat(137363456, (float) _resistance_calculation_product2__out);
     // Generated from the component: Compensator.Sum1
     _compensator_sum1__out = _compensator_pid_controller1__out - _compensator_slope_compensation__out;
     // Generated from the component: Compensator.Comparator1

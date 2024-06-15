@@ -76,7 +76,7 @@ displayValue = 0.0
                 <working_mode>windowed</working_mode>
                 <widget_settings>
                     <x>768</x>
-                    <y>304</y>
+                    <y>312</y>
                     <width>120</width>
                     <height>120</height>
                     <hierarchy_position>1</hierarchy_position>
@@ -86,6 +86,40 @@ displayValue = 0.0
                     <state>Capture</state>
                     <layout>None</layout>
                     <virtual_signals_definitions>
+                        <virtual_signal_definition>
+                            <name><![CDATA[Pout]]></name>
+                            <type><![CDATA[Analog signal]]></type>
+                            <source_signals>
+                                <source_signal>
+                                    <signal_name><![CDATA[Vout]]></signal_name>
+                                    <argument_name><![CDATA[in1]]></argument_name>
+                                </source_signal>
+                                <source_signal>
+                                    <signal_name><![CDATA[Iout]]></signal_name>
+                                    <argument_name><![CDATA[in2]]></argument_name>
+                                </source_signal>
+                                </source_signals>
+                            <code><![CDATA[
+# Use this function to define the values of the newly created signal.
+
+# The signals which you have specified in the input signals table
+# will be passed to this function as arguments.
+
+# Make sure to return a collection (Python list or Numpy ndarray) of
+# numeric values. If you generate a collection which contains more
+# elements than the original signals, the extra values will be sliced off.
+# If you generate less values, zeroes will be appended to the collection.
+
+# Numpy (np), Scipy (sp), Pandas (pd) and the math (math) module
+# are pre-imported and ready to be used.
+# 'time_data' ndarray variable holds x axis data used for all
+# captured signals.
+
+# return collection (list or ndarray) of numeric values
+# e.g return in1 * in2, return in1 * 2
+return in1 * in2
+]]></code>
+                        </virtual_signal_definition>
                     </virtual_signals_definitions>
                     <presets>
                         <active_capture_preset><![CDATA[Default]]></active_capture_preset>
@@ -133,10 +167,31 @@ displayValue = 0.0
                                         <num_viewport>2</num_viewport>
                                    </viewports>
                                </analog>
+                                <analog>
+                                    <channel>3</channel>
+                                    <name><![CDATA[Iout]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>3</row>
+                                    <viewports>
+                                        <num_viewport>3</num_viewport>
+                                   </viewports>
+                               </analog>
                             </analog_signals>
                             <digital_signals>
                             </digital_signals>
                             <virtual_signals>
+                                <virtual>
+                                    <name><![CDATA[Pout]]></name>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0</vertical_offset>
+                                    <row>4</row>
+                                    <viewports>
+                                        <num_viewport>4</num_viewport>
+                                    </viewports>
+                                </virtual>
                             </virtual_signals>
                             <trigger>
                                 <device>0</device>
@@ -225,6 +280,18 @@ displayValue = 0.0
                                     <row>2</row>
                                     <viewports>
                                         <num_viewport>2</num_viewport>
+                                   </viewports>
+                               </analog>
+                            <analog>
+                                    <channel>3</channel>
+                                    <name><![CDATA[Iout]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>3</row>
+                                    <viewports>
+                                        <num_viewport>3</num_viewport>
                                    </viewports>
                                </analog>
                         </analog_signals>
@@ -378,7 +445,7 @@ widgetValue = None
 widgetValue = hil.model_read('Compensator.PID controller1.ki')
 ]]></on_timer_code>
                 <on_start_code_source><![CDATA[Macro code]]></on_start_code_source>
-                <inputValue><![CDATA[37.8]]></inputValue>
+                <inputValue><![CDATA[20.0]]></inputValue>
                 <inputValueType>float</inputValueType>
                 <unit><![CDATA[]]></unit>
                 <widget_settings>

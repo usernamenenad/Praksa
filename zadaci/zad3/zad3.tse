@@ -420,12 +420,12 @@ model "zad3" {
             position = 8368, 8800
         ]
 
-        component "core/Variable Resistor" Rload {
+        component "core/Resistor" R1 {
+            resistance = "0.5"
         }
         [
-            position = 8888, 8480
+            position = 8888, 8456
             rotation = right
-            size = 64, 48
         ]
 
         tag Goto1 {
@@ -530,17 +530,13 @@ model "zad3" {
         [
             breakpoints = 8448, 8784; 8448, 8800
         ]
-        connect Rload.p_node Iout.p_node as Connection160
-        connect Junction6 Junction11 as Connection161
+        connect R1.p_node Iout.p_node as Connection181
+        connect Vout.p_node Junction11 as Connection182
+        connect Junction11 Junction6 as Connection183
         [
-            breakpoints = 8752, 8576; 8752, 8576; 8752, 8576; 8752, 8576; 8752, 8576; 8752, 8576; 8752, 8576; 8752, 8576
+            breakpoints = 8888, 8576; 8888, 8576; 8888, 8576; 8888, 8576; 8888, 8576; 8888, 8576; 8896, 8576; 8888, 8576; 8888, 8576; 8888, 8576; 8888, 8576; 8888, 8576; 8888, 8576; 8888, 8576; 8888, 8576; 8752, 8576; 8752, 8576; 8752, 8576; 8752, 8576; 8752, 8576; 8752, 8576; 8752, 8576; 8752, 8576; 8752, 8576; 8752, 8576
         ]
-        connect Junction11 Vout.p_node as Connection162
-        [
-            breakpoints = 8888, 8576; 8888, 8576; 8888, 8576; 8888, 8576; 8888, 8576; 8896, 8576; 8888, 8576; 8888, 8576; 8888, 8576; 8888, 8576; 8888, 8576
-        ]
-        connect Rload.n_node Junction11 as Connection163
-        connect "Resistance calculation.Resistance" Rload.In as Connection164
+        connect R1.n_node Junction11 as Connection184
     }
 
     default {
@@ -722,12 +718,6 @@ model "zad3" {
             visible = "True"
             override_signal_name = "False"
             signal_name = ""
-        }
-
-        "core/Variable Resistor" {
-            inductance = "1e-3"
-            initial_current = "0.0"
-            hide_int_meas = "False"
         }
 
         "core/Voltage Measurement" {
