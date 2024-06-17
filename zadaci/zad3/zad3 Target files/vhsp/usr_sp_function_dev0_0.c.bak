@@ -86,6 +86,18 @@ typedef double real;
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 //@cmp.def.end
 
 
@@ -100,21 +112,31 @@ typedef double real;
 //@cmp.var.start
 // variables
          double _buck_boost_constant1__out = 0.0;
+         double _compensator_constant1__out = 12.0;
+    X_Int32 _compensator_enable_close_loop__out;
         double _compensator_sr_flip_flop1__out;
         double _compensator_sr_flip_flop1__out_n;
         double _compensator_slope_compensation__out;
     X_Int32 _compensator_fsw__out;
-         double _constant1__out = 50.0;
+    double _disturbance__out;
+    X_Int32 _enable_disturbance__out;
+         double _input_voltage_input_voltage_reference__out = 12.0;
+         double _input_voltage_no_disturbance__out = 0.0;
+    double _iout_ia1__out;
     double _isw_ia1__out;
+         double _output_power__out = 50.0;
     double _output_voltage__out;
     double _vout_va1__out;
     	double _buck_boost_bus_join1__out[2];
+    double _input_voltage_signal_switch1__out;
 double _resistance_calculation_product1__out;
     double _compensator_sum2__out;
+    double _input_voltage_sum1__out;
 double _resistance_calculation_product2__out;
-    double _compensator_pid_controller1__out;
-    double _compensator_pid_controller1__pi_reg_out_int;
-    double _compensator_sum1__out;
+    double _compensator_pid__out;
+    double _compensator_pid__pi_reg_out_int;
+    double _compensator_sum3__out;
+double _compensator_gain1__out;    double _compensator_sum1__out;
 double _compensator_comparator1__out;//@cmp.var.end
 
 //@cmp.svar.start
@@ -122,28 +144,34 @@ double _compensator_comparator1__out;//@cmp.var.end
         double _compensator_sr_flip_flop1__state;
         double _compensator_slope_compensation__current_phase;
     double _compensator_fsw__current_phase;
-    double _compensator_pid_controller1__integrator_state;
-        X_Int32 _compensator_pid_controller1__av_active;
-    double _compensator_pid_controller1__filter_state;        double _compensator_comparator1__state;//@cmp.svar.end
+    double _disturbance__current_phase;
+    double _compensator_pid__integrator_state;
+        X_Int32 _compensator_pid__av_active;
+    double _compensator_pid__filter_state;        double _compensator_comparator1__state;//@cmp.svar.end
 
 //
 // Tunable parameters
 //
 static struct Tunable_params {
-        double _compensator_pid_controller1__lower_sat_lim;
-        double _compensator_pid_controller1__upper_sat_lim;
-        double _compensator_pid_controller1__ki;
-        double _compensator_pid_controller1__kp;
-            double _compensator_slope_compensation__min_val;
-            double _compensator_slope_compensation__phase;
-            double _compensator_slope_compensation__frequency;
-            double _compensator_slope_compensation__duty_cycle;
+            double _compensator_gain1__gain;
+        double _compensator_pid__lower_sat_lim;
+        double _compensator_pid__kp;
+        double _compensator_pid__upper_sat_lim;
+        double _compensator_pid__ki;
             double _compensator_slope_compensation__max_val;
+            double _compensator_slope_compensation__phase;
+            double _compensator_slope_compensation__duty_cycle;
+            double _compensator_slope_compensation__min_val;
+            double _compensator_slope_compensation__frequency;
  double _compensator_fsw__phase;
- double _compensator_fsw__frequency;
- X_Int32 _compensator_fsw__ls_output;
  double _compensator_fsw__duty_cycle;
  X_Int32 _compensator_fsw__hs_output;
+ double _compensator_fsw__frequency;
+ X_Int32 _compensator_fsw__ls_output;
+            double _disturbance__amplitude;
+            double _disturbance__phase;
+            double _disturbance__frequency;
+            double _disturbance__dc_offset;
 } __attribute__((__packed__)) tunable_params;
 
 void *tunable_params_dev0_cpu0_ptr = &tunable_params;
@@ -169,6 +197,8 @@ void ReInit_user_sp_cpu0_dev0(){
 #endif
     //@cmp.init.block.start
     
+    
+    
            
 
         _compensator_sr_flip_flop1__state =  0;
@@ -177,6 +207,12 @@ void ReInit_user_sp_cpu0_dev0(){
 
             _compensator_fsw__current_phase = tunable_params._compensator_fsw__phase;
 
+            _disturbance__current_phase = tunable_params._disturbance__phase/360.0f;
+
+    
+    
+    
+    
     
     
     
@@ -184,8 +220,7 @@ void ReInit_user_sp_cpu0_dev0(){
     
           HIL_OutAO(0x4000, 0.0f);
 
-          HIL_OutAO(0x4002, 0.0f);
-
+    
     
     
     
@@ -193,9 +228,16 @@ void ReInit_user_sp_cpu0_dev0(){
 
 
     
-        _compensator_pid_controller1__integrator_state =  0.0;
-    _compensator_pid_controller1__filter_state =  0.0;
+    
+        _compensator_pid__integrator_state =  0.0;
+    _compensator_pid__filter_state =  0.0;
 
+    
+    HIL_OutFloat(137101312, 0.0);
+
+            HIL_OutFloat(137363456, 0.0);
+
+    
     
           
             _compensator_comparator1__state = 0.0f;
@@ -266,7 +308,19 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
             
 
 
-             // Generated from the component: Constant1
+             // Generated from the component: Compensator.Constant1
+            
+
+
+             // Generated from the component: Input Voltage.Input voltage reference
+            
+
+
+             // Generated from the component: Input Voltage.No disturbance
+            
+
+
+             // Generated from the component: Output power
             
 
 
@@ -274,6 +328,9 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     // Output block
     //////////////////////////////////////////////////////////////////////////
     //@cmp.out.block.start
+         // Generated from the component: Compensator.Enable close loop
+                    _compensator_enable_close_loop__out = XIo_InInt32(0xfffc0000);
+
          // Generated from the component: Compensator.SR Flip Flop1
                
 
@@ -296,14 +353,23 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
             _compensator_fsw__out = tunable_params._compensator_fsw__ls_output;
         }
 
+         // Generated from the component: Disturbance
+                _disturbance__out = (tunable_params._disturbance__amplitude*sin(2.0f*M_PI*_disturbance__current_phase) + tunable_params._disturbance__dc_offset);
+
+         // Generated from the component: Enable disturbance
+                    _enable_disturbance__out = XIo_InInt32(0xfffc0004);
+
+         // Generated from the component: Iout.Ia1
+            _iout_ia1__out = (HIL_InFloat(0xc80000+0x5));
+
          // Generated from the component: Isw.Ia1
-            _isw_ia1__out = (HIL_InFloat(0xc80000+0x4));
+            _isw_ia1__out = (HIL_InFloat(0xc80000+0x6));
 
          // Generated from the component: Output voltage
-                    _output_voltage__out = XIo_InFloat(0x55000100);
+                    _output_voltage__out = XIo_InFloat(0xfffc0008);
 
          // Generated from the component: Vout.Va1
-            _vout_va1__out = (HIL_InFloat(0xc80000+0x2));
+            _vout_va1__out = (HIL_InFloat(0xc80000+0x4));
 
          // Generated from the component: Buck-Boost.Bus_Join1
         
@@ -313,8 +379,8 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
          // Generated from the component: Compensator.Duty
             HIL_OutAO(0x4000, (float)_compensator_sr_flip_flop1__out);
 
-         // Generated from the component: Compensator.Probe1
-            HIL_OutAO(0x4002, (float)_compensator_slope_compensation__out);
+         // Generated from the component: Input Voltage.Signal switch1
+                         _input_voltage_signal_switch1__out = (_enable_disturbance__out > 0.5) ? _disturbance__out : _input_voltage_no_disturbance__out;
 
          // Generated from the component: Resistance calculation.Product1
         _resistance_calculation_product1__out = (_output_voltage__out * _output_voltage__out);
@@ -332,27 +398,44 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
         HIL_OutInt32(0x810002f, 2*_buck_boost_bus_join1__out[0] + 1*_buck_boost_bus_join1__out[1]);
 
 
-         // Generated from the component: Resistance calculation.Product2
-        _resistance_calculation_product2__out = (_resistance_calculation_product1__out)*1.0/(_constant1__out);
+         // Generated from the component: Input Voltage.Sum1
+        _input_voltage_sum1__out = _input_voltage_signal_switch1__out+_input_voltage_input_voltage_reference__out;    
 
-         // Generated from the component: Compensator.PID controller1
+         // Generated from the component: Resistance calculation.Product2
+        _resistance_calculation_product2__out = (_resistance_calculation_product1__out)*1.0/(_output_power__out);
+
+         // Generated from the component: Compensator.PID
         
 
 
-        _compensator_pid_controller1__pi_reg_out_int = _compensator_pid_controller1__integrator_state + tunable_params._compensator_pid_controller1__kp * _compensator_sum2__out;
+        _compensator_pid__pi_reg_out_int = _compensator_pid__integrator_state + tunable_params._compensator_pid__kp * _compensator_sum2__out;
 
 
-        if (_compensator_pid_controller1__pi_reg_out_int < tunable_params._compensator_pid_controller1__lower_sat_lim)
-            _compensator_pid_controller1__av_active = -1;
-        else if (_compensator_pid_controller1__pi_reg_out_int > tunable_params._compensator_pid_controller1__upper_sat_lim)
-            _compensator_pid_controller1__av_active = 1;
+        if (_compensator_pid__pi_reg_out_int < tunable_params._compensator_pid__lower_sat_lim)
+            _compensator_pid__av_active = -1;
+        else if (_compensator_pid__pi_reg_out_int > tunable_params._compensator_pid__upper_sat_lim)
+            _compensator_pid__av_active = 1;
         else
-            _compensator_pid_controller1__av_active = 0;
+            _compensator_pid__av_active = 0;
 
-        _compensator_pid_controller1__out = MIN(MAX(_compensator_pid_controller1__pi_reg_out_int, tunable_params._compensator_pid_controller1__lower_sat_lim), tunable_params._compensator_pid_controller1__upper_sat_lim);
+        _compensator_pid__out = MIN(MAX(_compensator_pid__pi_reg_out_int, tunable_params._compensator_pid__lower_sat_lim), tunable_params._compensator_pid__upper_sat_lim);
+
+         // Generated from the component: Compensator.Sum3
+        _compensator_sum3__out = _compensator_constant1__out-_input_voltage_sum1__out;    
+
+         // Generated from the component: Vin.Vs1
+        
+HIL_OutFloat(137101312, (float) _input_voltage_sum1__out);
+
+         // Generated from the component: RLoad.Vs
+        
+        HIL_OutFloat(137363456, (float) _resistance_calculation_product2__out);
+
+         // Generated from the component: Compensator.Gain1
+                    _compensator_gain1__out = tunable_params._compensator_gain1__gain * _compensator_sum3__out;
 
          // Generated from the component: Compensator.Sum1
-        _compensator_sum1__out = _compensator_pid_controller1__out-_compensator_slope_compensation__out;    
+        _compensator_sum1__out = _compensator_pid__out-_compensator_slope_compensation__out+_compensator_gain1__out;    
 
          // Generated from the component: Compensator.Comparator1
               
@@ -385,20 +468,26 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
 
 
          // Generated from the component: Compensator.Slope compensation
-                _compensator_slope_compensation__current_phase += tunable_params._compensator_slope_compensation__frequency*2e-06;
+                _compensator_slope_compensation__current_phase += tunable_params._compensator_slope_compensation__frequency*5e-06;
         if (_compensator_slope_compensation__current_phase >= 1.0f) {
             _compensator_slope_compensation__current_phase -= 1.0f;
         }
 
          // Generated from the component: Compensator.fsw
-                _compensator_fsw__current_phase += tunable_params._compensator_fsw__frequency*2e-06;
+                _compensator_fsw__current_phase += tunable_params._compensator_fsw__frequency*5e-06;
         if (_compensator_fsw__current_phase >= 1.0f) {
             _compensator_fsw__current_phase -= 1.0f;
         }
 
-         // Generated from the component: Compensator.PID controller1
-                        if (!_compensator_pid_controller1__av_active || ((_compensator_pid_controller1__av_active < 0 && _compensator_sum2__out > 0 ) || (_compensator_pid_controller1__av_active > 0 && _compensator_sum2__out < 0 ))) {
-                    _compensator_pid_controller1__integrator_state += tunable_params._compensator_pid_controller1__ki * _compensator_sum2__out * 2e-06;
+         // Generated from the component: Disturbance
+                _disturbance__current_phase += tunable_params._disturbance__frequency*5e-06;
+        if (_disturbance__current_phase >= 1.0f) {
+            _disturbance__current_phase -= 1.0f;
+        }
+
+         // Generated from the component: Compensator.PID
+                        if (!_compensator_pid__av_active || ((_compensator_pid__av_active < 0 && _compensator_sum2__out > 0 ) || (_compensator_pid__av_active > 0 && _compensator_sum2__out < 0 ))) {
+                    _compensator_pid__integrator_state += tunable_params._compensator_pid__ki * _compensator_sum2__out * 5e-06;
                 }
 
 
