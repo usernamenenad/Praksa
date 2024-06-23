@@ -182,14 +182,6 @@ model "test" {
             rotation = right
         ]
 
-        component "core/Signal Controlled Current Source" Isp1 {
-        }
-        [
-            position = 8776, 8240
-            rotation = left
-            size = 64, 32
-        ]
-
         component "core/Probe" "duty ratio probe" {
         }
         [
@@ -207,6 +199,14 @@ model "test" {
         }
         [
             position = 8312, 8192
+        ]
+
+        component "core/Variable Resistor" RL1 {
+        }
+        [
+            position = 8768, 8240
+            rotation = left
+            size = 64, 48
         ]
 
         junction Junction26 pe
@@ -229,19 +229,9 @@ model "test" {
             position = 8472, 8048
         ]
 
-        junction Junction37 sp
-        [
-            position = 8744, 8120
-        ]
-
         junction Junction38 pe
         [
             position = 8240, 8192
-        ]
-
-        junction Junction39 pe
-        [
-            position = 8776, 8192
         ]
 
         junction Junction40 pe
@@ -256,7 +246,17 @@ model "test" {
 
         junction Junction42 pe
         [
-            position = 8776, 8288
+            position = 8768, 8192
+        ]
+
+        junction Junction43 pe
+        [
+            position = 8768, 8288
+        ]
+
+        junction Junction44 sp
+        [
+            position = 8728, 8120
         ]
 
         connect enable.out Flyback.En as Connection163
@@ -281,12 +281,6 @@ model "test" {
         ]
         connect Junction36 Flyback.In as Connection473
         connect "duty ratio probe.in" Junction36 as Connection474
-        connect Isp1.in Junction37 as Connection479
-        connect Junction37 "set power.out" as Connection480
-        [
-            breakpoints = 8744, 8120
-        ]
-        connect "set power probe.in" Junction37 as Connection481
         connect Req.n_node Flyback.a_in as Connection493
         connect Vin.p_node Junction38 as Connection494
         connect Junction38 Junction27 as Connection495
@@ -295,22 +289,31 @@ model "test" {
         ]
         connect Req.p_node Junction38 as Connection496
         connect L1.p_node Vsource.p_node as Connection503
-        connect Isp1.n_node Junction39 as Connection508
-        connect Junction39 Vout.p_node as Connection509
-        [
-            breakpoints = 8776, 8192; 8792, 8192; 8792, 8192; 8800, 8192; 8800, 8192; 8800, 8192
-        ]
         connect Flyback.a_out Junction40 as Connection511
-        connect Junction40 Junction39 as Connection512
         connect C2.p_node Junction40 as Connection513
         connect C2.n_node Junction41 as Connection516
         connect Junction41 Flyback.b_out as Connection517
         [
             breakpoints = 8648, 8288; 8648, 8288; 8648, 8288; 8648, 8288; 8648, 8288; 8648, 8288
         ]
-        connect Vout.n_node Junction42 as Connection519
-        connect Junction42 Junction41 as Connection520
-        connect Isp1.p_node Junction42 as Connection521
+        connect Junction40 Junction42 as Connection525
+        [
+            breakpoints = 8648, 8192
+        ]
+        connect Junction42 Vout.p_node as Connection526
+        [
+            breakpoints = 8776, 8192; 8776, 8192; 8792, 8192; 8792, 8192; 8800, 8192; 8800, 8192; 8800, 8192
+        ]
+        connect RL1.n_node Junction42 as Connection527
+        connect Vout.n_node Junction43 as Connection528
+        [
+            breakpoints = 8776, 8288
+        ]
+        connect Junction43 Junction41 as Connection529
+        connect RL1.p_node Junction43 as Connection530
+        connect "set power.out" Junction44 as Connection532
+        connect Junction44 RL1.In as Connection533
+        connect "set power probe.in" Junction44 as Connection534
     }
 
     default {
@@ -410,10 +413,6 @@ model "test" {
             pwm_enable_inv = "active high"
         }
 
-        "core/Signal Controlled Current Source" {
-            execution_rate = "inherit"
-        }
-
         "core/Single Phase Diode Rectifier" {
             signal_access = "inherit"
             FSM_select = "converter"
@@ -421,6 +420,12 @@ model "test" {
             dynamic_ac_voltage = "False"
             pesb_optimization = "True"
             predictive_diode_turn_off = "False"
+        }
+
+        "core/Variable Resistor" {
+            inductance = "1e-3"
+            initial_current = "0.0"
+            hide_int_meas = "False"
         }
 
         "core/Voltage Measurement" {

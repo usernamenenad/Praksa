@@ -137,7 +137,7 @@ void ReInit_user_sp_cpu0_dev0() {
     HIL_OutInt32(0x2000300 + _flyback_pwm_modulator__channels[0], 1);
     HIL_OutInt32(0x2000340 + _flyback_pwm_modulator__channels[0], 0);
     HIL_OutInt32(0x2000140, _flyback_pwm_modulator__update_mask);
-    HIL_OutFloat(137101312, 0.0);
+    HIL_OutFloat(137363456, 0.0);
     HIL_OutAO(0x4001, 0.0f);
     //@cmp.init.block.end
 }
@@ -222,8 +222,8 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
         HIL_OutInt32(0x2000000 + _flyback_pwm_modulator__channels[0], 0x1);
     }
     HIL_OutInt32(0x2000140, _flyback_pwm_modulator__update_mask);
-    // Generated from the component: Isp1.Is1
-    HIL_OutFloat(137101312, (float) _set_power__out);
+    // Generated from the component: RL1.Vs
+    HIL_OutFloat(137363456, (float) _set_power__out);
     // Generated from the component: set power probe
     HIL_OutAO(0x4001, (float)_set_power__out);
 //@cmp.out.block.end

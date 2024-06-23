@@ -33,6 +33,13 @@
     </pesb>
     <analog_variables>
         <cell>
+            <name>Cout</name>
+            <address>0</address>
+            <type>voltage</type>
+            <initial_condition>0.0</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
             <name>Rload.L</name>
             <address>4</address>
             <type>current</type>
@@ -47,9 +54,9 @@
             <visible>True</visible>
         </cell>
         <cell>
-            <name>Cout</name>
-            <address>0</address>
-            <type>voltage</type>
+            <name>Flyback1.L1</name>
+            <address>1</address>
+            <type>current</type>
             <initial_condition>0.0</initial_condition>
             <visible>True</visible>
         </cell>
@@ -61,18 +68,11 @@
             <visible>True</visible>
         </cell>
         <cell>
-            <name>Flyback1.L1</name>
-            <address>1</address>
-            <type>current</type>
-            <initial_condition>0.0</initial_condition>
-            <visible>True</visible>
-        </cell>
-        <cell>
-            <name>Rload.I</name>
-            <address>6</address>
-            <type>current</type>
+            <name>Flyback1.v1</name>
+            <address>385</address>
+            <type>voltage</type>
             <initial_condition>None</initial_condition>
-            <visible>True</visible>
+            <visible>False</visible>
         </cell>
         <cell>
             <name>Flyback1.il</name>
@@ -89,11 +89,11 @@
             <visible>True</visible>
         </cell>
         <cell>
-            <name>Flyback1.v1</name>
-            <address>385</address>
-            <type>voltage</type>
+            <name>Rload.I</name>
+            <address>6</address>
+            <type>current</type>
             <initial_condition>None</initial_condition>
-            <visible>False</visible>
+            <visible>True</visible>
         </cell>
         <cell>
             <name>Flyback1.v2</name>
@@ -612,20 +612,20 @@
             <address>768</address>
         </cell>
         <cell>
-            <name>Flyback1.PWM_Modulator.TOP_1</name>
-            <address>768</address>
-        </cell>
-        <cell>
-            <name>Flyback1.PWM_Modulator_TOP_1</name>
-            <address>768</address>
-        </cell>
-        <cell>
             <name>Flyback1.PWM_Modulator.BOT_1</name>
             <address>769</address>
         </cell>
         <cell>
             <name>Flyback1.PWM_Modulator_BOT_1</name>
             <address>769</address>
+        </cell>
+        <cell>
+            <name>Flyback1.PWM_Modulator.TOP_1</name>
+            <address>768</address>
+        </cell>
+        <cell>
+            <name>Flyback1.PWM_Modulator_TOP_1</name>
+            <address>768</address>
         </cell>
     </digital_variables>
     <sources>
@@ -677,11 +677,11 @@
 
     <tunable_params>
         <tunable_param>
-            <name>Disturbance.frequency</name>
+            <name>Disturbance.phase</name>
             <addr>[0]</addr>
-            <min>1e-15</min>
+            <min></min>
             <max></max>
-            <def_value>5.0</def_value>
+            <def_value>0.0</def_value>
             <unit></unit>
             <widget_type>float</widget_type>
             <format>real</format>
@@ -693,11 +693,11 @@
             <visible>True</visible>
         </tunable_param>
         <tunable_param>
-            <name>Disturbance.dc_offset</name>
+            <name>Disturbance.frequency</name>
             <addr>[8]</addr>
-            <min></min>
+            <min>1e-15</min>
             <max></max>
-            <def_value>0.0</def_value>
+            <def_value>5.0</def_value>
             <unit></unit>
             <widget_type>float</widget_type>
             <format>real</format>
@@ -725,7 +725,7 @@
             <visible>True</visible>
         </tunable_param>
         <tunable_param>
-            <name>Disturbance.phase</name>
+            <name>Disturbance.dc_offset</name>
             <addr>[24]</addr>
             <min></min>
             <max></max>

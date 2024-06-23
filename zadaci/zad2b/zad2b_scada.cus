@@ -84,9 +84,9 @@ widgetValue = None
                 <on_start_code_source><![CDATA[Custom code]]></on_start_code_source>
                 <inputValue><![CDATA[True]]></inputValue>
                 <widget_settings>
-                    <x>176</x>
-                    <y>312</y>
-                    <width>136</width>
+                    <x>248</x>
+                    <y>360</y>
+                    <width>200</width>
                     <height>32</height>
                     <appearance><![CDATA[Flat]]></appearance>
                     <hierarchy_position><![CDATA[1]]></hierarchy_position>
@@ -102,8 +102,8 @@ widgetValue = None
                 <description><![CDATA[]]></description>
                 <working_mode>windowed</working_mode>
                 <widget_settings>
-                    <x>368</x>
-                    <y>272</y>
+                    <x>576</x>
+                    <y>352</y>
                     <width>120</width>
                     <height>120</height>
                     <hierarchy_position>1</hierarchy_position>
@@ -121,8 +121,59 @@ widgetValue = None
                             <time_interval>2.0</time_interval>
                             <sample_rate>1000000.0</sample_rate>
                             <background_color>white</background_color>
-                            <layout>Vertical</layout>
+                            <layout>Grid</layout>
                             <legend>True</legend>
+                            <analog_signals>
+                                <analog>
+                                    <channel>0</channel>
+                                    <name><![CDATA[Cout]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>0</row>
+                                    <viewports>
+                                        <num_viewport>1</num_viewport>
+                                   </viewports>
+                               </analog>
+                                <analog>
+                                    <channel>1</channel>
+                                    <name><![CDATA[Flyback1.L1]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>1</row>
+                                    <viewports>
+                                   </viewports>
+                               </analog>
+                            </analog_signals>
+                            <digital_signals>
+                            </digital_signals>
+                            <virtual_signals>
+                            </virtual_signals>
+                            <trigger>
+                                <device>0</device>
+                                <is_force>True</is_force>
+                                <type>Analog</type>
+                                <source><![CDATA[Cout]]></source>
+                                <edge>Rising edge</edge>
+                                <treshold>0.0</treshold>
+                                <offset>50.0</offset>
+                                <useFirstTrigger>False</useFirstTrigger>
+                            </trigger>
+                            <plotting_options in_use="False">
+                                <subplots>
+                                    </subplots>
+                            </plotting_options>
+                        </capture>
+                        <scope name="Default">
+                            <background_color>white</background_color>
+                            <layout>Grid</layout>
+                            <legend>True</legend>
+                            <show_viewports>1</show_viewports>
+                            <decimation>3</decimation>
+                            <time_base>0.005</time_base>
                             <analog_signals>
                                 <analog>
                                     <channel>0</channel>
@@ -139,39 +190,11 @@ widgetValue = None
                             </analog_signals>
                             <digital_signals>
                             </digital_signals>
-                            <virtual_signals>
-                            </virtual_signals>
                             <trigger>
                                 <device>0</device>
                                 <is_force>False</is_force>
                                 <type>Analog</type>
-                                <source><![CDATA[Cout]]></source>
-                                <edge>Rising edge</edge>
-                                <treshold>0.0</treshold>
-                                <offset>0.0</offset>
-                                <useFirstTrigger>False</useFirstTrigger>
-                            </trigger>
-                            <plotting_options in_use="False">
-                                <subplots>
-                                    </subplots>
-                            </plotting_options>
-                        </capture>
-                        <scope name="Default">
-                            <background_color>white</background_color>
-                            <layout>Grid</layout>
-                            <legend>True</legend>
-                            <show_viewports>1</show_viewports>
-                            <decimation>1.0</decimation>
-                            <time_base>0.005</time_base>
-                            <analog_signals>
-                            </analog_signals>
-                            <digital_signals>
-                            </digital_signals>
-                            <trigger>
-                                <device>-1</device>
-                                <is_force>False</is_force>
-                                <type>Analog</type>
-                                <source>None</source>
+                                <source>Cout</source>
                                 <edge>Rising edge</edge>
                                 <treshold>0.0</treshold>
                                 <offset>50.0</offset>
@@ -183,14 +206,14 @@ widgetValue = None
                         <time_interval>2.0</time_interval>
                         <sample_rate>1000000.0</sample_rate>
                         <background_color>white</background_color>
-                        <layout>Vertical</layout>
+                        <layout>Grid</layout>
                         <legend>True</legend>
                         <trigger>
                             <type>Analog</type>
                             <source>Cout</source>
                             <edge>Rising edge</edge>
                             <treshold>0.0</treshold>
-                            <offset>0.0</offset>
+                            <offset>50.0</offset>
                             <useFirstTrigger>False</useFirstTrigger>
                         </trigger>
                         <analog_signals>
@@ -206,6 +229,17 @@ widgetValue = None
                                         <num_viewport>1</num_viewport>
                                    </viewports>
                                </analog>
+                            <analog>
+                                    <channel>1</channel>
+                                    <name><![CDATA[Flyback1.L1]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>1</row>
+                                    <viewports>
+                                   </viewports>
+                               </analog>
                         </analog_signals>
                          <digital_signals>
                          </digital_signals>
@@ -218,12 +252,24 @@ widgetValue = None
                         <trigger>
                             <mode>Auto</mode>
                             <type>Analog</type>
-                            <source>None</source>
+                            <source>Cout</source>
                             <edge>Rising edge</edge>
                             <treshold>0.0</treshold>
                             <offset>50.0</offset>
                         </trigger>
                          <analog_signals>
+                            <analog>
+                                    <channel>0</channel>
+                                    <name><![CDATA[Cout]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>0</row>
+                                    <viewports>
+                                        <num_viewport>1</num_viewport>
+                                   </viewports>
+                               </analog>
                         </analog_signals>
                         <digital_signals>
                         </digital_signals>
@@ -261,8 +307,8 @@ displayValue = 0.0
                 <decimals>3</decimals>
                 <scaling_factor>1.0</scaling_factor>
                 <widget_settings>
-                    <x>560</x>
-                    <y>256</y>
+                    <x>384</x>
+                    <y>192</y>
                     <width>248</width>
                     <height>144</height>
                     <appearance><![CDATA[Flat]]></appearance>
@@ -335,9 +381,9 @@ widgetValue = hil.model_read('Output power')
                 <inputValueType>float</inputValueType>
                 <unit><![CDATA[]]></unit>
                 <widget_settings>
-                    <x>648</x>
-                    <y>504</y>
-                    <width>144</width>
+                    <x>248</x>
+                    <y>440</y>
+                    <width>224</width>
                     <height>32</height>
                     <inputWidgetWidth>80</inputWidgetWidth>
                     <appearance><![CDATA[Flat]]></appearance>
@@ -407,12 +453,12 @@ widgetValue = None
 widgetValue = None
 ]]></on_timer_code>
                 <on_start_code_source><![CDATA[Custom code]]></on_start_code_source>
-                <inputValue><![CDATA[No disturbance]]></inputValue>
+                <inputValue><![CDATA[5Hz disturbance]]></inputValue>
                 <availableValues><![CDATA[['No disturbance', '5Hz disturbance', '500Hz disturbance']]]></availableValues>
                 <unit><![CDATA[]]></unit>
                 <widget_settings>
-                    <x>128</x>
-                    <y>448</y>
+                    <x>248</x>
+                    <y>392</y>
                     <width>208</width>
                     <height>48</height>
                     <appearance><![CDATA[Flat]]></appearance>

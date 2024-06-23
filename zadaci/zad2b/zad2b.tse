@@ -305,25 +305,6 @@ model "zad2b" {
             hide_name = True
         ]
 
-        component "core/Sum" Sum5 {
-            signs = "+-"
-        }
-        [
-            position = 9016, 7856
-        ]
-
-        component "core/Gain" Gain1 {
-        }
-        [
-            position = 9144, 7856
-        ]
-
-        component "core/Low-Pass Filter" "Low-Pass Filter1" {
-        }
-        [
-            position = 8920, 7880
-        ]
-
         tag "Calculate output load (Goto)" {
             value = "CalculateRload"
             scope = local
@@ -354,7 +335,7 @@ model "zad2b" {
             direction = in
         }
         [
-            position = 9200, 8264
+            position = 9216, 8264
             size = 60, 20
         ]
 
@@ -443,11 +424,6 @@ model "zad2b" {
             position = 8256, 8440
         ]
 
-        junction Junction11 sp
-        [
-            position = 8736, 7952
-        ]
-
         junction Junction12 pe
         [
             position = 8760, 8216
@@ -456,11 +432,6 @@ model "zad2b" {
         junction Junction13 pe
         [
             position = 8944, 8216
-        ]
-
-        junction Junction14 sp
-        [
-            position = 8736, 7888
         ]
 
         connect Flyback1.b_out Junction2 as Connection8
@@ -512,15 +483,6 @@ model "zad2b" {
             breakpoints = 8296, 8592
         ]
         connect "Disturbance Compensator.out" Sum2.in1 as Connection110
-        connect "Rate Limiter1.in" Junction11 as Connection123
-        [
-            breakpoints = 8752, 7952
-        ]
-        connect Junction11 Product1.out as Connection124
-        [
-            breakpoints = 8736, 7952
-        ]
-        connect Gain1.in Sum5.out as Connection126
         connect Flyback1.a_out Junction12 as Connection129
         connect Junction12 Cout.p_node as Connection130
         [
@@ -532,14 +494,14 @@ model "zad2b" {
             breakpoints = 8944, 8216
         ]
         connect Junction12 Junction13 as Connection133
-        connect "Low-Pass Filter1.out" Sum5.in1 as Connection137
         connect Rload.In "Rate Limiter1.out" as Connection138
         [
             breakpoints = 8840, 7952; 8800, 7952
         ]
-        connect Sum5.in Junction14 as Connection139
-        connect Junction14 Junction11 as Connection140
-        connect "Low-Pass Filter1.in" Junction14 as Connection141
+        connect "Rate Limiter1.in" Product1.out as Connection142
+        [
+            breakpoints = 8752, 7952; 8736, 7952; 8736, 7952
+        ]
     }
 
     default {
@@ -569,14 +531,6 @@ model "zad2b" {
             upper_limit = "[\'inf\']"
             lower_limit = "[\'-inf\']"
             execution_rate = "inherit"
-        }
-
-        "core/Low-Pass Filter" {
-            frequency = "500"
-            init_out = "0"
-            unit = "Hz"
-            execution_rate = "inherit"
-            _tunable = "False"
         }
 
         "core/PID controller" {
