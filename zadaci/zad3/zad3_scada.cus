@@ -23,6 +23,8 @@ SETTINGS_DIR = get_settings_dir_path()
 # Schematic Editor model namespace is imported as 'scm'
 # Function for printing to the HIL SCADA Message log is imported as 'printf'.
 
+import control as ct
+
 # Plant criteria
 Vin = 12                            # Input voltage
 Vout_min = 5                        # Minimal output voltage
@@ -113,7 +115,65 @@ for Vout in Vout_list:
     D0 = D0_list[Vout]
     Rb_list[Vout] = 1 / (1 - D0) * (2 * fsw * L / (1 - D0) - RL);
 
-Rb = min(Rb_list[Vout] for Vout in Vout_list)]]></initialization_code>
+Rb = min(Rb_list[Vout] for Vout in Vout_list)
+
+def get_transfer_function(R, Vout, Vin, RL, L, Cout):
+    """
+    Returns the transfer functions in this order:
+        GVI - from input voltage to inductor current
+        GVV - from input voltage to output voltage
+        GDI - from duty ratio to inductor current
+        GDV - from duty ratio to output voltage
+    """
+    a = -R * (Vin + Vout);
+    b = R * (-Vin - 2 * Vout);
+    c = -Vout * (R + RL);
+    D0 = np.abs(np.roots([a, b, c])[1])
+    
+    A11 = -RL / L
+    A12 = (1 - D0) / L
+    A21 = -(1 - D0) / Cout
+    A22 = -1 / (R * Cout)
+    
+    A = [[A11, A12], [A21, A22]]
+    
+    B11 = D0 / L
+    B12 = ((1 - D0) * R + RL) * Vin / (L * ((1 - D0)**2 * R + RL))
+    B21 = 0
+    B22 = D0 * Vin / (Cout * ((1 - D0)**2 * R + RL))
+    
+    B = [[B11, B12], [B21, B22]]
+    
+    B1 = [[B11], [B21]]
+    B2 = [[B12], [B22]]
+    
+    C1 = [1, 0]
+    C2 = [0, -1]
+    
+    D1 = [[0]]
+    D2 = [[0]]
+    
+    GVI = ct.ss2tf(ct.ss(A, B1, C1, D1))
+    GVV = ct.ss2tf(ct.ss(A, B1, C2, D1))
+    GDI = ct.ss2tf(ct.ss(A, B2, C1, D2))
+    GDV = ct.ss2tf(ct.ss(A, B2, C2, D2))
+    
+    Gplant = ct.minreal(GDV / GDI)                
+    HVI = ct.minreal(Gplant / (GVV - GVI * GDV / GDI))
+    input_voltage_compensator_dcgain = ct.dcgain(HVI)
+    
+    return GVI, GVV, GDI, GDV
+    
+def get_compensating_gain(R, Vout, Vin, RL, L, Cout):
+    """
+    Calculates the needed compensator gain for input voltage variations. 
+    """
+    GVI, GVV, GDI, GDV = get_transfer_function(R, Vout, Vin, RL, L, Cout)
+    Gplant = ct.minreal(GDV / GDI)
+    HVI = (GVV * GDI - GDV * GVI) / GDV
+    
+    return ct.dcgain(HVI)
+]]></initialization_code>
     <components>
         <component_data>
                 <id>eac0c6462c8711ef9d81f3447f08d04b</id>
@@ -249,7 +309,12 @@ displayValue = 0.0
 # NOTE: entered value is available through variable 'inputValue'
 
 hil.model_write('Output voltage', inputValue)
-hil.model_write('Controller.Slope compensation.max_val', inputValue / L * (0.999 / fsw))]]></on_use_code>
+hil.model_write('Controller.Slope compensation.max_val', inputValue / L * (0.999 / fsw))
+
+R = panel.get_property_value(panel.get_widget_by_fqn('Control panel.Load'), api_const.PROP_WIDGET_VALUE)
+
+compensation_gain = get_compensating_gain(R, inputValue, Vin, RL, L, Cout)
+hil.model_write('Controller.Input disturbance compensator.gain', compensation_gain)]]></on_use_code>
                 <on_start_code active="True"><![CDATA[# NOTE: The code specified in this handler will be executed on simulation start.
 # NOTE: Variables specified here will be available in other handlers.
 # HIL API is imported as 'hil'
@@ -289,7 +354,7 @@ widgetValue = None
 widgetValue = hil.model_read('Output voltage')
 ]]></on_timer_code>
                 <on_start_code_source><![CDATA[Macro code]]></on_start_code_source>
-                <inputValue><![CDATA[20.0]]></inputValue>
+                <inputValue><![CDATA[10.0]]></inputValue>
                 <min>5.0</min>
                 <max>20.0</max>
                 <step>1.0</step>
@@ -399,7 +464,12 @@ widgetValue = None
 # This object can be used as an argument in SCADA API functions.
 # NOTE: entered value is available through variable 'inputValue'
 
-hil.model_write('Load', inputValue)]]></on_use_code>
+hil.model_write('Load', inputValue)
+
+Vout = panel.get_property_value(panel.get_widget_by_fqn('Control panel.Reference output voltage'), api_const.PROP_WIDGET_VALUE)
+
+compensation_gain = get_compensating_gain(inputValue, Vout, Vin, RL, L, Cout)
+hil.model_write('Controller.Input disturbance compensator.gain', compensation_gain)]]></on_use_code>
                 <on_start_code active="True"><![CDATA[# NOTE: The code specified in this handler will be executed on simulation start.
 # NOTE: Variables specified here will be available in other handlers.
 # HIL API is imported as 'hil'
@@ -439,7 +509,7 @@ widgetValue = None
 widgetValue = hil.model_read('Load')
 ]]></on_timer_code>
                 <on_start_code_source><![CDATA[Macro code]]></on_start_code_source>
-                <inputValue><![CDATA[8.0]]></inputValue>
+                <inputValue><![CDATA[20.0]]></inputValue>
                 <min>5.0</min>
                 <max>20.0</max>
                 <step>1.0</step>
