@@ -439,7 +439,7 @@ widgetValue = None
 widgetValue = hil.model_read('Load')
 ]]></on_timer_code>
                 <on_start_code_source><![CDATA[Macro code]]></on_start_code_source>
-                <inputValue><![CDATA[8.0]]></inputValue>
+                <inputValue><![CDATA[6.0]]></inputValue>
                 <min>5.0</min>
                 <max>20.0</max>
                 <step>1.0</step>
@@ -788,8 +788,8 @@ widgetValue = None
                 <description><![CDATA[]]></description>
                 <working_mode>windowed</working_mode>
                 <widget_settings>
-                    <x>936</x>
-                    <y>784</y>
+                    <x>1144</x>
+                    <y>256</y>
                     <width>120</width>
                     <height>120</height>
                     <hierarchy_position>1</hierarchy_position>
@@ -880,6 +880,18 @@ return in1 * in2
                                         <num_viewport>3</num_viewport>
                                    </viewports>
                                </analog>
+                                <analog>
+                                    <channel>3</channel>
+                                    <name><![CDATA[Controller.Imax]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>4</row>
+                                    <viewports>
+                                        <num_viewport>2</num_viewport>
+                                   </viewports>
+                               </analog>
                             </analog_signals>
                             <digital_signals>
                             </digital_signals>
@@ -911,23 +923,59 @@ return in1 * in2
                         </capture>
                         <scope name="Default">
                             <background_color>white</background_color>
-                            <layout>Grid</layout>
+                            <layout>Vertical</layout>
                             <legend>True</legend>
-                            <show_viewports>1</show_viewports>
+                            <show_viewports>3</show_viewports>
                             <decimation>1.0</decimation>
-                            <time_base>0.005</time_base>
+                            <time_base>1e-05</time_base>
                             <analog_signals>
+                                <analog>
+                                    <channel>0</channel>
+                                    <name><![CDATA[Vout]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>0</row>
+                                    <viewports>
+                                        <num_viewport>1</num_viewport>
+                                   </viewports>
+                               </analog>
+                                <analog>
+                                    <channel>1</channel>
+                                    <name><![CDATA[L]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>1</row>
+                                    <viewports>
+                                        <num_viewport>2</num_viewport>
+                                   </viewports>
+                               </analog>
+                                <analog>
+                                    <channel>2</channel>
+                                    <name><![CDATA[Iout]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>2</row>
+                                    <viewports>
+                                        <num_viewport>3</num_viewport>
+                                   </viewports>
+                               </analog>
                             </analog_signals>
                             <digital_signals>
                             </digital_signals>
                             <trigger>
-                                <device>-1</device>
+                                <device>0</device>
                                 <is_force>False</is_force>
                                 <type>Analog</type>
-                                <source>None</source>
+                                <source>Vout</source>
                                 <edge>Rising edge</edge>
                                 <treshold>0.0</treshold>
-                                <offset>50.0</offset>
+                                <offset>0.0</offset>
                                 <useFirstTrigger>False</useFirstTrigger>
                             </trigger>
                         </scope>
@@ -983,24 +1031,72 @@ return in1 * in2
                                         <num_viewport>3</num_viewport>
                                    </viewports>
                                </analog>
+                            <analog>
+                                    <channel>3</channel>
+                                    <name><![CDATA[Controller.Imax]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>4</row>
+                                    <viewports>
+                                        <num_viewport>2</num_viewport>
+                                   </viewports>
+                               </analog>
                         </analog_signals>
                          <digital_signals>
                          </digital_signals>
                     </capture>
                     <scope>
-                        <time_base>0.005 </time_base>
+                        <time_base>1e-05 </time_base>
                         <background_color>white</background_color>
-                        <layout>Grid</layout>
+                        <layout>Vertical</layout>
                         <legend>True</legend>
                         <trigger>
                             <mode>Auto</mode>
                             <type>Analog</type>
-                            <source>None</source>
+                            <source>Vout</source>
                             <edge>Rising edge</edge>
                             <treshold>0.0</treshold>
-                            <offset>50.0</offset>
+                            <offset>0.0</offset>
                         </trigger>
                          <analog_signals>
+                            <analog>
+                                    <channel>0</channel>
+                                    <name><![CDATA[Vout]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>0</row>
+                                    <viewports>
+                                        <num_viewport>1</num_viewport>
+                                   </viewports>
+                               </analog>
+                            <analog>
+                                    <channel>1</channel>
+                                    <name><![CDATA[L]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>1</row>
+                                    <viewports>
+                                        <num_viewport>2</num_viewport>
+                                   </viewports>
+                               </analog>
+                            <analog>
+                                    <channel>2</channel>
+                                    <name><![CDATA[Iout]]></name>
+                                    <is_locked>False</is_locked>
+                                    <vertical_scale>Auto</vertical_scale>
+                                    <vertical_offset>0.0</vertical_offset>
+                                    <coupling>False</coupling>
+                                    <row>2</row>
+                                    <viewports>
+                                        <num_viewport>3</num_viewport>
+                                   </viewports>
+                               </analog>
                         </analog_signals>
                         <digital_signals>
                         </digital_signals>
