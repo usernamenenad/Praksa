@@ -100,9 +100,6 @@ typedef double real;
 
 
 
-
-
-
 //@cmp.def.end
 
 
@@ -116,15 +113,14 @@ typedef double real;
 
 //@cmp.var.start
 // variables
-         double _buck_boost_constant1__out = 0.0;
-         double _controller_constant1__out = 12.0;
     double _controller_control_mode__out;
         double _controller_current_mode_controller__out;
         double _controller_current_mode_controller__b_coeff[2] = {0.0011912824637003716, -0.0011912062536603152};
         double _controller_current_mode_controller__a_coeff[3] = {1.0, -1.9938510141206138, 0.9938510141206139};
         double _controller_current_mode_controller__a_sum;
         double _controller_current_mode_controller__b_sum;
-        double _controller_current_mode_controller__delay_line_in;    X_Int32 _controller_open_loop_duty_ratio__out;
+        double _controller_current_mode_controller__delay_line_in;    double _controller_open_loop_duty_ratio__out;
+         double _controller_reference_input_voltage__out = 12.0;
         double _controller_sr_flip_flop1__out;
         double _controller_sr_flip_flop1__out_n;
         double _controller_slope_compensation__out;
@@ -134,7 +130,6 @@ typedef double real;
     X_Int32 _enable_disturbance__out;
          double _input_voltage_input_voltage_reference__out = 12.0;
          double _input_voltage_no_disturbance__out = 0.0;
-    double _iout_ia1__out;
     double _isw_ia1__out;
     double _load__out;
     double _output_voltage__out;
@@ -148,49 +143,46 @@ typedef double real;
     double _controller_voltage_mode_controller__pi_reg_out_int;
     double _controller_sum3__out;
         double _controller_multiport_signal_switch1__out;
-double _controller_input_disturbance_compensator__out;    	double _buck_boost_bus_join1__out[2];
+double _controller_gain__out;    X_UnInt32 _buck_boost_pwm_modulator__channels[1] = {0};
+    double _buck_boost_pwm_modulator__limited_in[1];
+    X_UnInt32 _buck_boost_pwm_modulator__update_mask;
+
     double _controller_sum1__out;
 double _controller_comparator1__out;//@cmp.var.end
 
 //@cmp.svar.start
 // state variables
             double _controller_current_mode_controller__states[2];
-    double _controller_open_loop_duty_ratio__current_phase;
         double _controller_sr_flip_flop1__state;
         double _controller_slope_compensation__current_phase;
     double _controller_fsw__current_phase;
     double _disturbance__current_phase;
     double _controller_voltage_mode_controller__integrator_state;
         X_Int32 _controller_voltage_mode_controller__av_active;
-    double _controller_voltage_mode_controller__filter_state;        double _controller_comparator1__state;//@cmp.svar.end
+    double _controller_voltage_mode_controller__filter_state;double _controller_voltage_mode_controller__reset_state;        double _controller_comparator1__state;//@cmp.svar.end
 
 //
 // Tunable parameters
 //
 static struct Tunable_params {
-            double _controller_input_disturbance_compensator__gain;
- double _controller_open_loop_duty_ratio__phase;
- X_Int32 _controller_open_loop_duty_ratio__ls_output;
- double _controller_open_loop_duty_ratio__frequency;
- double _controller_open_loop_duty_ratio__duty_cycle;
- X_Int32 _controller_open_loop_duty_ratio__hs_output;
-            double _controller_slope_compensation__min_val;
-            double _controller_slope_compensation__phase;
+            double _controller_gain__gain;
             double _controller_slope_compensation__duty_cycle;
-            double _controller_slope_compensation__frequency;
+            double _controller_slope_compensation__min_val;
             double _controller_slope_compensation__max_val;
-        double _controller_voltage_mode_controller__kp;
+            double _controller_slope_compensation__phase;
+            double _controller_slope_compensation__frequency;
         double _controller_voltage_mode_controller__lower_sat_lim;
-        double _controller_voltage_mode_controller__ki;
         double _controller_voltage_mode_controller__upper_sat_lim;
- double _controller_fsw__frequency;
- double _controller_fsw__duty_cycle;
- X_Int32 _controller_fsw__ls_output;
- double _controller_fsw__phase;
+        double _controller_voltage_mode_controller__ki;
+        double _controller_voltage_mode_controller__kp;
  X_Int32 _controller_fsw__hs_output;
-            double _disturbance__phase;
-            double _disturbance__dc_offset;
+ double _controller_fsw__duty_cycle;
+ double _controller_fsw__phase;
+ X_Int32 _controller_fsw__ls_output;
+ double _controller_fsw__frequency;
             double _disturbance__amplitude;
+            double _disturbance__dc_offset;
+            double _disturbance__phase;
             double _disturbance__frequency;
 } __attribute__((__packed__)) tunable_params;
 
@@ -217,8 +209,6 @@ void ReInit_user_sp_cpu0_dev0(){
 #endif
     //@cmp.init.block.start
     
-    
-    
                 X_UnInt32 _controller_current_mode_controller__i;
           
 
@@ -226,8 +216,8 @@ void ReInit_user_sp_cpu0_dev0(){
                 _controller_current_mode_controller__states[_controller_current_mode_controller__i] = 0;
             }
 
-            _controller_open_loop_duty_ratio__current_phase = tunable_params._controller_open_loop_duty_ratio__phase;
-
+    
+    
            
 
         _controller_sr_flip_flop1__state =  0;
@@ -238,7 +228,6 @@ void ReInit_user_sp_cpu0_dev0(){
 
             _disturbance__current_phase = tunable_params._disturbance__phase/360.0f;
 
-    
     
     
     
@@ -264,12 +253,17 @@ void ReInit_user_sp_cpu0_dev0(){
 
     
     
-    
-    
-    
-        HIL_OutInt32(0x810002e, 0x3);
+                _buck_boost_pwm_modulator__update_mask = 1;
+            HIL_OutInt32(0x2000080 + _buck_boost_pwm_modulator__channels[0], 14000); // divide by 2 is already implemented in hw
+        HIL_OutInt32(0x20000c0 + _buck_boost_pwm_modulator__channels[0], 0);
+                HIL_OutInt32(0x20001c0 + _buck_boost_pwm_modulator__channels[0], 0);
+                HIL_OutInt32(0x2000200 + _buck_boost_pwm_modulator__channels[0], 0);
+        HIL_OutInt32(0x2000240 + _buck_boost_pwm_modulator__channels[0], 0);
+        HIL_OutInt32(0x2000300 + _buck_boost_pwm_modulator__channels[0], 1);
+            HIL_OutInt32(0x2000340 + _buck_boost_pwm_modulator__channels[0], 0);
+HIL_OutInt32(0x2000140, _buck_boost_pwm_modulator__update_mask);
 
-
+    
           
             _controller_comparator1__state = 0.0f;
           HIL_OutAO(0x4000, 0.0f);
@@ -335,11 +329,7 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     //////////////////////////////////////////////////////////////////////////
     // Set tunable parameters
     //////////////////////////////////////////////////////////////////////////
-             // Generated from the component: Buck-Boost.Constant1
-            
-
-
-             // Generated from the component: Controller.Constant1
+             // Generated from the component: Controller.Reference input voltage
             
 
 
@@ -356,7 +346,7 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     //////////////////////////////////////////////////////////////////////////
     //@cmp.out.block.start
          // Generated from the component: Controller.Control mode
-                    _controller_control_mode__out = XIo_InFloat(0x55000100);
+                    _controller_control_mode__out = XIo_InFloat(0xfffc0000);
 
          // Generated from the component: Controller.Current mode controller
                     X_UnInt32 _controller_current_mode_controller__i;
@@ -372,11 +362,7 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
 
 
          // Generated from the component: Controller.Open loop duty ratio
-                if (_controller_open_loop_duty_ratio__current_phase < tunable_params._controller_open_loop_duty_ratio__duty_cycle) {
-            _controller_open_loop_duty_ratio__out = tunable_params._controller_open_loop_duty_ratio__hs_output;
-        } else {
-            _controller_open_loop_duty_ratio__out = tunable_params._controller_open_loop_duty_ratio__ls_output;
-        }
+                    _controller_open_loop_duty_ratio__out = XIo_InFloat(0xfffc0004);
 
          // Generated from the component: Controller.SR Flip Flop1
                
@@ -404,25 +390,22 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
                 _disturbance__out = (tunable_params._disturbance__amplitude*sin(2.0f*M_PI*_disturbance__current_phase) + tunable_params._disturbance__dc_offset);
 
          // Generated from the component: Enable buck-boost
-                    _enable_buck_boost__out = XIo_InInt32(0x55000104);
+                    _enable_buck_boost__out = XIo_InInt32(0xfffc0008);
 
          // Generated from the component: Enable disturbance
-                    _enable_disturbance__out = XIo_InInt32(0x55000108);
-
-         // Generated from the component: Iout.Ia1
-            _iout_ia1__out = (HIL_InFloat(0xc80000+0x5));
+                    _enable_disturbance__out = XIo_InInt32(0xfffc000c);
 
          // Generated from the component: Isw.Ia1
             _isw_ia1__out = (HIL_InFloat(0xc80000+0x6));
 
          // Generated from the component: Load
-                    _load__out = XIo_InFloat(0x5500010c);
+                    _load__out = XIo_InFloat(0xfffc0010);
 
          // Generated from the component: Output voltage
-                    _output_voltage__out = XIo_InFloat(0x55000110);
+                    _output_voltage__out = XIo_InFloat(0xfffc0014);
 
          // Generated from the component: Turn on load
-                    _turn_on_load__out = XIo_InInt32(0x55000114);
+                    _turn_on_load__out = XIo_InInt32(0xfffc0018);
 
          // Generated from the component: Vout.Va1
             _vout_va1__out = (HIL_InFloat(0xc80000+0x4));
@@ -474,7 +457,7 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
         _controller_voltage_mode_controller__out = MIN(MAX(_controller_voltage_mode_controller__pi_reg_out_int, tunable_params._controller_voltage_mode_controller__lower_sat_lim), tunable_params._controller_voltage_mode_controller__upper_sat_lim);
 
          // Generated from the component: Controller.Sum3
-        _controller_sum3__out = _controller_constant1__out-_input_voltage_sum1__out;    
+        _controller_sum3__out = _controller_reference_input_voltage__out-_input_voltage_sum1__out;    
 
          // Generated from the component: Vin.Vs1
         
@@ -497,26 +480,30 @@ default:
     }
 
 
-         // Generated from the component: Controller.Input disturbance compensator
-                    _controller_input_disturbance_compensator__out = tunable_params._controller_input_disturbance_compensator__gain * _controller_sum3__out;
+         // Generated from the component: Controller.Gain
+                    _controller_gain__out = tunable_params._controller_gain__gain * _controller_sum3__out;
 
-         // Generated from the component: Buck-Boost.Bus_Join1
-        
-	        	_buck_boost_bus_join1__out[0] = _controller_multiport_signal_switch1__out;
- 	        	_buck_boost_bus_join1__out[1] = _buck_boost_constant1__out;
- 
+         // Generated from the component: Buck-Boost.PWM_Modulator
+                    _buck_boost_pwm_modulator__limited_in[0] = MIN(MAX(_controller_multiport_signal_switch1__out, 0.0), 1.0);
+
+                HIL_OutInt32(0x2000040 + _buck_boost_pwm_modulator__channels[0], ((X_UnInt32)((_buck_boost_pwm_modulator__limited_in[0]-(0.0)) * 14000.0)));
+
+
+
+    if (_enable_buck_boost__out == 0x0) {
+        // pwm_modulator_en
+            HIL_OutInt32(0x2000000 + _buck_boost_pwm_modulator__channels[0], 0x0);
+    }
+    else {
+        // pwm_modulator_en
+            HIL_OutInt32(0x2000000 + _buck_boost_pwm_modulator__channels[0], 0x1);
+    }
+    HIL_OutInt32(0x2000140, _buck_boost_pwm_modulator__update_mask);
+
+
+
          // Generated from the component: Controller.Sum1
-        _controller_sum1__out = _controller_current_mode_controller__out-_controller_slope_compensation__out+_controller_input_disturbance_compensator__out;    
-
-         // Generated from the component: Buck-Boost.FSM_Wrapper1
-        
-
-
-        _buck_boost_bus_join1__out[0]=(_buck_boost_bus_join1__out[0]) ? 1 : 0;
-        _buck_boost_bus_join1__out[1]=(_buck_boost_bus_join1__out[1]) ? 1 : 0;
-
-        HIL_OutInt32(0x810002f, 2*_buck_boost_bus_join1__out[0] + 1*_buck_boost_bus_join1__out[1]);
-
+        _controller_sum1__out = _controller_current_mode_controller__out-_controller_slope_compensation__out+_controller_gain__out;    
 
          // Generated from the component: Controller.Comparator1
               
@@ -554,12 +541,6 @@ default:
             _controller_current_mode_controller__states[0] = _controller_current_mode_controller__delay_line_in;
 
 
-         // Generated from the component: Controller.Open loop duty ratio
-                _controller_open_loop_duty_ratio__current_phase += tunable_params._controller_open_loop_duty_ratio__frequency*5e-06;
-        if (_controller_open_loop_duty_ratio__current_phase >= 1.0f) {
-            _controller_open_loop_duty_ratio__current_phase -= 1.0f;
-        }
-
          // Generated from the component: Controller.SR Flip Flop1
                        if ((_controller_fsw__out != 0x0) && (_controller_comparator1__out == 0x0))
             _controller_sr_flip_flop1__state = 1;
@@ -588,11 +569,22 @@ default:
         }
 
          // Generated from the component: Controller.Voltage mode controller
-                        if (!_controller_voltage_mode_controller__av_active || ((_controller_voltage_mode_controller__av_active < 0 && _controller_sum4__out > 0 ) || (_controller_voltage_mode_controller__av_active > 0 && _controller_sum4__out < 0 ))) {
+        if (((_controller_control_mode__out > 0.0) && (_controller_voltage_mode_controller__reset_state <= 0)) || ((_controller_control_mode__out <= 0.0) && (_controller_voltage_mode_controller__reset_state == 1))) {_controller_voltage_mode_controller__integrator_state = 0.0;
+            _controller_voltage_mode_controller__filter_state = 0.0;
+
+            }
+
+                if (!_controller_voltage_mode_controller__av_active || ((_controller_voltage_mode_controller__av_active < 0 && _controller_sum4__out > 0 ) || (_controller_voltage_mode_controller__av_active > 0 && _controller_sum4__out < 0 ))) {
                     _controller_voltage_mode_controller__integrator_state += tunable_params._controller_voltage_mode_controller__ki * _controller_sum4__out * 5e-06;
                 }
 
 
+        if (_controller_control_mode__out > 0)
+            _controller_voltage_mode_controller__reset_state = 1.0;
+        else if (_controller_control_mode__out < 0)
+            _controller_voltage_mode_controller__reset_state = -1.0;
+        else
+            _controller_voltage_mode_controller__reset_state = 0.0;
 
          // Generated from the component: Controller.Comparator1
               
