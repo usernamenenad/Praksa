@@ -180,7 +180,7 @@ def get_compensating_gain(R, Vout, Vin, RL, L, Cout):
                 <name><![CDATA[Control panel]]></name>
                 <type>Group</type>
                 <description><![CDATA[]]></description>
-                <components_ids><![CDATA[['fee78b932c8711ef8cf7f3447f08d04b', '118d19812c8811ef98d9f3447f08d04b', '1f1dba232c8811efb5eef3447f08d04b', '2e78e23e2c8811ef9f13f3447f08d04b', '5f1070c730c411efa1f9ec0fddbd2a74', '6014d05a30cb11ef9e8bec0fddbd2a74', '4c17459130cc11ef977fec0fddbd2a74', 'e6d160ad30cc11efb04cec0fddbd2a74', 'ea41be9b30cc11efba28ec0fddbd2a74', 'ddee8c03323011ef9b05141333de5773']]]></components_ids>
+                <components_ids><![CDATA[['fee78b932c8711ef8cf7f3447f08d04b', '118d19812c8811ef98d9f3447f08d04b', '1f1dba232c8811efb5eef3447f08d04b', '2e78e23e2c8811ef9f13f3447f08d04b', '6014d05a30cb11ef9e8bec0fddbd2a74', '4c17459130cc11ef977fec0fddbd2a74', 'e6d160ad30cc11efb04cec0fddbd2a74', 'ddee8c03323011ef9b05141333de5773', 'baf207ad32c411ef8f2bdbfccc9e91fd']]]></components_ids>
                 <canvas_bg_color>#ffffff</canvas_bg_color>
                 <initialization_code><![CDATA[# NOTE: Variables and functions defined here will be available for use in
 # all Macro, Expression and handlers codes of components owned by this widget.
@@ -453,79 +453,6 @@ widgetValue = None
                 </widget_settings>
             </component_data>
         <component_data>
-                <id>5f1070c730c411efa1f9ec0fddbd2a74</id>
-                <name><![CDATA[Load resistance]]></name>
-                <type>SliderMacro</type>
-                <description><![CDATA[]]></description>
-                <on_use_code active="True"><![CDATA[# HIL API is imported as 'hil'
-# SCADA API is imported as 'panel'
-# SCADA API constants are imported as 'api_const'
-# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
-# This object can be used as an argument in SCADA API functions.
-# NOTE: entered value is available through variable 'inputValue'
-
-hil.model_write('Load', inputValue)
-
-Vout = panel.get_property_value(panel.get_widget_by_fqn('Control panel.Reference output voltage'), api_const.PROP_WIDGET_VALUE)
-
-compensation_gain = get_compensating_gain(inputValue, Vout, Vin, RL, L, Cout)
-hil.model_write('Controller.Gain.gain', compensation_gain)]]></on_use_code>
-                <on_start_code active="True"><![CDATA[# NOTE: The code specified in this handler will be executed on simulation start.
-# NOTE: Variables specified here will be available in other handlers.
-# HIL API is imported as 'hil'
-# SCADA API is imported as 'panel'
-# SCADA API constants are imported as 'api_const'
-# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
-# This object can be used as an argument in SCADA API functions.
-
-# Change widget value by setting this variable.
-# NOTE: If you not specify 'widgetValue' variable or assign 'None' to it,
-# widget value won't be changed.
-widgetValue = None
-]]></on_start_code>
-                <on_stop_code active="False"><![CDATA[# NOTE: The code specified in this handler will be executed after simulation is stopped.
-# HIL API is imported as 'hil'
-# SCADA API is imported as 'panel'
-# SCADA API constants are imported as 'api_const'
-# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
-# This object can be used as an argument in SCADA API functions.
-
-# Change widget value by setting this variable.
-# NOTE: If you not specify 'widgetValue' variable or assign 'None' to it,
-# widget value won't be changed.
-widgetValue = None
-]]></on_stop_code>
-                <on_timer_code active="True"><![CDATA[# NOTE: The code specified in this handler will be executed periodically each 1000ms.
-# HIL API is imported as 'hil'
-# NOTE: Only read functions are available from the HIL API
-# SCADA API is imported as 'panel'
-# SCADA API constants are imported as 'api_const'
-# 'WIDGET_HANDLE' constant holds the WidgetHandle object of this widget.
-# This object can be used as an argument in SCADA API functions.
-
-# Change the widget value by setting this variable.
-# NOTE: If you do not specify a 'widgetValue' variable or assign 'None' to it,
-# the widget value will not be changed.
-widgetValue = hil.model_read('Load')
-]]></on_timer_code>
-                <on_start_code_source><![CDATA[Macro code]]></on_start_code_source>
-                <inputValue><![CDATA[20.0]]></inputValue>
-                <min>5.0</min>
-                <max>20.0</max>
-                <step>1.0</step>
-                <widget_settings>
-                    <x>584</x>
-                    <y>280</y>
-                    <width>328</width>
-                    <height>48</height>
-                    <appearance><![CDATA[Flat]]></appearance>
-                    <hierarchy_position><![CDATA[2]]></hierarchy_position>
-                    <is_background><![CDATA[False]]></is_background>
-                    <label><![CDATA[]]></label>
-                    <use_label>False</use_label>
-                </widget_settings>
-            </component_data>
-        <component_data>
                 <id>6014d05a30cb11ef9e8bec0fddbd2a74</id>
                 <name><![CDATA[Output power]]></name>
                 <type>Gauge</type>
@@ -628,7 +555,7 @@ widgetValue = None
 widgetValue = None
 ]]></on_timer_code>
                 <on_start_code_source><![CDATA[Custom code]]></on_start_code_source>
-                <inputValue><![CDATA[Voltage mode control]]></inputValue>
+                <inputValue><![CDATA[Current mode control]]></inputValue>
                 <availableValues><![CDATA[['Open loop control', 'Voltage mode control', 'Current mode control']]]></availableValues>
                 <unit><![CDATA[]]></unit>
                 <widget_settings>
@@ -702,8 +629,8 @@ widgetValue = None
                 <on_start_code_source><![CDATA[Custom code]]></on_start_code_source>
                 <inputValue><![CDATA[True]]></inputValue>
                 <widget_settings>
-                    <x>584</x>
-                    <y>448</y>
+                    <x>680</x>
+                    <y>440</y>
                     <width>120</width>
                     <height>32</height>
                     <appearance><![CDATA[Flat]]></appearance>
@@ -714,9 +641,9 @@ widgetValue = None
                 </widget_settings>
             </component_data>
         <component_data>
-                <id>ea41be9b30cc11efba28ec0fddbd2a74</id>
-                <name><![CDATA[Enable buck boost]]></name>
-                <type>CheckBoxMacro</type>
+                <id>ddee8c03323011ef9b05141333de5773</id>
+                <name><![CDATA[Open loop duty ratio]]></name>
+                <type>SliderMacro</type>
                 <description><![CDATA[]]></description>
                 <on_use_code active="True"><![CDATA[# HIL API is imported as 'hil'
 # SCADA API is imported as 'panel'
@@ -725,12 +652,7 @@ widgetValue = None
 # This object can be used as an argument in SCADA API functions.
 # NOTE: entered value is available through variable 'inputValue'
 
-if inputValue:
-    hil.set_scada_input_value('Enable buck-boost', 1)
-else:
-    hil.set_scada_input_value('Enable buck-boost', 0)
-
-]]></on_use_code>
+hil.model_write('Controller.Open loop duty ratio.duty_cycle', inputValue)]]></on_use_code>
                 <on_start_code active="False"><![CDATA[# NOTE: The code specified in this handler will be executed on simulation start.
 # NOTE: Variables specified here will be available in other handlers.
 # HIL API is imported as 'hil'
@@ -770,12 +692,15 @@ widgetValue = None
 widgetValue = None
 ]]></on_timer_code>
                 <on_start_code_source><![CDATA[Custom code]]></on_start_code_source>
-                <inputValue><![CDATA[True]]></inputValue>
+                <inputValue><![CDATA[0.3]]></inputValue>
+                <min>0.0</min>
+                <max>100.0</max>
+                <step>1.0</step>
                 <widget_settings>
-                    <x>760</x>
-                    <y>448</y>
-                    <width>152</width>
-                    <height>32</height>
+                    <x>584</x>
+                    <y>336</y>
+                    <width>328</width>
+                    <height>48</height>
                     <appearance><![CDATA[Flat]]></appearance>
                     <hierarchy_position><![CDATA[2]]></hierarchy_position>
                     <is_background><![CDATA[False]]></is_background>
@@ -879,6 +804,7 @@ return in1 * in2
                                     <coupling>False</coupling>
                                     <row>2</row>
                                     <viewports>
+                                        <num_viewport>3</num_viewport>
                                    </viewports>
                                </analog>
                                 <analog>
@@ -890,30 +816,7 @@ return in1 * in2
                                     <coupling>False</coupling>
                                     <row>4</row>
                                     <viewports>
-                                   </viewports>
-                               </analog>
-                                <analog>
-                                    <channel>4</channel>
-                                    <name><![CDATA[Controller.Probe1]]></name>
-                                    <is_locked>False</is_locked>
-                                    <vertical_scale>Auto</vertical_scale>
-                                    <vertical_offset>0.0</vertical_offset>
-                                    <coupling>False</coupling>
-                                    <row>5</row>
-                                    <viewports>
                                         <num_viewport>3</num_viewport>
-                                   </viewports>
-                               </analog>
-                                <analog>
-                                    <channel>5</channel>
-                                    <name><![CDATA[Controller.Probe2]]></name>
-                                    <is_locked>False</is_locked>
-                                    <vertical_scale>Auto</vertical_scale>
-                                    <vertical_offset>0.0</vertical_offset>
-                                    <coupling>False</coupling>
-                                    <row>6</row>
-                                    <viewports>
-                                        <num_viewport>4</num_viewport>
                                    </viewports>
                                </analog>
                             </analog_signals>
@@ -926,6 +829,7 @@ return in1 * in2
                                     <vertical_offset>0</vertical_offset>
                                     <row>3</row>
                                     <viewports>
+                                        <num_viewport>4</num_viewport>
                                     </viewports>
                                 </virtual>
                             </virtual_signals>
@@ -1051,6 +955,7 @@ return in1 * in2
                                     <coupling>False</coupling>
                                     <row>2</row>
                                     <viewports>
+                                        <num_viewport>3</num_viewport>
                                    </viewports>
                                </analog>
                             <analog>
@@ -1062,30 +967,7 @@ return in1 * in2
                                     <coupling>False</coupling>
                                     <row>4</row>
                                     <viewports>
-                                   </viewports>
-                               </analog>
-                            <analog>
-                                    <channel>4</channel>
-                                    <name><![CDATA[Controller.Probe1]]></name>
-                                    <is_locked>False</is_locked>
-                                    <vertical_scale>Auto</vertical_scale>
-                                    <vertical_offset>0.0</vertical_offset>
-                                    <coupling>False</coupling>
-                                    <row>5</row>
-                                    <viewports>
                                         <num_viewport>3</num_viewport>
-                                   </viewports>
-                               </analog>
-                            <analog>
-                                    <channel>5</channel>
-                                    <name><![CDATA[Controller.Probe2]]></name>
-                                    <is_locked>False</is_locked>
-                                    <vertical_scale>Auto</vertical_scale>
-                                    <vertical_offset>0.0</vertical_offset>
-                                    <coupling>False</coupling>
-                                    <row>6</row>
-                                    <viewports>
-                                        <num_viewport>4</num_viewport>
                                    </viewports>
                                </analog>
                         </analog_signals>
@@ -1155,8 +1037,8 @@ return in1 * in2
 
             </component_data>
         <component_data>
-                <id>ddee8c03323011ef9b05141333de5773</id>
-                <name><![CDATA[Slider]]></name>
+                <id>baf207ad32c411ef8f2bdbfccc9e91fd</id>
+                <name><![CDATA[Load resistance]]></name>
                 <type>SliderMacro</type>
                 <description><![CDATA[]]></description>
                 <on_use_code active="True"><![CDATA[# HIL API is imported as 'hil'
@@ -1166,7 +1048,12 @@ return in1 * in2
 # This object can be used as an argument in SCADA API functions.
 # NOTE: entered value is available through variable 'inputValue'
 
-hil.model_write('Controller.Open loop duty ratio.duty_cycle', inputValue)]]></on_use_code>
+hil.model_write('Load resistance', inputValue)
+
+Vout = panel.get_property_value(panel.get_widget_by_fqn('Control panel.Reference output voltage'), api_const.PROP_WIDGET_VALUE)
+
+compensation_gain = get_compensating_gain(inputValue, Vout, Vin, RL, L, Cout)
+hil.model_write('Controller.Gain.gain', compensation_gain)]]></on_use_code>
                 <on_start_code active="False"><![CDATA[# NOTE: The code specified in this handler will be executed on simulation start.
 # NOTE: Variables specified here will be available in other handlers.
 # HIL API is imported as 'hil'
@@ -1206,13 +1093,13 @@ widgetValue = None
 widgetValue = None
 ]]></on_timer_code>
                 <on_start_code_source><![CDATA[Custom code]]></on_start_code_source>
-                <inputValue><![CDATA[0.3]]></inputValue>
-                <min>0.0</min>
-                <max>100.0</max>
+                <inputValue><![CDATA[5.0]]></inputValue>
+                <min>5.0</min>
+                <max>20.0</max>
                 <step>1.0</step>
                 <widget_settings>
                     <x>584</x>
-                    <y>336</y>
+                    <y>280</y>
                     <width>328</width>
                     <height>48</height>
                     <appearance><![CDATA[Flat]]></appearance>

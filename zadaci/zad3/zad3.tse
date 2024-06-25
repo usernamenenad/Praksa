@@ -767,19 +767,6 @@ model "zad3" {
             rotation = right
         ]
 
-        component "core/SCADA Input" "Enable buck-boost" {
-            execution_rate = "Ts"
-            format = "int"
-            max = "1"
-            min = "0"
-            signal_access = "Inherit"
-            signal_type = "int"
-            unit = ""
-        }
-        [
-            position = 8304, 8024
-        ]
-
         component "core/Single Pole Single Throw Contactor" S {
             ctrl_src = "Model"
             signal_access = "Inherit"
@@ -810,7 +797,7 @@ model "zad3" {
             size = 64, 48
         ]
 
-        component "core/SCADA Input" Load {
+        component "core/SCADA Input" "Load resistance" {
             def_value = "Rload"
             execution_rate = "Ts"
             max = "20"
@@ -1037,7 +1024,7 @@ model "zad3" {
             breakpoints = 8200, 8544
         ]
         connect Va1.n_node Junction32 as Connection384
-        connect Load.out Rload.In as Connection388
+        connect "Load resistance.out" Rload.In as Connection388
         [
             breakpoints = 9240, 8440
         ]

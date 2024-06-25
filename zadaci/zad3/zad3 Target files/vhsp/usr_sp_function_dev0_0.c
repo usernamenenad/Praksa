@@ -109,7 +109,6 @@ typedef double real;
 
 
 
-
 //@cmp.def.end
 
 
@@ -134,12 +133,11 @@ double _controller_slope_compensation__out;
 double _controller_triangular_wave_source1__out;
 X_Int32 _controller_fsw__out;
 double _disturbance__out;
-X_Int32 _enable_buck_boost__out;
 X_Int32 _enable_disturbance__out;
 double _input_voltage_input_voltage_reference__out = 12.0;
 double _input_voltage_no_disturbance__out = 0.0;
 double _isw_ia1__out;
-double _load__out;
+double _load_resistance__out;
 double _output_voltage__out;
 X_Int32 _turn_on_load__out;
 double _vout_va1__out;
@@ -189,29 +187,29 @@ double _controller_comparator1__state;//@cmp.svar.end
 //
 static struct Tunable_params {
     double _controller_gain__gain;
+    X_Int32 _controller_open_loop_duty_ratio__ls_output;
     double _controller_open_loop_duty_ratio__duty_cycle;
     X_Int32 _controller_open_loop_duty_ratio__hs_output;
-    double _controller_open_loop_duty_ratio__phase;
     double _controller_open_loop_duty_ratio__frequency;
-    X_Int32 _controller_open_loop_duty_ratio__ls_output;
-    double _controller_slope_compensation__duty_cycle;
+    double _controller_open_loop_duty_ratio__phase;
     double _controller_slope_compensation__frequency;
-    double _controller_slope_compensation__min_val;
-    double _controller_slope_compensation__max_val;
     double _controller_slope_compensation__phase;
-    double _controller_voltage_mode_controller__ki;
+    double _controller_slope_compensation__max_val;
+    double _controller_slope_compensation__min_val;
+    double _controller_slope_compensation__duty_cycle;
+    double _controller_voltage_mode_controller__upper_sat_lim;
     double _controller_voltage_mode_controller__kp;
     double _controller_voltage_mode_controller__lower_sat_lim;
-    double _controller_voltage_mode_controller__upper_sat_lim;
-    double _controller_fsw__phase;
-    X_Int32 _controller_fsw__ls_output;
-    double _controller_fsw__frequency;
-    double _controller_fsw__duty_cycle;
+    double _controller_voltage_mode_controller__ki;
     X_Int32 _controller_fsw__hs_output;
+    double _controller_fsw__frequency;
+    X_Int32 _controller_fsw__ls_output;
+    double _controller_fsw__duty_cycle;
+    double _controller_fsw__phase;
     double _disturbance__dc_offset;
+    double _disturbance__frequency;
     double _disturbance__phase;
     double _disturbance__amplitude;
-    double _disturbance__frequency;
 } __attribute__((__packed__)) tunable_params;
 
 void *tunable_params_dev0_cpu0_ptr = &tunable_params;
@@ -356,18 +354,16 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     }
     // Generated from the component: Disturbance
     _disturbance__out = (tunable_params._disturbance__amplitude * sin(2.0f * M_PI * _disturbance__current_phase) + tunable_params._disturbance__dc_offset);
-    // Generated from the component: Enable buck-boost
-    _enable_buck_boost__out = XIo_InInt32(0xfffc0004);
     // Generated from the component: Enable disturbance
-    _enable_disturbance__out = XIo_InInt32(0xfffc0008);
+    _enable_disturbance__out = XIo_InInt32(0xfffc0004);
     // Generated from the component: Isw.Ia1
     _isw_ia1__out = (HIL_InFloat(0xc80000 + 0x6));
-    // Generated from the component: Load
-    _load__out = XIo_InFloat(0xfffc000c);
+    // Generated from the component: Load resistance
+    _load_resistance__out = XIo_InFloat(0xfffc0008);
     // Generated from the component: Output voltage
-    _output_voltage__out = XIo_InFloat(0xfffc0010);
+    _output_voltage__out = XIo_InFloat(0xfffc000c);
     // Generated from the component: Turn on load
-    _turn_on_load__out = XIo_InInt32(0xfffc0014);
+    _turn_on_load__out = XIo_InInt32(0xfffc0010);
     // Generated from the component: Vout.Va1
     _vout_va1__out = (HIL_InFloat(0xc80000 + 0x4));
     // Generated from the component: Controller.Integrator
@@ -379,7 +375,7 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     // Generated from the component: Input Voltage.Signal switch1
     _input_voltage_signal_switch1__out = (_enable_disturbance__out > 0.5) ? _disturbance__out : _input_voltage_no_disturbance__out;
     // Generated from the component: Rload.Vs
-    HIL_OutFloat(137363456, (float) _load__out);
+    HIL_OutFloat(137363456, (float) _load_resistance__out);
     // Generated from the component: S.CTC_Wrapper
     if (_turn_on_load__out == 0x0) {
         HIL_OutInt32(0x8240480, 0x0);
