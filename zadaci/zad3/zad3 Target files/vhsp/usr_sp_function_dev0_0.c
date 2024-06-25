@@ -107,8 +107,6 @@ typedef double real;
 
 
 
-
-
 //@cmp.def.end
 
 
@@ -187,29 +185,29 @@ double _controller_comparator1__state;//@cmp.svar.end
 //
 static struct Tunable_params {
     double _controller_gain__gain;
-    X_Int32 _controller_open_loop_duty_ratio__ls_output;
-    double _controller_open_loop_duty_ratio__duty_cycle;
     X_Int32 _controller_open_loop_duty_ratio__hs_output;
     double _controller_open_loop_duty_ratio__frequency;
+    double _controller_open_loop_duty_ratio__duty_cycle;
     double _controller_open_loop_duty_ratio__phase;
+    X_Int32 _controller_open_loop_duty_ratio__ls_output;
+    double _controller_slope_compensation__duty_cycle;
+    double _controller_slope_compensation__min_val;
+    double _controller_slope_compensation__max_val;
     double _controller_slope_compensation__frequency;
     double _controller_slope_compensation__phase;
-    double _controller_slope_compensation__max_val;
-    double _controller_slope_compensation__min_val;
-    double _controller_slope_compensation__duty_cycle;
-    double _controller_voltage_mode_controller__upper_sat_lim;
-    double _controller_voltage_mode_controller__kp;
     double _controller_voltage_mode_controller__lower_sat_lim;
     double _controller_voltage_mode_controller__ki;
+    double _controller_voltage_mode_controller__upper_sat_lim;
+    double _controller_voltage_mode_controller__kp;
     X_Int32 _controller_fsw__hs_output;
     double _controller_fsw__frequency;
-    X_Int32 _controller_fsw__ls_output;
     double _controller_fsw__duty_cycle;
+    X_Int32 _controller_fsw__ls_output;
     double _controller_fsw__phase;
-    double _disturbance__dc_offset;
+    double _disturbance__amplitude;
     double _disturbance__frequency;
     double _disturbance__phase;
-    double _disturbance__amplitude;
+    double _disturbance__dc_offset;
 } __attribute__((__packed__)) tunable_params;
 
 void *tunable_params_dev0_cpu0_ptr = &tunable_params;
@@ -248,9 +246,7 @@ void ReInit_user_sp_cpu0_dev0() {
     }
     _controller_voltage_mode_controller__integrator_state =  0.0;
     _controller_voltage_mode_controller__filter_state =  0.0;
-    HIL_OutAO(0x4001, 0.0f);
     HIL_OutFloat(137101312, 0.0);
-    HIL_OutAO(0x4002, 0.0f);
     _controller_comparator2__state = 0.0f;
     _controller_comparator1__state = 0.0f;
     HIL_OutAO(0x4000, 0.0f);
@@ -412,16 +408,12 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     else
         _controller_voltage_mode_controller__av_active = 0;
     _controller_voltage_mode_controller__out = MIN(MAX(_controller_voltage_mode_controller__pi_reg_out_int, tunable_params._controller_voltage_mode_controller__lower_sat_lim), tunable_params._controller_voltage_mode_controller__upper_sat_lim);
-    // Generated from the component: Controller.Probe1
-    HIL_OutAO(0x4001, (float)_controller_lead_regulator__out);
     // Generated from the component: Controller.Sum3
     _controller_sum3__out = _controller_dc_reference_input_voltage__out - _input_voltage_sum1__out;
     // Generated from the component: Vin.Vs1
     HIL_OutFloat(137101312, (float) _input_voltage_sum1__out);
     // Generated from the component: Controller.K
     _controller_k__out = 365.07 * _controller_signal_switch1__out;
-    // Generated from the component: Controller.Probe2
-    HIL_OutAO(0x4002, (float)_controller_signal_switch1__out);
     // Generated from the component: Controller.Comparator2
     if (_controller_triangular_wave_source1__out < _controller_voltage_mode_controller__out) {
         _controller_comparator2__out = 0;

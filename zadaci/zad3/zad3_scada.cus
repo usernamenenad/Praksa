@@ -1,6 +1,6 @@
 <ui_settings>
     <version>2.8</version>
-    <model_locked>False</model_locked>
+    <model_locked>True</model_locked>
     <canvas_bg_color>#ffffff</canvas_bg_color>
     <initialization_code><![CDATA[# NOTE: Variables and functions defined here will be
 # available for use in all Macro and Expression scripts.
@@ -766,7 +766,7 @@ return in1 * in2
                         <active_scope_preset><![CDATA[Default]]></active_scope_preset>
                         <capture name="Default">
                             <time_interval>10.0</time_interval>
-                            <sample_rate>1000000.0</sample_rate>
+                            <sample_rate>200000.0</sample_rate>
                             <background_color>white</background_color>
                             <layout>Vertical</layout>
                             <legend>True</legend>
@@ -816,7 +816,7 @@ return in1 * in2
                                     <coupling>False</coupling>
                                     <row>4</row>
                                     <viewports>
-                                        <num_viewport>3</num_viewport>
+                                        <num_viewport>2</num_viewport>
                                    </viewports>
                                </analog>
                             </analog_signals>
@@ -909,7 +909,7 @@ return in1 * in2
                         </presets>
                     <capture>
                         <time_interval>10.0</time_interval>
-                        <sample_rate>1000000.0</sample_rate>
+                        <sample_rate>200000.0</sample_rate>
                         <background_color>white</background_color>
                         <layout>Vertical</layout>
                         <legend>True</legend>
@@ -967,7 +967,7 @@ return in1 * in2
                                     <coupling>False</coupling>
                                     <row>4</row>
                                     <viewports>
-                                        <num_viewport>3</num_viewport>
+                                        <num_viewport>2</num_viewport>
                                    </viewports>
                                </analog>
                         </analog_signals>
@@ -1093,7 +1093,7 @@ widgetValue = None
 widgetValue = None
 ]]></on_timer_code>
                 <on_start_code_source><![CDATA[Custom code]]></on_start_code_source>
-                <inputValue><![CDATA[5.0]]></inputValue>
+                <inputValue><![CDATA[8.0]]></inputValue>
                 <min>5.0</min>
                 <max>20.0</max>
                 <step>1.0</step>
