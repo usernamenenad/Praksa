@@ -134,7 +134,7 @@ model "zad3" {
 
             component "core/Square Wave Source" fsw {
                 _tunable = "True"
-                duty_cycle = "0.001"
+                duty_cycle = "0.0001"
                 execution_rate = "Ts"
                 frequency = "fsw"
                 signal_type = "int"
@@ -151,7 +151,7 @@ model "zad3" {
 
             component "core/Triangular Wave Source" "Slope compensation" {
                 _tunable = "True"
-                duty_cycle = "0.999"
+                duty_cycle = "0.9999"
                 execution_rate = "Ts"
                 frequency = "fsw"
                 max_val = "0"
@@ -1282,7 +1282,7 @@ model "zad3" {
         
         Rload = 8                           # Load resistance
         Vout_ripple_max = 0.05              # Allowed output voltage ripple
-        IL_ripple_max = 0.2                 # Allowed inductor current ripple
+        IL_ripple_max = 0.05                # Allowed inductor current ripple
         
         fsw = 10e3                          # Switching frequency
         eff = 0.95                          # Worst case efficiency of the converter

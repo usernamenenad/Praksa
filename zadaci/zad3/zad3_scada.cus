@@ -309,7 +309,7 @@ displayValue = 0.0
 # NOTE: entered value is available through variable 'inputValue'
 
 hil.model_write('Output voltage', inputValue)
-hil.model_write('Controller.Slope compensation.max_val', inputValue / L * (0.999 / fsw))
+hil.model_write('Controller.Slope compensation.max_val', inputValue / L * (0.9999 / fsw))
 
 R = panel.get_property_value(panel.get_widget_by_fqn('Control panel.Load resistance'), api_const.PROP_WIDGET_VALUE)
 
@@ -354,7 +354,7 @@ widgetValue = None
 widgetValue = hil.model_read('Output voltage')
 ]]></on_timer_code>
                 <on_start_code_source><![CDATA[Macro code]]></on_start_code_source>
-                <inputValue><![CDATA[5.0]]></inputValue>
+                <inputValue><![CDATA[20.0]]></inputValue>
                 <min>5.0</min>
                 <max>20.0</max>
                 <step>1.0</step>
@@ -792,7 +792,6 @@ return in1 * in2
                                     <coupling>False</coupling>
                                     <row>1</row>
                                     <viewports>
-                                        <num_viewport>2</num_viewport>
                                    </viewports>
                                </analog>
                                 <analog>
@@ -804,7 +803,6 @@ return in1 * in2
                                     <coupling>False</coupling>
                                     <row>2</row>
                                     <viewports>
-                                        <num_viewport>3</num_viewport>
                                    </viewports>
                                </analog>
                                 <analog>
@@ -816,7 +814,6 @@ return in1 * in2
                                     <coupling>False</coupling>
                                     <row>4</row>
                                     <viewports>
-                                        <num_viewport>2</num_viewport>
                                    </viewports>
                                </analog>
                             </analog_signals>
@@ -829,7 +826,6 @@ return in1 * in2
                                     <vertical_offset>0</vertical_offset>
                                     <row>3</row>
                                     <viewports>
-                                        <num_viewport>4</num_viewport>
                                     </viewports>
                                 </virtual>
                             </virtual_signals>
@@ -943,7 +939,6 @@ return in1 * in2
                                     <coupling>False</coupling>
                                     <row>1</row>
                                     <viewports>
-                                        <num_viewport>2</num_viewport>
                                    </viewports>
                                </analog>
                             <analog>
@@ -955,7 +950,6 @@ return in1 * in2
                                     <coupling>False</coupling>
                                     <row>2</row>
                                     <viewports>
-                                        <num_viewport>3</num_viewport>
                                    </viewports>
                                </analog>
                             <analog>
@@ -967,7 +961,6 @@ return in1 * in2
                                     <coupling>False</coupling>
                                     <row>4</row>
                                     <viewports>
-                                        <num_viewport>2</num_viewport>
                                    </viewports>
                                </analog>
                         </analog_signals>
