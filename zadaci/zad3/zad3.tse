@@ -76,7 +76,7 @@ model "zad3" {
     component Subsystem Root {
         component "core/Buck - Boost" Buck-Boost {
             carrier_freq = "fsw"
-            ctrl_src = "Internal modulator"
+            ctrl_src = "Model"
             d_time = "0"
             ref_sig_min_max = "[0, 1]"
             signal_access = "Inherit"
@@ -100,7 +100,7 @@ model "zad3" {
             signal_access = "Inherit"
         }
         [
-            position = 8752, 8368
+            position = 8752, 8384
             rotation = right
         ]
 
@@ -118,7 +118,7 @@ model "zad3" {
             signal_access = "Inherit"
         }
         [
-            position = 9112, 8368
+            position = 9112, 8384
             rotation = left
             size = 64, 32
         ]
@@ -128,7 +128,7 @@ model "zad3" {
             component "core/SR Flip Flop" "SR Flip Flop1" {
             }
             [
-                position = 7856, 8040
+                position = 8040, 8040
                 hide_name = True
             ]
 
@@ -140,13 +140,13 @@ model "zad3" {
                 signal_type = "int"
             }
             [
-                position = 7760, 7944
+                position = 7944, 7944
             ]
 
             component "core/Probe" Imax {
             }
             [
-                position = 7712, 8152
+                position = 7928, 8152
             ]
 
             component "core/Triangular Wave Source" "Slope compensation" {
@@ -158,14 +158,14 @@ model "zad3" {
                 min_val = "0"
             }
             [
-                position = 7368, 8120
+                position = 7600, 8152
             ]
 
             component "core/Sum" Sum1 {
                 signs = "+-+"
             }
             [
-                position = 7600, 8064
+                position = 7776, 8088
                 hide_name = True
             ]
 
@@ -185,7 +185,7 @@ model "zad3" {
                 hide_name = True
             ]
 
-            component "core/Constant" "Reference input voltage" {
+            component "core/Constant" "DC Reference input voltage" {
                 execution_rate = "Ts"
                 value = "Vin"
             }
@@ -204,7 +204,7 @@ model "zad3" {
             component "core/Comparator" Comparator1 {
             }
             [
-                position = 7744, 8056
+                position = 7928, 8056
                 hide_name = True
             ]
 
@@ -212,7 +212,7 @@ model "zad3" {
                 number_of_input_terminals = "3"
             }
             [
-                position = 8064, 7768
+                position = 8224, 7776
                 hide_name = True
             ]
 
@@ -225,7 +225,7 @@ model "zad3" {
                 unit = ""
             }
             [
-                position = 7744, 7576
+                position = 7904, 7576
             ]
 
             component "core/Sum" Sum4 {
@@ -243,40 +243,101 @@ model "zad3" {
                 enb_output_limit_out = "True"
                 ki = "0.1"
                 kp = "0.05"
-                lower_sat_lim = "0.05"
+                lower_sat_lim = "0"
                 show_reset = "either"
-                upper_sat_lim = "0.95"
             }
             [
-                position = 7792, 7776
+                position = 7840, 7776
             ]
 
             component "core/Termination" Termination1 {
             }
             [
-                position = 7920, 8056
+                position = 8104, 8056
                 hide_name = True
             ]
 
-            component "core/Discrete Transfer Function" "Current mode controller" {
-                a_coeff = "[12.8, 1.579e4, 0]"
-                b_coeff = "[3059, 3.914e4]"
+            component "core/Signal switch" "Signal switch1" {
+                threshold = "2.5"
+            }
+            [
+                position = 7272, 8064
+                hide_name = True
+            ]
+
+            component "core/Constant" Constant1 {
+                execution_rate = "Ts"
+                value = "0"
+            }
+            [
+                position = 7200, 8120
+                hide_name = True
+            ]
+
+            component "core/Comparator" Comparator2 {
+            }
+            [
+                position = 8120, 7784
+                hide_name = True
+                scale = 1, -1
+            ]
+
+            component "core/Triangular Wave Source" "Triangular Wave Source1" {
+                duty_cycle = "0.999"
+                execution_rate = "Ts"
+                frequency = "fsw"
+                max_val = "1"
+                min_val = "0"
+            }
+            [
+                position = 8024, 7856
+                hide_name = True
+            ]
+
+            component "core/Square Wave Source" "Open loop duty ratio" {
+                _tunable = "True"
+                duty_cycle = "0.001"
+                execution_rate = "Ts"
+                frequency = "fsw"
+                signal_type = "int"
+            }
+            [
+                position = 7904, 7640
+            ]
+
+            component "core/Integrator" Integrator {
+                show_reset = "either"
+            }
+            [
+                position = 7488, 8072
+            ]
+
+            component "core/Gain" K {
+                gain = "365.07"
+            }
+            [
+                position = 7368, 8064
+            ]
+
+            component "core/Discrete Transfer Function" "Lead regulator" {
+                a_coeff = "[1, 1885]"
+                b_coeff = "[1, 8.378]"
                 domain = "S-domain"
             }
             [
-                position = 7368, 8048
+                position = 7600, 8072
             ]
 
-            component "core/SCADA Input" "Open loop duty ratio" {
-                def_value = "0.5"
-                execution_rate = "Ts"
-                max = "1"
-                min = "0"
-                signal_access = "Inherit"
-                unit = ""
+            component "core/Probe" Probe1 {
             }
             [
-                position = 7744, 7640
+                position = 7752, 8008
+            ]
+
+            component "core/Probe" Probe2 {
+            }
+            [
+                position = 7352, 8192
             ]
 
             port Isw {
@@ -302,7 +363,7 @@ model "zad3" {
                 }
             }
             [
-                position = 8312, 7768
+                position = 8384, 7776
             ]
 
             port Vout {
@@ -332,7 +393,7 @@ model "zad3" {
             ]
 
             tag "Reference output voltage" {
-                value = "OutputVoltageReference"
+                value = "Vout_ref"
                 scope = global
                 kind = sp
                 direction = out
@@ -349,7 +410,7 @@ model "zad3" {
                 direction = in
             }
             [
-                position = 8104, 7576
+                position = 8264, 7576
                 hide_name = True
                 size = 60, 20
             ]
@@ -361,103 +422,184 @@ model "zad3" {
                 direction = out
             }
             [
-                position = 7648, 7784
+                position = 7752, 7784
                 hide_name = True
                 size = 60, 20
             ]
 
-            junction Junction1 sp
+            tag "Reference output voltage1" {
+                value = "Vout_ref"
+                scope = global
+                kind = sp
+                direction = out
+            }
             [
-                position = 7664, 8064
+                position = 6880, 8040
+                size = 60, 20
             ]
 
-            junction Junction2 sp
+            tag Goto2 {
+                value = "Vout_measured"
+                scope = local
+                kind = sp
+                direction = in
+            }
             [
-                position = 6992, 7760
+                position = 7080, 7864
+                hide_name = True
+                size = 100, 20
             ]
 
-            junction Junction3 sp
+            tag From3 {
+                value = "Vout_measured"
+                scope = local
+                kind = sp
+                direction = out
+            }
             [
-                position = 7016, 7832
+                position = 7080, 8056
+                hide_name = True
+                size = 108, 20
+            ]
+
+            tag From4 {
+                value = "ctrl"
+                scope = local
+                kind = sp
+                direction = out
+            }
+            [
+                position = 7200, 7992
+                hide_name = True
+                size = 60, 20
+            ]
+
+            tag From5 {
+                value = "ctrl"
+                scope = local
+                kind = sp
+                direction = out
+            }
+            [
+                position = 7368, 8128
+                hide_name = True
+                size = 60, 20
             ]
 
             junction Junction4 sp
             [
-                position = 7992, 7576
+                position = 8152, 7576
+            ]
+
+            junction Junction5 sp
+            [
+                position = 7008, 7832
+            ]
+
+            junction Junction6 sp
+            [
+                position = 7816, 8088
+            ]
+
+            junction Junction7 sp
+            [
+                position = 7688, 8072
+            ]
+
+            junction Junction8 sp
+            [
+                position = 7312, 8064
             ]
 
             comment Comment1 START <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd"><html><head><meta name="qrichtext" content="1" /><style type="text/css">p, li { white-space: pre-wrap; }</style></head><body style=" font-family:'Arial'; font-size:12pt; font-weight:400; font-style:normal;"><p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Three types of control:<br />- Open loop control with adjustable duty ratio<br />- Voltage mode control (currently not working)</p><p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">- Current mode control  </p></body></html> ENDCOMMENT 
             [
-                position = 8040, 8152
+                position = 7824, 8240
             ]
 
             comment Comment2 START <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd"><html><head><meta name="qrichtext" content="1" /><style type="text/css">p, li { white-space: pre-wrap; }</style></head><body style=" font-family:'Arial'; font-size:12pt; font-weight:400; font-style:normal;"><p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Input disturbance compensator</p></body></html> ENDCOMMENT 
             [
-                position = 6968, 8336
+                position = 7040, 8312
+            ]
+
+            comment Comment3 START <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd"><html><head><meta name="qrichtext" content="1" /><style type="text/css">p, li { white-space: pre-wrap; }</style></head><body style=" font-family:'Arial'; font-size:12pt; font-weight:400; font-style:normal;"><p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Current mode control regulator with reset feature</p></body></html> ENDCOMMENT 
+            [
+                position = 7312, 7976
             ]
 
             connect fsw.out "SR Flip Flop1.s_in" as Connection181
             connect Comparator1.out "SR Flip Flop1.r_in" as Connection182
             connect Isw Comparator1.in1 as Connection196
+            [
+                breakpoints = 6912, 7952; 7712, 7952; 7712, 7952; 7896, 7952
+            ]
             connect Vin Sum3.in1 as Connection198
             connect Sum3.out Gain.in as Connection200
             connect Termination1.in "SR Flip Flop1.out_n" as Connection237
-            connect "Slope compensation.out" Sum1.in1 as Connection247
-            [
-                breakpoints = 7512, 8120; 7512, 8064
-            ]
-            connect Gain.out Sum1.in2 as Connection249
-            [
-                breakpoints = 7544, 8240; 7544, 8080
-            ]
-            connect Sum1.out Junction1 as Connection250
-            connect Junction1 Comparator1.in2 as Connection251
-            connect Imax.in Junction1 as Connection252
-            [
-                breakpoints = 7664, 8072
-            ]
-            connect "Reference output voltage" Junction2 as Connection253
-            connect Sum2.in Junction2 as Connection255
-            connect Vout Junction3 as Connection268
-            connect Junction3 Sum4.in1 as Connection269
-            [
-                breakpoints = 7056, 7832; 7056, 7832; 7496, 7832
-            ]
-            connect Sum2.in1 Junction3 as Connection270
-            [
-                breakpoints = 7048, 8056
-            ]
-            connect Sum2.out "Current mode controller.in" as Connection278
-            [
-                breakpoints = 7280, 8048
-            ]
-            connect "Current mode controller.out" Sum1.in as Connection279
-            connect "SR Flip Flop1.out" "Multiport signal switch1.in2" as Connection286
-            [
-                breakpoints = 7992, 8024; 7992, 7920; 7992, 7920; 7992, 7792
-            ]
-            connect Junction2 Sum4.in as Connection297
-            [
-                breakpoints = 6992, 7760; 7064, 7760
-            ]
-            connect "Reference input voltage.out" Sum3.in as Connection298
+            connect "DC Reference input voltage.out" Sum3.in as Connection298
             [
                 breakpoints = 6912, 8240
-            ]
-            connect "Open loop duty ratio.out" "Multiport signal switch1.in" as Connection299
-            [
-                breakpoints = 7912, 7640; 7912, 7752
             ]
             connect Sum4.out "Voltage mode controller.in" as Connection312
             [
                 breakpoints = 7576, 7768; 7760, 7768
             ]
-            connect "Voltage mode controller.out" "Multiport signal switch1.in1" as Connection313
             connect "Multiport signal switch1.out" Control as Connection314
             connect From2 "Voltage mode controller.reset" as Connection317
             connect Goto1 Junction4 as Connection318
             connect Junction4 "Control mode.out" as Connection319
             connect "Multiport signal switch1.ctrl" Junction4 as Connection320
+            [
+                breakpoints = 8200, 7752; 8184, 7752
+            ]
+            connect "Reference output voltage" Sum4.in as Connection321
+            [
+                breakpoints = 6992, 7760; 6992, 7760; 7064, 7760
+            ]
+            connect "Reference output voltage1" Sum2.in as Connection322
+            connect From3 Sum2.in1 as Connection327
+            connect Sum4.in1 Junction5 as Connection333
+            [
+                breakpoints = 7496, 7832; 7064, 7832; 7056, 7832; 7056, 7832; 7016, 7832; 7024, 7832
+            ]
+            connect Junction5 Vout as Connection334
+            connect Goto2 Junction5 as Connection335
+            [
+                breakpoints = 7008, 7864
+            ]
+            connect Sum2.out "Signal switch1.in" as Connection337
+            connect From4 "Signal switch1.in2" as Connection338
+            connect Constant1.out "Signal switch1.in1" as Connection339
+            connect "Open loop duty ratio.out" "Multiport signal switch1.in" as Connection349
+            [
+                breakpoints = 8080, 7640; 8080, 7760
+            ]
+            connect Gain.out Sum1.in2 as Connection353
+            connect "Lead regulator.in" Integrator.out as Connection357
+            connect From5 Integrator.reset as Connection362
+            [
+                breakpoints = 7432, 8128; 7432, 8080
+            ]
+            connect Integrator.in K.out as Connection364
+            connect "Slope compensation.out" Sum1.in1 as Connection370
+            [
+                breakpoints = 7696, 8128; 7696, 8088
+            ]
+            connect Comparator1.in2 Junction6 as Connection372
+            connect Junction6 Sum1.out as Connection373
+            connect Imax.in Junction6 as Connection374
+            connect "Lead regulator.out" Junction7 as Connection375
+            connect Junction7 Sum1.in as Connection376
+            connect Probe1.in Junction7 as Connection377
+            connect K.in Junction8 as Connection378
+            [
+                breakpoints = 7328, 8064
+            ]
+            connect Junction8 "Signal switch1.out" as Connection379
+            connect Probe2.in Junction8 as Connection380
+            connect Comparator2.out "Multiport signal switch1.in1" as Connection383
+            connect "SR Flip Flop1.out" "Multiport signal switch1.in2" as Connection384
+            connect Comparator2.in1 "Triangular Wave Source1.out" as Connection385
+            connect Comparator2.in2 "Voltage mode controller.out" as Connection386
         }
         [
             position = 8304, 7920
@@ -496,7 +638,7 @@ model "zad3" {
         component "core/Signal Controlled Voltage Source" Vin {
         }
         [
-            position = 8040, 8368
+            position = 8040, 8384
             rotation = right
             size = 64, 32
         ]
@@ -529,7 +671,7 @@ model "zad3" {
             signal_access = "Inherit"
         }
         [
-            position = 8224, 8368
+            position = 8224, 8384
             rotation = right
             hide_name = True
             size = 64, 32
@@ -621,7 +763,7 @@ model "zad3" {
             resistance = "Rb"
         }
         [
-            position = 8920, 8368
+            position = 8920, 8384
             rotation = right
         ]
 
@@ -663,7 +805,7 @@ model "zad3" {
         component "core/Variable Resistor" Rload {
         }
         [
-            position = 9280, 8368
+            position = 9280, 8384
             rotation = left
             size = 64, 48
         ]
@@ -681,7 +823,7 @@ model "zad3" {
         ]
 
         tag Goto2 {
-            value = "OutputVoltageReference"
+            value = "Vout_ref"
             scope = global
             kind = sp
             direction = in
@@ -693,70 +835,70 @@ model "zad3" {
         ]
 
         tag Goto3 {
-            value = "OutputVoltageMeasurement"
+            value = "Vout_measured"
             scope = local
             kind = sp
             direction = in
         }
         [
-            position = 9024, 8368
+            position = 9016, 8384
             rotation = down
             hide_name = True
-            size = 84, 20
+            size = 100, 20
         ]
 
         tag From2 {
-            value = "OutputVoltageMeasurement"
+            value = "Vout_measured"
             scope = local
             kind = sp
             direction = out
         }
         [
-            position = 8120, 7896
+            position = 8096, 7896
             hide_name = True
-            size = 60, 20
+            size = 108, 20
         ]
 
         tag Goto4 {
-            value = "SwitchCurrent"
+            value = "switch_current"
             scope = local
             kind = sp
             direction = in
         }
         [
-            position = 8240, 8176
+            position = 8208, 8176
             rotation = down
             hide_name = True
-            size = 60, 20
+            size = 116, 20
         ]
 
         tag From3 {
-            value = "SwitchCurrent"
+            value = "switch_current"
             scope = local
             kind = sp
             direction = out
         }
         [
-            position = 8120, 7920
+            position = 8096, 7920
             hide_name = True
-            size = 60, 20
+            size = 108, 20
         ]
 
         tag From5 {
-            value = "InputVoltage"
+            value = "Vin_ref"
             scope = local
             kind = sp
             direction = out
         }
         [
-            position = 8120, 8368
+            position = 8120, 8384
             rotation = down
             hide_name = True
             size = 68, 20
         ]
 
         tag Goto6 {
-            value = "InputVoltage"
+            value = "Vin_ref"
             scope = local
             kind = sp
             direction = in
@@ -768,15 +910,15 @@ model "zad3" {
         ]
 
         tag From7 {
-            value = "InputVoltage"
+            value = "Vin_ref"
             scope = local
             kind = sp
             direction = out
         }
         [
-            position = 8120, 7944
+            position = 8096, 7944
             hide_name = True
-            size = 60, 20
+            size = 108, 20
         ]
 
         junction Junction13 pe
@@ -901,8 +1043,7 @@ model "zad3" {
         ]
         connect From7 Controller.Vin as Connection389
         connect From3 Controller.Isw as Connection390
-        connect "Enable buck-boost.out" Buck-Boost.En as Connection391
-        connect Buck-Boost.In Controller.Control as Connection392
+        connect Controller.Control Buck-Boost.s_ctrl as Connection391
     }
 
     default {
@@ -947,6 +1088,19 @@ model "zad3" {
             initial_current = "0.0"
             pole_shift_ignore = "False"
             visible = "True"
+        }
+
+        "core/Integrator" {
+            show_reset = "none"
+            reset_type = "asynchronous"
+            show_init_condition = "internal"
+            init_value = "0"
+            limit_output = "False"
+            limit_upper = "inf"
+            limit_lower = "-inf"
+            show_state = "False"
+            state_port_type = "inherit"
+            execution_rate = "inherit"
         }
 
         "core/Multiport signal switch" {

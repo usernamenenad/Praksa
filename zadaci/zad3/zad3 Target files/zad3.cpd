@@ -33,6 +33,13 @@
     </pesb>
     <analog_variables>
         <cell>
+            <name>L</name>
+            <address>1</address>
+            <type>current</type>
+            <initial_condition>0.0</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
             <name>Cout</name>
             <address>0</address>
             <type>voltage</type>
@@ -47,20 +54,6 @@
             <visible>True</visible>
         </cell>
         <cell>
-            <name>L</name>
-            <address>1</address>
-            <type>current</type>
-            <initial_condition>0.0</initial_condition>
-            <visible>True</visible>
-        </cell>
-        <cell>
-            <name>Iout</name>
-            <address>5</address>
-            <type>current</type>
-            <initial_condition>None</initial_condition>
-            <visible>True</visible>
-        </cell>
-        <cell>
             <name>Buck-Boost.v2</name>
             <address>386</address>
             <type>voltage</type>
@@ -68,29 +61,8 @@
             <visible>False</visible>
         </cell>
         <cell>
-            <name>Va1</name>
-            <address>3</address>
-            <type>voltage</type>
-            <initial_condition>None</initial_condition>
-            <visible>True</visible>
-        </cell>
-        <cell>
-            <name>S.i</name>
-            <address>8</address>
-            <type>current</type>
-            <initial_condition>None</initial_condition>
-            <visible>True</visible>
-        </cell>
-        <cell>
-            <name>Vout</name>
-            <address>4</address>
-            <type>voltage</type>
-            <initial_condition>None</initial_condition>
-            <visible>True</visible>
-        </cell>
-        <cell>
-            <name>Rload.I</name>
-            <address>7</address>
+            <name>Isw</name>
+            <address>6</address>
             <type>current</type>
             <initial_condition>None</initial_condition>
             <visible>True</visible>
@@ -103,6 +75,13 @@
             <visible>False</visible>
         </cell>
         <cell>
+            <name>Va1</name>
+            <address>3</address>
+            <type>voltage</type>
+            <initial_condition>None</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
             <name>Buck-Boost.il</name>
             <address>384</address>
             <type>current</type>
@@ -110,8 +89,29 @@
             <visible>False</visible>
         </cell>
         <cell>
-            <name>Isw</name>
-            <address>6</address>
+            <name>Iout</name>
+            <address>5</address>
+            <type>current</type>
+            <initial_condition>None</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
+            <name>Vout</name>
+            <address>4</address>
+            <type>voltage</type>
+            <initial_condition>None</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
+            <name>S.i</name>
+            <address>8</address>
+            <type>current</type>
+            <initial_condition>None</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
+            <name>Rload.I</name>
+            <address>7</address>
             <type>current</type>
             <initial_condition>None</initial_condition>
             <visible>True</visible>
@@ -670,26 +670,6 @@
             <address>575</address>
         </cell>
         <cell>
-            <name>Buck-Boost.S1</name>
-            <address>769</address>
-        </cell>
-        <cell>
-            <name>Buck-Boost.PWM_Modulator.BOT_1</name>
-            <address>769</address>
-        </cell>
-        <cell>
-            <name>Buck-Boost.PWM_Modulator_BOT_1</name>
-            <address>769</address>
-        </cell>
-        <cell>
-            <name>Buck-Boost.PWM_Modulator.TOP_1</name>
-            <address>768</address>
-        </cell>
-        <cell>
-            <name>Buck-Boost.PWM_Modulator_TOP_1</name>
-            <address>768</address>
-        </cell>
-        <cell>
             <name>S.feedback</name>
             <address>1024</address>
         </cell>
@@ -740,9 +720,23 @@
 
     <analog_variables>
         <cell>
+            <name>Controller.Probe1</name>
+            <type>generic</type>
+            <address>16385</address>
+            <initial_condition>None</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
             <name>Controller.Imax</name>
             <type>generic</type>
             <address>16384</address>
+            <initial_condition>None</initial_condition>
+            <visible>True</visible>
+        </cell>
+        <cell>
+            <name>Controller.Probe2</name>
+            <type>generic</type>
+            <address>16386</address>
             <initial_condition>None</initial_condition>
             <visible>True</visible>
         </cell>
@@ -769,8 +763,88 @@
             <visible>True</visible>
         </tunable_param>
         <tunable_param>
-            <name>Controller.Slope compensation.duty_cycle</name>
+            <name>Controller.Open loop duty ratio.duty_cycle</name>
             <addr>[8]</addr>
+            <min>0.0</min>
+            <max>1</max>
+            <def_value>0.001</def_value>
+            <unit></unit>
+            <widget_type>float</widget_type>
+            <format>real</format>
+            <size>1</size>
+            <param_type>tunable property</param_type>
+            <cpu_type>user_sp_cpu</cpu_type>
+            <cpu_idx>0</cpu_idx>
+            <execution_rate>5e-06</execution_rate>
+            <visible>True</visible>
+        </tunable_param>
+        <tunable_param>
+            <name>Controller.Open loop duty ratio.hs_output</name>
+            <addr>[16]</addr>
+            <min></min>
+            <max></max>
+            <def_value>1.0</def_value>
+            <unit></unit>
+            <widget_type>int</widget_type>
+            <format>integer</format>
+            <size>1</size>
+            <param_type>tunable property</param_type>
+            <cpu_type>user_sp_cpu</cpu_type>
+            <cpu_idx>0</cpu_idx>
+            <execution_rate>5e-06</execution_rate>
+            <visible>True</visible>
+        </tunable_param>
+        <tunable_param>
+            <name>Controller.Open loop duty ratio.phase</name>
+            <addr>[20]</addr>
+            <min>0</min>
+            <max>1</max>
+            <def_value>0.0</def_value>
+            <unit></unit>
+            <widget_type>float</widget_type>
+            <format>real</format>
+            <size>1</size>
+            <param_type>tunable property</param_type>
+            <cpu_type>user_sp_cpu</cpu_type>
+            <cpu_idx>0</cpu_idx>
+            <execution_rate>5e-06</execution_rate>
+            <visible>True</visible>
+        </tunable_param>
+        <tunable_param>
+            <name>Controller.Open loop duty ratio.frequency</name>
+            <addr>[28]</addr>
+            <min>1e-15</min>
+            <max></max>
+            <def_value>10000.0</def_value>
+            <unit></unit>
+            <widget_type>float</widget_type>
+            <format>real</format>
+            <size>1</size>
+            <param_type>tunable property</param_type>
+            <cpu_type>user_sp_cpu</cpu_type>
+            <cpu_idx>0</cpu_idx>
+            <execution_rate>5e-06</execution_rate>
+            <visible>True</visible>
+        </tunable_param>
+        <tunable_param>
+            <name>Controller.Open loop duty ratio.ls_output</name>
+            <addr>[36]</addr>
+            <min></min>
+            <max></max>
+            <def_value>0.0</def_value>
+            <unit></unit>
+            <widget_type>int</widget_type>
+            <format>integer</format>
+            <size>1</size>
+            <param_type>tunable property</param_type>
+            <cpu_type>user_sp_cpu</cpu_type>
+            <cpu_idx>0</cpu_idx>
+            <execution_rate>5e-06</execution_rate>
+            <visible>True</visible>
+        </tunable_param>
+        <tunable_param>
+            <name>Controller.Slope compensation.duty_cycle</name>
+            <addr>[40]</addr>
             <min>0.0</min>
             <max>1</max>
             <def_value>0.999</def_value>
@@ -785,8 +859,24 @@
             <visible>True</visible>
         </tunable_param>
         <tunable_param>
+            <name>Controller.Slope compensation.frequency</name>
+            <addr>[48]</addr>
+            <min>1e-12</min>
+            <max></max>
+            <def_value>10000.0</def_value>
+            <unit></unit>
+            <widget_type>float</widget_type>
+            <format>real</format>
+            <size>1</size>
+            <param_type>tunable property</param_type>
+            <cpu_type>user_sp_cpu</cpu_type>
+            <cpu_idx>0</cpu_idx>
+            <execution_rate>5e-06</execution_rate>
+            <visible>True</visible>
+        </tunable_param>
+        <tunable_param>
             <name>Controller.Slope compensation.min_val</name>
-            <addr>[16]</addr>
+            <addr>[56]</addr>
             <min></min>
             <max></max>
             <def_value>0.0</def_value>
@@ -802,7 +892,7 @@
         </tunable_param>
         <tunable_param>
             <name>Controller.Slope compensation.max_val</name>
-            <addr>[24]</addr>
+            <addr>[64]</addr>
             <min></min>
             <max></max>
             <def_value>0.0</def_value>
@@ -818,7 +908,7 @@
         </tunable_param>
         <tunable_param>
             <name>Controller.Slope compensation.phase</name>
-            <addr>[32]</addr>
+            <addr>[72]</addr>
             <min>0</min>
             <max>1</max>
             <def_value>0.0</def_value>
@@ -833,56 +923,8 @@
             <visible>True</visible>
         </tunable_param>
         <tunable_param>
-            <name>Controller.Slope compensation.frequency</name>
-            <addr>[40]</addr>
-            <min>1e-12</min>
-            <max></max>
-            <def_value>10000.0</def_value>
-            <unit></unit>
-            <widget_type>float</widget_type>
-            <format>real</format>
-            <size>1</size>
-            <param_type>tunable property</param_type>
-            <cpu_type>user_sp_cpu</cpu_type>
-            <cpu_idx>0</cpu_idx>
-            <execution_rate>5e-06</execution_rate>
-            <visible>True</visible>
-        </tunable_param>
-        <tunable_param>
-            <name>Controller.Voltage mode controller.lower_sat_lim</name>
-            <addr>[48]</addr>
-            <min></min>
-            <max></max>
-            <def_value>0.05</def_value>
-            <unit></unit>
-            <widget_type>float</widget_type>
-            <format>real</format>
-            <size>1</size>
-            <param_type>tunable property</param_type>
-            <cpu_type>user_sp_cpu</cpu_type>
-            <cpu_idx>0</cpu_idx>
-            <execution_rate>5e-06</execution_rate>
-            <visible>True</visible>
-        </tunable_param>
-        <tunable_param>
-            <name>Controller.Voltage mode controller.upper_sat_lim</name>
-            <addr>[56]</addr>
-            <min></min>
-            <max></max>
-            <def_value>0.95</def_value>
-            <unit></unit>
-            <widget_type>float</widget_type>
-            <format>real</format>
-            <size>1</size>
-            <param_type>tunable property</param_type>
-            <cpu_type>user_sp_cpu</cpu_type>
-            <cpu_idx>0</cpu_idx>
-            <execution_rate>5e-06</execution_rate>
-            <visible>True</visible>
-        </tunable_param>
-        <tunable_param>
             <name>Controller.Voltage mode controller.ki</name>
-            <addr>[64]</addr>
+            <addr>[80]</addr>
             <min></min>
             <max></max>
             <def_value>0.1</def_value>
@@ -898,7 +940,7 @@
         </tunable_param>
         <tunable_param>
             <name>Controller.Voltage mode controller.kp</name>
-            <addr>[72]</addr>
+            <addr>[88]</addr>
             <min></min>
             <max></max>
             <def_value>0.05</def_value>
@@ -913,14 +955,14 @@
             <visible>True</visible>
         </tunable_param>
         <tunable_param>
-            <name>Controller.fsw.hs_output</name>
-            <addr>[80]</addr>
+            <name>Controller.Voltage mode controller.lower_sat_lim</name>
+            <addr>[96]</addr>
             <min></min>
             <max></max>
-            <def_value>1.0</def_value>
+            <def_value>0.0</def_value>
             <unit></unit>
-            <widget_type>int</widget_type>
-            <format>integer</format>
+            <widget_type>float</widget_type>
+            <format>real</format>
             <size>1</size>
             <param_type>tunable property</param_type>
             <cpu_type>user_sp_cpu</cpu_type>
@@ -929,11 +971,11 @@
             <visible>True</visible>
         </tunable_param>
         <tunable_param>
-            <name>Controller.fsw.duty_cycle</name>
-            <addr>[84]</addr>
-            <min>0.0</min>
-            <max>1</max>
-            <def_value>0.001</def_value>
+            <name>Controller.Voltage mode controller.upper_sat_lim</name>
+            <addr>[104]</addr>
+            <min></min>
+            <max></max>
+            <def_value>1.0</def_value>
             <unit></unit>
             <widget_type>float</widget_type>
             <format>real</format>
@@ -946,7 +988,7 @@
         </tunable_param>
         <tunable_param>
             <name>Controller.fsw.phase</name>
-            <addr>[92]</addr>
+            <addr>[112]</addr>
             <min>0</min>
             <max>1</max>
             <def_value>0.0</def_value>
@@ -962,7 +1004,7 @@
         </tunable_param>
         <tunable_param>
             <name>Controller.fsw.ls_output</name>
-            <addr>[100]</addr>
+            <addr>[120]</addr>
             <min></min>
             <max></max>
             <def_value>0.0</def_value>
@@ -978,7 +1020,7 @@
         </tunable_param>
         <tunable_param>
             <name>Controller.fsw.frequency</name>
-            <addr>[104]</addr>
+            <addr>[124]</addr>
             <min>1e-15</min>
             <max></max>
             <def_value>10000.0</def_value>
@@ -993,11 +1035,11 @@
             <visible>True</visible>
         </tunable_param>
         <tunable_param>
-            <name>Disturbance.amplitude</name>
-            <addr>[112]</addr>
-            <min>0</min>
-            <max></max>
-            <def_value>0.0</def_value>
+            <name>Controller.fsw.duty_cycle</name>
+            <addr>[132]</addr>
+            <min>0.0</min>
+            <max>1</max>
+            <def_value>0.001</def_value>
             <unit></unit>
             <widget_type>float</widget_type>
             <format>real</format>
@@ -1009,8 +1051,24 @@
             <visible>True</visible>
         </tunable_param>
         <tunable_param>
+            <name>Controller.fsw.hs_output</name>
+            <addr>[140]</addr>
+            <min></min>
+            <max></max>
+            <def_value>1.0</def_value>
+            <unit></unit>
+            <widget_type>int</widget_type>
+            <format>integer</format>
+            <size>1</size>
+            <param_type>tunable property</param_type>
+            <cpu_type>user_sp_cpu</cpu_type>
+            <cpu_idx>0</cpu_idx>
+            <execution_rate>5e-06</execution_rate>
+            <visible>True</visible>
+        </tunable_param>
+        <tunable_param>
             <name>Disturbance.dc_offset</name>
-            <addr>[120]</addr>
+            <addr>[144]</addr>
             <min></min>
             <max></max>
             <def_value>0.0</def_value>
@@ -1026,7 +1084,7 @@
         </tunable_param>
         <tunable_param>
             <name>Disturbance.phase</name>
-            <addr>[128]</addr>
+            <addr>[152]</addr>
             <min></min>
             <max></max>
             <def_value>0.0</def_value>
@@ -1041,8 +1099,24 @@
             <visible>True</visible>
         </tunable_param>
         <tunable_param>
+            <name>Disturbance.amplitude</name>
+            <addr>[160]</addr>
+            <min>0</min>
+            <max></max>
+            <def_value>0.0</def_value>
+            <unit></unit>
+            <widget_type>float</widget_type>
+            <format>real</format>
+            <size>1</size>
+            <param_type>tunable property</param_type>
+            <cpu_type>user_sp_cpu</cpu_type>
+            <cpu_idx>0</cpu_idx>
+            <execution_rate>5e-06</execution_rate>
+            <visible>True</visible>
+        </tunable_param>
+        <tunable_param>
             <name>Disturbance.frequency</name>
-            <addr>[136]</addr>
+            <addr>[168]</addr>
             <min>1e-15</min>
             <max></max>
             <def_value>0.1</def_value>
@@ -1073,24 +1147,8 @@
             <visible>True</visible>
         </tunable_param>
         <tunable_param>
-            <name>Controller.Open loop duty ratio</name>
-            <addr>[4294705156]</addr>
-            <min>0.0</min>
-            <max>1.0</max>
-            <def_value>0.5</def_value>
-            <unit></unit>
-            <widget_type>float</widget_type>
-            <format>real</format>
-            <size>1</size>
-            <param_type>scada input</param_type>
-            <cpu_type>user_sp_cpu</cpu_type>
-            <cpu_idx>0</cpu_idx>
-            <execution_rate>5e-06</execution_rate>
-            <visible>True</visible>
-        </tunable_param>
-        <tunable_param>
             <name>Enable buck-boost</name>
-            <addr>[4294705160]</addr>
+            <addr>[4294705156]</addr>
             <min>0.0</min>
             <max>1.0</max>
             <def_value>0.0</def_value>
@@ -1106,7 +1164,7 @@
         </tunable_param>
         <tunable_param>
             <name>Enable disturbance</name>
-            <addr>[4294705164]</addr>
+            <addr>[4294705160]</addr>
             <min>0.0</min>
             <max>1.0</max>
             <def_value>0.0</def_value>
@@ -1122,7 +1180,7 @@
         </tunable_param>
         <tunable_param>
             <name>Load</name>
-            <addr>[4294705168]</addr>
+            <addr>[4294705164]</addr>
             <min>0.0</min>
             <max>20.0</max>
             <def_value>8.0</def_value>
@@ -1138,7 +1196,7 @@
         </tunable_param>
         <tunable_param>
             <name>Output voltage</name>
-            <addr>[4294705172]</addr>
+            <addr>[4294705168]</addr>
             <min>-1000000.0</min>
             <max>1000000.0</max>
             <def_value>0.0</def_value>
@@ -1154,7 +1212,7 @@
         </tunable_param>
         <tunable_param>
             <name>Turn on load</name>
-            <addr>[4294705176]</addr>
+            <addr>[4294705172]</addr>
             <min>0.0</min>
             <max>1.0</max>
             <def_value>0.0</def_value>
