@@ -32,6 +32,7 @@ extern "C" {
 #endif
 
 
+
 // ----------------------------------------------------------------------------------------                // generated using template:generic_macros.template-----------------------------------------
 /*********************** Macros (Inline Functions) Definitions ***************************/
 
@@ -107,6 +108,7 @@ typedef double real;
 
 
 
+
 //@cmp.def.end
 
 
@@ -123,24 +125,26 @@ typedef double real;
 double _buck_boost_constant1__out = 0.0;
 double _controller_constant1__out = 0.0;
 double _controller_control_mode__out;
-double _controller_dc_reference_input_voltage__out = 7.0;
+double _controller_dc_reference_input_voltage__out = 12.0;
 X_Int32 _controller_open_loop_duty_ratio__out;
 double _controller_sr_flip_flop1__out;
 double _controller_sr_flip_flop1__out_n;
-double _controller_slope_compensation__out;
 double _controller_triangular_wave_source1__out;
 X_Int32 _controller_fsw__out;
 double _disturbance__out;
 X_Int32 _enable_disturbance__out;
-double _input_voltage_input_voltage_reference__out = 7.0;
+double _input_voltage_input_voltage_reference__out = 12.0;
 double _input_voltage_no_disturbance__out = 0.0;
 double _isw_ia1__out;
 double _load_resistance__out;
-double _output_voltage__out;
+double _reference_output_voltage__out;
 X_Int32 _turn_on_load__out;
 double _vout_va1__out;
 double _controller_integrator__out;
 double _input_voltage_signal_switch1__out;
+double _controller_c_function2__vout_ref;
+
+double _controller_c_function2__out;
 double _controller_sum2__out;
 double _controller_sum4__out;
 double _controller_lead_regulator__out;
@@ -166,12 +170,20 @@ double _controller_comparator1__out;//@cmp.var.end
 // state variables
 double _controller_open_loop_duty_ratio__current_phase;
 double _controller_sr_flip_flop1__state;
-double _controller_slope_compensation__current_phase;
 double _controller_triangular_wave_source1__current_phase;
 double _controller_fsw__current_phase;
 double _disturbance__current_phase;
 double _controller_integrator__state;
 double _controller_integrator__reset_state;
+double _controller_c_function2__counter;
+
+double _controller_c_function2__Tsw;
+
+double _controller_c_function2__execution_rate1;
+
+double _controller_c_function2__out_var;
+
+
 double _controller_lead_regulator__states[1];
 double _controller_voltage_mode_controller__integrator_state;
 X_Int32 _controller_voltage_mode_controller__av_active;
@@ -185,29 +197,24 @@ double _controller_comparator1__state;//@cmp.svar.end
 //
 static struct Tunable_params {
     double _controller_gain__gain;
-    double _controller_open_loop_duty_ratio__frequency;
-    double _controller_open_loop_duty_ratio__duty_cycle;
     X_Int32 _controller_open_loop_duty_ratio__ls_output;
     X_Int32 _controller_open_loop_duty_ratio__hs_output;
+    double _controller_open_loop_duty_ratio__frequency;
     double _controller_open_loop_duty_ratio__phase;
-    double _controller_slope_compensation__frequency;
-    double _controller_slope_compensation__max_val;
-    double _controller_slope_compensation__duty_cycle;
-    double _controller_slope_compensation__min_val;
-    double _controller_slope_compensation__phase;
+    double _controller_open_loop_duty_ratio__duty_cycle;
     double _controller_voltage_mode_controller__ki;
     double _controller_voltage_mode_controller__upper_sat_lim;
     double _controller_voltage_mode_controller__kp;
     double _controller_voltage_mode_controller__lower_sat_lim;
     double _controller_fsw__phase;
+    double _controller_fsw__duty_cycle;
     double _controller_fsw__frequency;
     X_Int32 _controller_fsw__hs_output;
     X_Int32 _controller_fsw__ls_output;
-    double _controller_fsw__duty_cycle;
-    double _disturbance__dc_offset;
     double _disturbance__frequency;
-    double _disturbance__amplitude;
     double _disturbance__phase;
+    double _disturbance__dc_offset;
+    double _disturbance__amplitude;
 } __attribute__((__packed__)) tunable_params;
 
 void *tunable_params_dev0_cpu0_ptr = &tunable_params;
@@ -233,13 +240,16 @@ void ReInit_user_sp_cpu0_dev0() {
     //@cmp.init.block.start
     _controller_open_loop_duty_ratio__current_phase = tunable_params._controller_open_loop_duty_ratio__phase;
     _controller_sr_flip_flop1__state =  0;
-    _controller_slope_compensation__current_phase = tunable_params._controller_slope_compensation__phase;
     _controller_triangular_wave_source1__current_phase = 0.0;
     _controller_fsw__current_phase = tunable_params._controller_fsw__phase;
     _disturbance__current_phase = tunable_params._disturbance__phase / 360.0f;
     _controller_integrator__state = 0.0;
     _controller_integrator__reset_state = 2;
     HIL_OutFloat(137363456, 0.0);
+    {
+        _controller_c_function2__out_var = 0 ;
+        _controller_c_function2__Tsw = 1 / 10000.0 ;
+    }
     X_UnInt32 _controller_lead_regulator__i;
     for (_controller_lead_regulator__i = 0; _controller_lead_regulator__i < 1; _controller_lead_regulator__i++) {
         _controller_lead_regulator__states[_controller_lead_regulator__i] = 0;
@@ -330,12 +340,6 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     // Generated from the component: Controller.SR Flip Flop1
     _controller_sr_flip_flop1__out = _controller_sr_flip_flop1__state;
     _controller_sr_flip_flop1__out_n = _controller_sr_flip_flop1__state != -1 ? !_controller_sr_flip_flop1__state : -1;
-    // Generated from the component: Controller.Slope compensation
-    if (_controller_slope_compensation__current_phase < tunable_params._controller_slope_compensation__duty_cycle) {
-        _controller_slope_compensation__out = tunable_params._controller_slope_compensation__min_val + (((tunable_params._controller_slope_compensation__max_val) - (tunable_params._controller_slope_compensation__min_val)) * (_controller_slope_compensation__current_phase / tunable_params._controller_slope_compensation__duty_cycle));
-    } else {
-        _controller_slope_compensation__out = tunable_params._controller_slope_compensation__max_val - (((tunable_params._controller_slope_compensation__max_val) - (tunable_params._controller_slope_compensation__min_val)) * ((_controller_slope_compensation__current_phase - tunable_params._controller_slope_compensation__duty_cycle) / (1.0f - tunable_params._controller_slope_compensation__duty_cycle)));
-    }
     // Generated from the component: Controller.Triangular Wave Source1
     if (_controller_triangular_wave_source1__current_phase < 0.999) {
         _controller_triangular_wave_source1__out = 0.0 + (((1.0) - (0.0)) * (_controller_triangular_wave_source1__current_phase / 0.999));
@@ -356,8 +360,8 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     _isw_ia1__out = (HIL_InFloat(0xc80000 + 0x6));
     // Generated from the component: Load resistance
     _load_resistance__out = XIo_InFloat(0xfffc0008);
-    // Generated from the component: Output voltage
-    _output_voltage__out = XIo_InFloat(0xfffc000c);
+    // Generated from the component: Reference output voltage
+    _reference_output_voltage__out = XIo_InFloat(0xfffc000c);
     // Generated from the component: Turn on load
     _turn_on_load__out = XIo_InInt32(0xfffc0010);
     // Generated from the component: Vout.Va1
@@ -372,6 +376,17 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
     _input_voltage_signal_switch1__out = (_enable_disturbance__out > 0.5) ? _disturbance__out : _input_voltage_no_disturbance__out;
     // Generated from the component: Rload.Vs
     HIL_OutFloat(137363456, (float) _load_resistance__out);
+    // Generated from the component: Controller.C function2
+    _controller_c_function2__vout_ref = _reference_output_voltage__out;
+    {
+        _controller_c_function2__counter += 5e-06 / _controller_c_function2__Tsw ;
+        _controller_c_function2__out_var += _controller_c_function2__vout_ref / 0.004992460003836716 * 5e-06 ;
+        if ( _controller_c_function2__counter >= 1 )     {
+            _controller_c_function2__out_var = 0 ;
+            _controller_c_function2__counter = 0 ;
+        }
+        _controller_c_function2__out = _controller_c_function2__out_var ;
+    }
     // Generated from the component: S.CTC_Wrapper
     if (_turn_on_load__out == 0x0) {
         HIL_OutInt32(0x8240480, 0x0);
@@ -380,9 +395,9 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
         HIL_OutInt32(0x8240480, 0x1);
     }
     // Generated from the component: Controller.Sum2
-    _controller_sum2__out = _output_voltage__out - _vout_va1__out;
+    _controller_sum2__out = _reference_output_voltage__out - _vout_va1__out;
     // Generated from the component: Controller.Sum4
-    _controller_sum4__out = _output_voltage__out - _vout_va1__out;
+    _controller_sum4__out = _reference_output_voltage__out - _vout_va1__out;
     // Generated from the component: Controller.Lead regulator
     X_UnInt32 _controller_lead_regulator__i;
     _controller_lead_regulator__a_sum = 0.0f;
@@ -439,7 +454,7 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
         _controller_multiport_signal_switch1__out = 0x0;
     }
     // Generated from the component: Controller.Sum1
-    _controller_sum1__out = _controller_lead_regulator__out - _controller_slope_compensation__out + _controller_gain__out;
+    _controller_sum1__out = _controller_lead_regulator__out - _controller_c_function2__out + _controller_gain__out;
     // Generated from the component: Buck-Boost.Bus_Join1
     _buck_boost_bus_join1__out[0] = _controller_multiport_signal_switch1__out;
     _buck_boost_bus_join1__out[1] = _buck_boost_constant1__out;
@@ -474,11 +489,6 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
         _controller_sr_flip_flop1__state = 0;
     else if ((_controller_fsw__out != 0x0) && (_controller_comparator1__out != 0x0))
         _controller_sr_flip_flop1__state = -1;
-    // Generated from the component: Controller.Slope compensation
-    _controller_slope_compensation__current_phase += tunable_params._controller_slope_compensation__frequency * 5e-06;
-    if (_controller_slope_compensation__current_phase >= 1.0f) {
-        _controller_slope_compensation__current_phase -= 1.0f;
-    }
     // Generated from the component: Controller.Triangular Wave Source1
     _controller_triangular_wave_source1__current_phase += 10000.0 * 5e-06;
     if (_controller_triangular_wave_source1__current_phase >= 1.0f) {
@@ -502,6 +512,7 @@ void TimerCounterHandler_0_user_sp_cpu0_dev0() {
         _controller_integrator__reset_state = -1;
     else
         _controller_integrator__reset_state = 0;
+    // Generated from the component: Controller.C function2
     // Generated from the component: Controller.Lead regulator
     _controller_lead_regulator__states[0] = _controller_lead_regulator__delay_line_in;
     // Generated from the component: Controller.Voltage mode controller

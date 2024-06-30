@@ -149,18 +149,6 @@ model "zad3" {
                 position = 7928, 8152
             ]
 
-            component "core/Triangular Wave Source" "Slope compensation" {
-                _tunable = "True"
-                duty_cycle = "0.9999"
-                execution_rate = "Ts"
-                frequency = "fsw"
-                max_val = "0"
-                min_val = "0"
-            }
-            [
-                position = 7600, 8152
-            ]
-
             component "core/Sum" Sum1 {
                 signs = "+-+"
             }
@@ -328,6 +316,42 @@ model "zad3" {
                 position = 7600, 8072
             ]
 
+            component "core/C function" "C function2" {
+                arb_defs = "/*Begin code section*/
+
+/*End code section*/"
+                global_variables = "real counter;real Tsw;real execution_rate1;real out_var;"
+                init_fnc = "/*Begin code section*/
+out_var=0;
+
+Tsw=1 / fsw;
+/*End code section*/"
+                input_terminals = "real vout_ref;"
+                input_terminals_dimensions = "inherit"
+                input_terminals_feedthrough = "True"
+                input_terminals_show_labels = "True"
+                output_fnc = "/*Begin code section*/
+counter += execution_rate/Tsw;
+out_var += vout_ref/L * execution_rate;
+
+if (counter >= 1) {
+    out_var = 0;
+    counter=0;
+}
+
+out = out_var;
+/*End code section*/"
+                output_terminals_dimensions = "inherit"
+                output_terminals_feedthrough = "True"
+                output_terminals_show_labels = "False"
+                parameters = "real L;real fsw;"
+            }
+            [
+                position = 7592, 8160
+                hide_name = True
+                size = 48, 48
+            ]
+
             port Isw {
                 position = left:2
                 kind = sp
@@ -474,6 +498,17 @@ model "zad3" {
                 size = 60, 20
             ]
 
+            tag "Reference output voltage2" {
+                value = "Vout_ref"
+                scope = global
+                kind = sp
+                direction = out
+            }
+            [
+                position = 7472, 8160
+                size = 60, 20
+            ]
+
             junction Junction4 sp
             [
                 position = 8152, 7576
@@ -489,7 +524,7 @@ model "zad3" {
                 position = 7816, 8088
             ]
 
-            comment Comment1 START <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd"><html><head><meta name="qrichtext" content="1" /><style type="text/css">p, li { white-space: pre-wrap; }</style></head><body style=" font-family:'Arial'; font-size:12pt; font-weight:400; font-style:normal;"><p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Three types of control:<br />- Open loop control with adjustable duty ratio<br />- Voltage mode control (currently not working)</p><p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">- Current mode control  </p></body></html> ENDCOMMENT 
+            comment Comment1 START <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd"><html><head><meta name="qrichtext" content="1" /><style type="text/css">p, li { white-space: pre-wrap; }</style></head><body style=" font-family:'Arial'; font-size:12pt; font-weight:400; font-style:normal;"><p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Three types of control:<br />- Open loop control with adjustable duty ratio<br />- Voltage mode control</p><p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">- Current mode control   </p></body></html> ENDCOMMENT 
             [
                 position = 7824, 8240
             ]
@@ -527,7 +562,7 @@ model "zad3" {
             connect Junction4 "Control mode.out" as Connection319
             connect "Multiport signal switch1.ctrl" Junction4 as Connection320
             [
-                breakpoints = 8200, 7752; 8184, 7752
+                breakpoints = 8200, 7752; 8152, 7752; 8152, 7576
             ]
             connect "Reference output voltage" Sum4.in as Connection321
             [
@@ -558,10 +593,6 @@ model "zad3" {
                 breakpoints = 7432, 8128; 7432, 8080
             ]
             connect Integrator.in K.out as Connection364
-            connect "Slope compensation.out" Sum1.in1 as Connection370
-            [
-                breakpoints = 7696, 8128; 7696, 8088
-            ]
             connect Comparator1.in2 Junction6 as Connection372
             connect Junction6 Sum1.out as Connection373
             connect Imax.in Junction6 as Connection374
@@ -577,9 +608,14 @@ model "zad3" {
             [
                 breakpoints = 7328, 8064; 7312, 8064
             ]
+            connect "C function2.out" Sum1.in1 as Connection389
+            [
+                breakpoints = 7688, 8160; 7688, 8088
+            ]
+            connect "Reference output voltage2" "C function2.vout_ref" as Connection390
         }
         [
-            position = 8304, 7920
+            position = 8312, 8008
             size = 168, 96
         ]
 
@@ -603,7 +639,7 @@ model "zad3" {
             size = 64, 32
         ]
 
-        component "core/SCADA Input" "Output voltage" {
+        component "core/SCADA Input" "Reference output voltage" {
             execution_rate = "Ts"
             signal_access = "Inherit"
             unit = ""
@@ -818,7 +854,7 @@ model "zad3" {
             direction = out
         }
         [
-            position = 8096, 7896
+            position = 8104, 7984
             hide_name = True
             size = 108, 20
         ]
@@ -843,7 +879,7 @@ model "zad3" {
             direction = out
         }
         [
-            position = 8096, 7920
+            position = 8104, 8008
             hide_name = True
             size = 108, 20
         ]
@@ -880,7 +916,7 @@ model "zad3" {
             direction = out
         }
         [
-            position = 8096, 7944
+            position = 8104, 8032
             hide_name = True
             size = 108, 20
         ]
@@ -944,7 +980,7 @@ model "zad3" {
         connect Disturbance.out "Input Voltage.Disturbance" as Connection232
         connect "Enable disturbance.out" "Input Voltage.Enable" as Connection233
         connect From2 Controller.Vout as Connection302
-        connect Goto2 "Output voltage.out" as Connection305
+        connect Goto2 "Reference output voltage.out" as Connection305
         [
             breakpoints = 9128, 8680
         ]
@@ -1011,6 +1047,43 @@ model "zad3" {
     }
 
     default {
+        "core/C function" {
+            input_terminals = "real in;"
+            input_terminals_show_labels = "False;"
+            input_terminals_feedthrough = "True;"
+            input_terminals_dimensions = "inherit;"
+            output_terminals = "real out;"
+            output_terminals_show_labels = "False;"
+            output_terminals_feedthrough = "True;"
+            output_terminals_dimensions = "inherit;"
+            output_fnc = ""
+            update_fnc = ""
+            init_fnc = ""
+            global_variables = ""
+            parameters = ""
+            library_load_type = "Compile-time load"
+            dll_file_path = ""
+            dll_file_path_full = ""
+            arm_a9_file_path = ""
+            arm_a9_file_path_full = ""
+            arm_a53_file_path = ""
+            arm_a53_file_path_full = ""
+            h_file_path = ""
+            h_file_path_full = ""
+            add_src_path = ""
+            add_src_path_full = ""
+            convert_to_relative_dll = "True"
+            convert_to_relative_a = "True"
+            convert_to_relative_src = "True"
+            arb_defs = ""
+            add_macros = ""
+            skip_pre_cmpl_check = "False"
+            generate_for_hil = "True"
+            execution_rate = "inherit"
+            _supported_platforms = "[\'generic\']"
+            refresh = "refresh"
+        }
+
         "core/Capacitor" {
             signal_access = "inherit"
             capacitance = "1e-6"
